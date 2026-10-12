@@ -1,0 +1,12 @@
+@startuml
+package cli
+package application
+package domain
+package infrastructure
+[Main] --> cli
+[Main] --> infrastructure
+cli --> application
+application --> domain
+infrastructure --> application : implements DocumentPort
+infrastructure --> domain
+@enduml

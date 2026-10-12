@@ -1,0 +1,23 @@
+{
+  "name": "svg-editor",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "cli": "npm run build --silent && node build/src/Main.js",
+    "test": "npm run build --silent && node --test build/test/*.test.js",
+    "test:coverage": "npm run build --silent && node --experimental-test-coverage --test build/test/*.test.js",
+    "check": "npm test && node scripts/check-architecture.mjs"
+  },
+  "dependencies": {
+    "@xmldom/xmldom": "0.9.8"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.15",
+    "typescript": "5.9.3"
+  }
+}
