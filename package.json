@@ -10,7 +10,7 @@
     "build": "tsc -p tsconfig.json",
     "cli": "npm run build --silent && node build/src/Main.js",
     "test": "npm run build --silent && node --test build/test/*.test.js",
-    "test:coverage": "npm run build --silent && node --experimental-test-coverage --test build/test/*.test.js",
+    "test:coverage": "npm run build --silent && node --experimental-test-coverage --test-coverage-include=build/src/**/*.js --test build/test/*.test.js",
     "check": "npm test && node scripts/check-architecture.mjs"
   },
   "dependencies": {
