@@ -1,12 +1,47 @@
 @startuml
-package cli
-package application
-package domain
-package infrastructure
-[Main] --> cli
-[Main] --> infrastructure
-cli --> application
-application --> domain
-infrastructure --> application : implements DocumentPort
-infrastructure --> domain
+!pragma layout smetana
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam defaultFontName SansSerif
+skinparam packageStyle rectangle
+skinparam ArrowColor #536273
+skinparam componentBackgroundColor #F6F8FA
+skinparam packageBackgroundColor #FFFFFF
+title SVG editor - module dependencies
+top to bottom direction
+component "Main\ncomposition root" as Main
+package cli {
+  component "ConsoleApp\nCommandDispatcher\nTokenizer / Arguments\nCommandFactory" as CLI
+}
+package application {
+  component "Command / EditingCommand\nconcrete command classes" as Commands
+  component "Editor\ntransaction boundary" as Editor
+  component "History / EditRecord" as History
+  interface DocumentPort
+  component TreeFormatter
+}
+package domain {
+  component "SvgDocument\nidentity and tree rules" as Doc
+  component "Shape\nRect / Circle / Ellipse\nLine / Text / Group" as Shapes
+  component "ShapeFactory" as Factory
+}
+package infrastructure {
+  component NodeDocumentStore as Store
+  component "SvgCodec / SvgTransform" as Codec
+}
+Main --> CLI
+Main --> Store
+CLI --> Commands
+Commands --> Editor
+Editor --> History
+Editor --> DocumentPort
+Editor --> Doc
+Commands --> Doc
+TreeFormatter --> Doc
+Doc --> Shapes
+Factory --> Shapes
+Store ..|> DocumentPort
+Store --> Codec
+Codec --> Doc
+Codec --> Factory
 @enduml

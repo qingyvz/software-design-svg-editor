@@ -54,7 +54,9 @@ test('invalid XML and unsupported content fail explicitly', () => {
   const codec = new SvgCodec();
   for (const xml of ['<svg><rect></svg>', '<svg><path id="p"/></svg>', '<svg><text><tspan>nested</tspan></text></svg>',
     '<!DOCTYPE svg [<!ENTITY test "x">]><svg/>', '<html/>', '<svg><rect onclick="alert(1)"/></svg>',
-    '<svg width="NaN"/>', '<svg><g transform="rotate(30)"/></svg>']) assert.throws(() => codec.decode(xml), Error, xml);
+    '<svg width="NaN"/>', '<svg><g transform="rotate(30)"/></svg>',
+    '<svg>' + '<g>'.repeat(257) + '</g>'.repeat(257) + '</svg>',
+    '<svg><text transform="scale(2)" font-size="1e308">x</text></svg>']) assert.throws(() => codec.decode(xml), Error, xml);
 });
 
 test('real file port replaces valid files atomically and leaves no temp files on failure', t => {
