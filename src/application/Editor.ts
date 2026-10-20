@@ -46,7 +46,7 @@ export class Editor {
   }
   executeEdit(command: EditingCommand): readonly string[] {
     const before = this.requireDocument(), draft = before.clone();
-    // 只有完整操作和约束校验都成功，才替换文档并更新历史。
+    // 草稿校验通过后再提交，失败时保留原文档和历史。
     const message = command.apply(draft);
     draft.assertValid();
     const record = new EditRecord(command.description, before, draft);

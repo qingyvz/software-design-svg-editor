@@ -1,4 +1,4 @@
-# 对应题目 6.1；在工程根目录运行
+# 两节点流程图，在工程根目录运行。
 init 800 600
 create g flowchart
 create g node1 in flowchart

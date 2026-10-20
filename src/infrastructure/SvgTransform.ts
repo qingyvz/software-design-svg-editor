@@ -3,7 +3,7 @@ export class SvgTransform {
   constructor(readonly scale = 1, readonly dx = 0, readonly dy = 0) {}
   static parse(value: string): SvgTransform {
     if (!value.trim()) return new SvgTransform();
-    // 本阶段只归一化题目背景里出现的 translate 后接等比 scale。
+    // 仅支持 translate 后接正数等比 scale。
     const pattern = /^(?:translate\(\s*([^)]*)\)\s*)?(?:scale\(\s*([^)]*)\)\s*)?$/;
     const match = value.trim().match(pattern);
     if (!match) throw new Error('unsupported transform: expected translate(...) followed by uniform scale(...)');
