@@ -1,4 +1,5 @@
 import { Numbers } from './Numbers.js';
+import type { ShapeContainer } from './ShapeContainer.js';
 
 export abstract class Shape {
   private readonly identifier: string;
@@ -11,6 +12,8 @@ export abstract class Shape {
   abstract get tag(): string;
   get label(): string { return `${this.tag}#${this.id}`; }
   get children(): readonly Shape[] { return []; }
+  get container(): ShapeContainer | undefined { return undefined; }
+  get opacity(): number { return Number(this.appearance.get('opacity') ?? '1'); }
   get text(): string | null { return null; }
   get attributes(): ReadonlyMap<string, string> { return new Map(this.appearance); }
   abstract move(dx: number, dy: number): void;
@@ -28,12 +31,18 @@ export abstract class Shape {
     if (['fill', 'stroke', 'stroke-width'].includes(attribute)) { this.set(attribute, value); return; }
     const supported = ['font-size', 'font-family', 'font-weight', 'text-anchor', 'opacity', 'fill-opacity', 'stroke-opacity', 'stroke-linecap', 'stroke-linejoin'];
     if (!supported.includes(attribute) && !attribute.startsWith('data-')) throw new Error(`unsupported SVG attribute: ${attribute}`);
+    if (['opacity', 'fill-opacity', 'stroke-opacity'].includes(attribute)) {
+      const raw = value.trim();
+      const number = raw.endsWith('%') ? Numbers.parse(raw.slice(0, -1), attribute) / 100 : Numbers.parse(raw, attribute);
+      value = Numbers.format(Math.max(0, Math.min(1, number)));
+    }
     this.appearance.set(attribute, value);
   }
   inheritPresentationFrom(parent: Shape): void {
     for (const [name, value] of parent.appearance) {
-      if (!name.startsWith('data-') && !this.appearance.has(name)) this.appearance.set(name, value);
+      if (name !== 'opacity' && !name.startsWith('data-') && !this.appearance.has(name)) this.appearance.set(name, value);
     }
+    if (parent.opacity !== 1) this.appearance.set('opacity', Numbers.format(parent.opacity * this.opacity));
   }
   protected copyAppearance<T extends Shape>(target: T): T {
     for (const [name, value] of this.appearance) target.appearance.set(name, value);
