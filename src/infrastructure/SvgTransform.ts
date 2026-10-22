@@ -1,20 +1,33 @@
+import { AffineTransform } from '../domain/AffineTransform.js';
 import { Numbers } from '../domain/Numbers.js';
+
 export class SvgTransform {
-  constructor(readonly scale = 1, readonly dx = 0, readonly dy = 0) {}
-  static parse(value: string): SvgTransform {
-    if (!value.trim()) return new SvgTransform();
-    // 仅支持 translate 后接正数等比 scale。
-    const pattern = /^(?:translate\(\s*([^)]*)\)\s*)?(?:scale\(\s*([^)]*)\)\s*)?$/;
-    const match = value.trim().match(pattern);
-    if (!match) throw new Error('unsupported transform: expected translate(...) followed by uniform scale(...)');
-    const translation = match[1]?.trim().split(/[\s,]+/).map(v => Numbers.parse(v, 'translate')) ?? [0, 0];
-    const scaling = match[2]?.trim().split(/[\s,]+/).map(v => Numbers.parse(v, 'scale')) ?? [1];
-    if (translation.length < 1 || translation.length > 2 || scaling.length < 1 || scaling.length > 2 || (scaling.length === 2 && scaling[0] !== scaling[1])) throw new Error('unsupported non-uniform or malformed transform');
-    return new SvgTransform(Numbers.positive(scaling[0]!, 'scale factor'), translation[0]!, translation[1] ?? 0);
+  static parse(value: string): AffineTransform {
+    let result = AffineTransform.identity();
+    let remaining = value.trim();
+    while (remaining) {
+      const match = /^([A-Za-z]+)\s*\(([^()]*)\)/.exec(remaining);
+      if (!match) throw new Error('invalid SVG transform');
+      const raw = match[2]!.trim();
+      if (!raw || /^,|,$|,\s*,/.test(raw)) throw new Error('invalid transform arguments');
+      const numbers = raw.split(/[\s,]+/).map(item => Numbers.parse(item, 'transform'));
+      result = result.multiply(this.operation(match[1]!, numbers));
+      remaining = remaining.slice(match[0].length).trim();
+      if (remaining.startsWith(',')) {
+        remaining = remaining.slice(1).trim();
+        if (!remaining) throw new Error('invalid SVG transform separator');
+      }
+    }
+    return result;
   }
-  compose(child: SvgTransform): SvgTransform {
-    return new SvgTransform(Numbers.finite(this.scale * child.scale, 'transform scale'),
-      Numbers.finite(this.dx + this.scale * child.dx, 'transform x'),
-      Numbers.finite(this.dy + this.scale * child.dy, 'transform y'));
+
+  private static operation(name: string, values: readonly number[]): AffineTransform {
+    if (name === 'matrix' && values.length === 6) return new AffineTransform(values[0], values[1], values[2], values[3], values[4], values[5]);
+    if (name === 'translate' && [1, 2].includes(values.length)) return AffineTransform.translation(values[0]!, values[1] ?? 0);
+    if (name === 'scale' && [1, 2].includes(values.length)) return AffineTransform.scaling(values[0]!, values[1] ?? values[0]!);
+    if (name === 'rotate' && [1, 3].includes(values.length)) return AffineTransform.rotation(values[0]!, values[1] ?? 0, values[2] ?? 0);
+    if (name === 'skewX' && values.length === 1) return new AffineTransform(1, 0, Math.tan(values[0]! * Math.PI / 180), 1);
+    if (name === 'skewY' && values.length === 1) return new AffineTransform(1, Math.tan(values[0]! * Math.PI / 180), 0, 1);
+    throw new Error(`unsupported or malformed transform: ${name}`);
   }
 }

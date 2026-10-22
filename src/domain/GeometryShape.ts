@@ -1,5 +1,6 @@
 import { Shape } from './Shape.js';
 import { Numbers } from './Numbers.js';
+import { AffineTransform } from './AffineTransform.js';
 
 export abstract class GeometryShape extends Shape {
   private readonly geometry: Map<string, number>;
@@ -17,6 +18,7 @@ export abstract class GeometryShape extends Shape {
   }
   protected translate(xKeys: readonly string[], yKeys: readonly string[], dx: number, dy: number): void {
     Numbers.finite(dx, 'dx'); Numbers.finite(dy, 'dy');
+    if (!this.transform.isIdentity) { this.applyTransform(AffineTransform.translation(dx, dy)); return; }
     const changes = new Map<string, number>();
     for (const key of xKeys) changes.set(key, Numbers.finite(this.value(key) + dx, key));
     for (const key of yKeys) changes.set(key, Numbers.finite(this.value(key) + dy, key));
@@ -24,8 +26,10 @@ export abstract class GeometryShape extends Shape {
   }
   override scale(factor: number): void {
     Numbers.positive(factor, 'scale factor');
+    const placement = this.transform.scaleTranslation(factor);
     const changes = [...this.geometry].map(([key, value]) => [key, Numbers.finite(value * factor, key)] as const);
     for (const [key, value] of changes) this.geometry.set(key, value);
+    this.replaceTransform(placement);
   }
   override set(attribute: string, value: string): void {
     if (this.geometry.has(attribute)) this.assign(attribute, Numbers.parse(value, attribute));
