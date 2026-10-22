@@ -5,49 +5,47 @@ import { Ellipse } from './Ellipse.js';
 import { Line } from './Line.js';
 import { Text } from './Text.js';
 import { Group } from './Group.js';
-import { Numbers } from './Numbers.js';
+import { BuiltinShapeProvider } from './BuiltinShapeProvider.js';
+import type { ShapeProvider } from './ShapeProvider.js';
 
-interface Definition {
-  readonly geometry: readonly string[];
-  readonly construct: (id: string, n: readonly number[], text: string) => Shape;
-  readonly text?: boolean;
-  readonly paint?: string;
-}
 export class ShapeFactory {
-  // TODO: 支持外部注册图形类型。
-  private readonly definitions = new Map<string, Definition>([
-    ['rect', { geometry: ['x', 'y', 'width', 'height'], construct: (id, n) => new Rect(id, n[0]!, n[1]!, n[2]!, n[3]!), paint: 'fill' }],
-    ['circle', { geometry: ['cx', 'cy', 'r'], construct: (id, n) => new Circle(id, n[0]!, n[1]!, n[2]!), paint: 'fill' }],
-    ['ellipse', { geometry: ['cx', 'cy', 'rx', 'ry'], construct: (id, n) => new Ellipse(id, n[0]!, n[1]!, n[2]!, n[3]!), paint: 'fill' }],
-    ['line', { geometry: ['x1', 'y1', 'x2', 'y2'], construct: (id, n) => new Line(id, n[0]!, n[1]!, n[2]!, n[3]!), paint: 'stroke' }],
-    ['text', { geometry: ['x', 'y'], construct: (id, n, text) => new Text(id, n[0]!, n[1]!, text), text: true }],
-    ['g', { geometry: [], construct: id => new Group(id) }],
-  ]);
-  private definition(type: string): Definition {
-    const entry = this.definitions.get(type);
-    if (!entry) throw new Error(`unknown shape type: ${type} (is the plugin loaded?)`);
-    return entry;
+  private readonly providers = new Map<string, ShapeProvider>();
+  private readonly svgProviders = new Map<string, ShapeProvider>();
+
+  constructor() {
+    this.register(new BuiltinShapeProvider('rect', ['x', 'y', 'width', 'height'], (id, n) => new Rect(id, n[0]!, n[1]!, n[2]!, n[3]!), { paint: 'fill' }));
+    this.register(new BuiltinShapeProvider('circle', ['cx', 'cy', 'r'], (id, n) => new Circle(id, n[0]!, n[1]!, n[2]!), { paint: 'fill' }));
+    this.register(new BuiltinShapeProvider('ellipse', ['cx', 'cy', 'rx', 'ry'], (id, n) => new Ellipse(id, n[0]!, n[1]!, n[2]!, n[3]!), { paint: 'fill' }));
+    this.register(new BuiltinShapeProvider('line', ['x1', 'y1', 'x2', 'y2'], (id, n) => new Line(id, n[0]!, n[1]!, n[2]!, n[3]!), { paint: 'stroke' }));
+    this.register(new BuiltinShapeProvider('text', ['x', 'y'], (id, n, text) => new Text(id, n[0]!, n[1]!, text), { text: true }));
+    this.register(new BuiltinShapeProvider('g', [], id => new Group(id)));
   }
-  create(type: string, id: string, params: readonly string[]): Shape {
-    const definition = this.definition(type);
-    const minimum = definition.geometry.length + (definition.text ? 1 : 0);
-    const maximum = minimum + (definition.paint ? 1 : 0);
-    if (params.length < minimum || params.length > maximum) throw new Error(`invalid parameters for ${type}`);
-    const geometry = definition.geometry.map((key, index) => Numbers.parse(params[index]!, key));
-    const shape = definition.construct(id, geometry, definition.text ? params[definition.geometry.length]! : '');
-    if (definition.paint && params.length > minimum) shape.set(definition.paint, params[minimum]!);
-    return shape;
+
+  register(provider: ShapeProvider): this {
+    const key = this.svgKey(provider.svgTag, provider.kind);
+    if (!provider.type || !provider.svgTag || provider.kind === '') throw new Error('invalid shape provider');
+    if (this.providers.has(provider.type) || this.svgProviders.has(key)) throw new Error(`shape provider already registered: ${provider.type}`);
+    this.providers.set(provider.type, provider);
+    this.svgProviders.set(key, provider);
+    return this;
   }
-  fromSvg(type: string, id: string, attrs: ReadonlyMap<string, string>, content: string): Shape {
-    const definition = this.definition(type);
-    const numbers = definition.geometry.map(key => {
-      const raw = attrs.get(key) ?? '0';
-      return Numbers.parse(raw.replace(/px$/, ''), key);
-    });
-    const shape = definition.construct(id, numbers, content);
-    for (const [key, value] of attrs) {
-      if (!['id', 'transform', 'xmlns'].includes(key) && !definition.geometry.includes(key)) shape.importPresentation(key, value);
-    }
+
+  create(type: string, id: string, parameters: readonly string[]): Shape {
+    const provider = this.providers.get(type);
+    if (!provider) throw new Error(`unknown shape type: ${type} (is the plugin loaded?)`);
+    return this.validate(provider, provider.create(id, parameters), id);
+  }
+
+  fromSvg(tag: string, id: string, attributes: ReadonlyMap<string, string>, content: string, children: readonly Shape[] = []): Shape {
+    const provider = this.svgProviders.get(this.svgKey(tag, attributes.get('data-kind'))) ?? this.svgProviders.get(this.svgKey(tag));
+    if (!provider) throw new Error(`unknown shape type: ${tag} (is the plugin loaded?)`);
+    return this.validate(provider, provider.fromSvg(id, new Map(attributes), content, children), id);
+  }
+
+  private svgKey(tag: string, kind?: string): string { return JSON.stringify([tag, kind ?? null]); }
+  private validate(provider: ShapeProvider, shape: Shape, id: string): Shape {
+    if (shape.id !== id || shape.tag !== provider.svgTag) throw new Error(`invalid result from shape provider: ${provider.type}`);
+    if (provider.kind) shape.importPresentation('data-kind', provider.kind);
     return shape;
   }
 }

@@ -1,3 +1,5 @@
+import { ShapeFactory } from '../domain/ShapeFactory.js';
+import type { Shape } from '../domain/Shape.js';
 import { SvgDocument } from '../domain/SvgDocument.js';
 import type { DocumentPort } from './DocumentPort.js';
 import type { EditingCommand } from './EditingCommand.js';
@@ -9,7 +11,8 @@ export class Editor {
   private path: string | undefined;
   private readonly history = new History();
   private exitRequested = false;
-  constructor(private readonly documents: DocumentPort) {}
+  constructor(private readonly documents: DocumentPort, private readonly factory = new ShapeFactory()) {}
+  createShape(type: string, id: string, params: readonly string[]): Shape { return this.factory.create(type, id, params); }
   private requireDocument(): SvgDocument {
     if (!this.current) throw new Error("no document. use 'init' or 'read' first");
     return this.current;
