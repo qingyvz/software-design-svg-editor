@@ -16,6 +16,7 @@ export class HelpCommand extends Command {
       'tree [id] | show <id> | help | undo | redo | exit',
       'rotate <degrees> <cx> <cy> <id1> [id2 ...] | move-many <dx> <dy> <id1> [id2 ...]',
       'layer [enter <gid> | leave]',
+      'Optional --box plugin: create box <id> <x> <y> <w> <h> "label" [in <gid>]',
       'Common set attributes: fill, stroke, stroke-width; geometry attributes depend on shape.',
       'Text additionally supports: set <id> text "content".',
     ];
