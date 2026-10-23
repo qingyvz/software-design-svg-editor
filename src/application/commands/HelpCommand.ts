@@ -14,6 +14,7 @@ export class HelpCommand extends Command {
       'set <id> <attr> <value> | group <newGid> <id1> [id2 ...]',
       'ungroup <gid> | addto <gid> <id> | front <id> | back <id>',
       'tree [id] | show <id> | help | undo | redo | exit',
+      'layer [enter <gid> | leave]',
       'Common set attributes: fill, stroke, stroke-width; geometry attributes depend on shape.',
       'Text additionally supports: set <id> text "content".',
     ];
