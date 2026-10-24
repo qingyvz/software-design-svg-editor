@@ -10,11 +10,11 @@ export class Box extends Group {
   }
   override set(attribute: string, value: string): void {
     if (attribute === 'fill') {
-      const body = this.children.find(child => child.id === this.id + '-rect');
+      const body = this.children.find((child) => child.id === this.id + '-rect');
       if (!body) throw new Error('box body is missing');
       body.set('fill', value);
     } else if (attribute === 'label') {
-      const label = this.children.find(child => child.id === this.id + '-label');
+      const label = this.children.find((child) => child.id === this.id + '-label');
       if (!label) throw new Error('box label is missing');
       label.set('text', value);
     } else super.set(attribute, value);
@@ -24,5 +24,4 @@ export class Box extends Group {
     for (const child of this.children) result.add(child.clone());
     return result;
   }
-  override summary(): string { return `${this.label} (box) ${this.styleSummary()}`.trimEnd(); }
 }

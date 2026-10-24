@@ -2,7 +2,18 @@ import { EditingCommand } from '../EditingCommand.js';
 import type { Editor } from '../Editor.js';
 import type { EditContext } from '../EditContext.js';
 export class AddToCommand extends EditingCommand {
-  constructor(receiver: Editor, private readonly groupId: string, private readonly id: string) { super(receiver); }
-  override get description(): string { return `addto ${this.groupId} ${this.id}`; }
-  override apply(document: EditContext): string { document.addTo(this.groupId, this.id); return `${document.get(this.id).label} moved into g#${this.groupId}`; }
+  constructor(
+    receiver: Editor,
+    private readonly groupId: string,
+    private readonly id: string,
+  ) {
+    super(receiver);
+  }
+  override get description(): string {
+    return `addto ${this.groupId} ${this.id}`;
+  }
+  override apply(document: EditContext): string {
+    document.addTo(this.groupId, this.id);
+    return `${document.label(document.get(this.id))} moved into g#${this.groupId}`;
+  }
 }
