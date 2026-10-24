@@ -1,6 +1,8 @@
 import { Shape } from './Shape.js';
 import { Group } from './Group.js';
 import type { ShapeContainer } from './ShapeContainer.js';
+import type { Bounds } from './Bounds.js';
+import type { BoundsContext } from './BoundsContext.js';
 import { Numbers } from './Numbers.js';
 
 export class SvgDocument {
@@ -69,6 +71,13 @@ export class SvgDocument {
     const parent = this.parent(shape);
     return parent === this.root ? undefined : parent;
   }
+  bounds(id: string, context: BoundsContext = {}): Bounds | undefined {
+    const shape = this.get(id);
+    let presentation = context.inheritedPresentation ?? new Map<string, string>();
+    for (const ancestor of this.ancestors(shape))
+      presentation = ancestor.resolvedPresentation(presentation);
+    return shape.bounds({ ...context, inheritedPresentation: presentation });
+  }
   add(shape: Shape, containerId?: string): void {
     const existing = new Set(this.shapes.map((item) => item.id));
     for (const item of shape.walk()) {
@@ -91,12 +100,14 @@ export class SvgDocument {
         throw new Error(`cannot group a container into its own descendant: ${shape.id}`);
     }
     const ordered = this.shapes.filter((shape) => selected.includes(shape));
+    // 祖先路径从根开始，共同前缀的末端就是最低共同祖先。
     const paths = ordered.map((shape) => this.ancestors(shape));
     let parent: ShapeContainer = this.root;
     for (let i = 0; paths.every((path) => path[i] !== undefined && path[i] === paths[0]![i]); i++)
       parent = paths[0]![i]!;
     const first = ordered[0]!;
     const branch = parent.children.find((child) => [...child.walk()].includes(first))!;
+    // 新组占用最早选中分支的位置；先记住前面的兄弟，移除后再计算索引。
     const earlier = parent.children.slice(0, parent.children.indexOf(branch));
     const result = new Group(id);
     for (const shape of ordered) {

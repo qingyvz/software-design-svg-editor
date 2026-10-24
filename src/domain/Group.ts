@@ -1,6 +1,8 @@
 import { Shape } from './Shape.js';
 import { Numbers } from './Numbers.js';
 import type { AffineTransform } from './AffineTransform.js';
+import type { Bounds } from './Bounds.js';
+import type { BoundsContext } from './BoundsContext.js';
 export class Group extends Shape {
   private readonly members: Shape[] = [];
   constructor(id: string) {
@@ -46,6 +48,18 @@ export class Group extends Shape {
   }
   override applyTransform(transform: AffineTransform): void {
     for (const child of this.members) child.applyTransform(transform);
+  }
+  override bounds(context: BoundsContext = {}): Bounds | undefined {
+    let result: Bounds | undefined;
+    const childrenContext = {
+      ...context,
+      inheritedPresentation: this.resolvedPresentation(context.inheritedPresentation),
+    };
+    for (const child of this.members) {
+      const bounds = child.bounds(childrenContext);
+      if (bounds) result = result ? result.union(bounds) : bounds;
+    }
+    return result;
   }
   override clone(): Group {
     const result = this.copyState(new Group(this.id));

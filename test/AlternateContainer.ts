@@ -1,6 +1,8 @@
 import { Shape } from '../src/domain/Shape.js';
 import { Group } from '../src/domain/Group.js';
 import type { AffineTransform } from '../src/domain/AffineTransform.js';
+import type { Bounds } from '../src/domain/Bounds.js';
+import type { BoundsContext } from '../src/domain/BoundsContext.js';
 
 export class AlternateContainer extends Shape {
   private readonly content = new Group('$content');
@@ -31,6 +33,12 @@ export class AlternateContainer extends Shape {
   }
   override applyTransform(transform: AffineTransform): void {
     this.content.applyTransform(transform);
+  }
+  override bounds(context: BoundsContext = {}): Bounds | undefined {
+    return this.content.bounds({
+      ...context,
+      inheritedPresentation: this.resolvedPresentation(context.inheritedPresentation),
+    });
   }
   override clone(): AlternateContainer {
     const result = this.copyState(new AlternateContainer(this.id));

@@ -1,6 +1,8 @@
 import { Numbers } from './Numbers.js';
 import { AffineTransform } from './AffineTransform.js';
 import type { ShapeContainer } from './ShapeContainer.js';
+import type { Bounds } from './Bounds.js';
+import type { BoundsContext } from './BoundsContext.js';
 
 export abstract class Shape {
   private readonly identifier: string;
@@ -44,6 +46,22 @@ export abstract class Shape {
   abstract move(dx: number, dy: number): void;
   abstract scale(factor: number): void;
   abstract clone(): Shape;
+  abstract bounds(context?: BoundsContext): Bounds | undefined;
+
+  resolvedPresentation(
+    inherited: ReadonlyMap<string, string> = new Map(),
+  ): ReadonlyMap<string, string> {
+    const result = new Map(inherited);
+    for (const [name, value] of this.appearance) {
+      if (
+        name !== 'opacity' &&
+        !name.startsWith('data-') &&
+        value.trim().toLowerCase() !== 'inherit'
+      )
+        result.set(name, value);
+    }
+    return result;
+  }
 
   set(attribute: string, value: string): void {
     if (!['fill', 'stroke', 'stroke-width'].includes(attribute))
@@ -88,7 +106,8 @@ export abstract class Shape {
         name !== 'opacity' &&
         !name.startsWith('data-') &&
         (own === undefined || own.trim().toLowerCase() === 'inherit')
-      ) this.appearance.set(name, value);
+      )
+        this.appearance.set(name, value);
     }
     if (parent.opacity !== 1)
       this.appearance.set('opacity', Numbers.format(parent.opacity * this.opacity));
