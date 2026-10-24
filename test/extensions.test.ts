@@ -17,7 +17,10 @@ import { AlternateContainer } from './AlternateContainer.js';
 function execute(cli: CommandDispatcher, ...commands: string[]): void {
   for (const command of commands) {
     const result = cli.run(command);
-    assert.ok(!result.some(line => line.startsWith('error:')), command + ': ' + result.join('\n'));
+    assert.ok(
+      !result.some((line) => line.startsWith('error:')),
+      command + ': ' + result.join('\n'),
+    );
   }
 }
 
@@ -28,14 +31,22 @@ test('affine operations follow SVG multiplication order and keep immutable finit
   assert.deepEqual(SvgTransform.parse('matrix(1 2 3 4 5 6)').point(7, 8), [36, 52]);
   assert.throws(() => Object.assign(transform, { e: 100 }), TypeError);
   assert.throws(() => new AffineTransform(Infinity), /finite/);
-  for (const value of ['rotate(1 2)', 'matrix(1 2 3)', 'translate(1,,2)', 'scale()', 'rotate(30),', 'rotate(30) junk']) {
+  for (const value of [
+    'rotate(1 2)',
+    'matrix(1 2 3)',
+    'translate(1,,2)',
+    'scale()',
+    'rotate(30),',
+    'rotate(30) junk',
+  ]) {
     assert.throws(() => SvgTransform.parse(value), Error, value);
   }
 });
 
 test('rotated, skewed and nonuniform SVG shapes survive import and save', () => {
   const codec = new SvgCodec();
-  const xml = '<svg width="300" height="200"><g id="g" transform="translate(50 60) rotate(90)"><rect id="r" x="1" y="2" width="10" height="20"/><ellipse id="e" cx="3" cy="4" rx="5" ry="6" transform="scale(2 3)"/><text id="t" x="7" y="8" transform="skewX(20)">中文</text></g></svg>';
+  const xml =
+    '<svg width="300" height="200"><g id="g" transform="translate(50 60) rotate(90)"><rect id="r" x="1" y="2" width="10" height="20"/><ellipse id="e" cx="3" cy="4" rx="5" ry="6" transform="scale(2 3)"/><text id="t" x="7" y="8" transform="skewX(20)">中文</text></g></svg>';
   const document = codec.decode(xml).document;
   assert.deepEqual(document.get('r').transform.point(1, 2), [48, 61]);
   assert.deepEqual(document.get('e').transform.point(3, 4), [38, 66]);
@@ -49,8 +60,14 @@ test('batch rotation handles overlapping selection roots and uses one undo unit'
   const editor = new Editor(new MemoryDocumentStore());
   const cli = new CommandDispatcher(editor);
   const codec = new SvgCodec();
-  execute(cli, 'init', 'create g g', 'create rect r 1 2 10 20 in g',
-    'create ellipse e 3 4 5 6', 'create text t 7 8 "Text"');
+  execute(
+    cli,
+    'init',
+    'create g g',
+    'create rect r 1 2 10 20 in g',
+    'create ellipse e 3 4 5 6',
+    'create text t 7 8 "Text"',
+  );
   const before = codec.encode(editor.inspect());
   execute(cli, 'rotate 90 0 0 g r e t');
   const rotated = editor.inspect();
@@ -68,10 +85,20 @@ test('batch rotation handles overlapping selection roots and uses one undo unit'
 test('move and CLI scale keep canvas coordinates and stroke width after rotation', () => {
   const editor = new Editor(new MemoryDocumentStore());
   const cli = new CommandDispatcher(editor);
-  execute(cli, 'init', 'create rect r 10 20 30 40', 'set r stroke-width 3',
-    'rotate 90 100 100 r', 'move r 5 -2', 'scale r 2');
+  execute(
+    cli,
+    'init',
+    'create rect r 10 20 30 40',
+    'set r stroke-width 3',
+    'rotate 90 100 100 r',
+    'move r 5 -2',
+    'scale r 2',
+  );
   const shape = editor.inspect().get('r');
-  assert.deepEqual(shape.transform.point(Number(shape.attributes.get('x')), Number(shape.attributes.get('y'))), [370, 16]);
+  assert.deepEqual(
+    shape.transform.point(Number(shape.attributes.get('x')), Number(shape.attributes.get('y'))),
+    [370, 16],
+  );
   assert.equal(shape.attributes.get('width'), '60');
   assert.equal(shape.attributes.get('stroke-width'), '3');
 });
@@ -80,8 +107,7 @@ test('batch failures leave all targets and redo history unchanged', () => {
   const editor = new Editor(new MemoryDocumentStore());
   const cli = new CommandDispatcher(editor);
   const codec = new SvgCodec();
-  execute(cli, 'init', 'create rect a 1 2 3 4', 'create rect b 1e308 0 1 1',
-    'move a 1 0', 'undo');
+  execute(cli, 'init', 'create rect a 1 2 3 4', 'create rect b 1e308 0 1 1', 'move a 1 0', 'undo');
   const before = codec.encode(editor.inspect());
   assert.match(cli.run('move-many 1e308 0 a b')[0]!, /finite/);
   assert.match(cli.run('rotate 90 0 0 a missing')[0]!, /no such shape/);
@@ -95,18 +121,35 @@ test('layer scope applies to creation and every editing target', () => {
   const editor = new Editor(new MemoryDocumentStore());
   const cli = new CommandDispatcher(editor);
   const codec = new SvgCodec();
-  execute(cli, 'init', 'create g layer', 'create g other',
-    'create g inside in layer', 'create rect a 1 2 3 4 in inside',
-    'create rect outside 0 0 1 1 in other', 'layer enter layer',
-    'create circle added 10 20 3');
+  execute(
+    cli,
+    'init',
+    'create g layer',
+    'create g other',
+    'create g inside in layer',
+    'create rect a 1 2 3 4 in inside',
+    'create rect outside 0 0 1 1 in other',
+    'layer enter layer',
+    'create circle added 10 20 3',
+  );
   const document = editor.inspect();
-  assert.equal(document.parentLabel(document.get('added')), 'g#layer');
+  assert.equal(document.parentOf(document.get('added'))?.id, 'layer');
   const before = codec.encode(document);
   for (const command of [
-    'create rect bad 0 0 1 1 in other', 'delete outside', 'delete layer',
-    'move outside 1 2', 'scale outside 2', 'set outside fill red',
-    'group bad a outside', 'ungroup other', 'addto other a', 'addto inside outside',
-    'front outside', 'back outside', 'rotate 30 0 0 a outside', 'move-many 1 2 a outside',
+    'create rect bad 0 0 1 1 in other',
+    'delete outside',
+    'delete layer',
+    'move outside 1 2',
+    'scale outside 2',
+    'set outside fill red',
+    'group bad a outside',
+    'ungroup other',
+    'addto other a',
+    'addto inside outside',
+    'front outside',
+    'back outside',
+    'rotate 30 0 0 a outside',
+    'move-many 1 2 a outside',
   ]) {
     assert.match(cli.run(command)[0]!, /outside active layer/, command);
     assert.equal(codec.encode(editor.inspect()), before, command);
@@ -139,8 +182,15 @@ test('injected box provider supports commands, clone history and SVG restoration
   const editor = new Editor(new MemoryDocumentStore(), factory);
   const cli = new CommandDispatcher(editor);
   const codec = new SvgCodec(factory);
-  execute(cli, 'init', 'create g outer', 'create box b 10 20 100 60 "Start" in outer',
-    'set b fill red', 'set b label "Changed"', 'rotate 45 0 0 b');
+  execute(
+    cli,
+    'init',
+    'create g outer',
+    'create box b 10 20 100 60 "Start" in outer',
+    'set b fill red',
+    'set b label "Changed"',
+    'rotate 45 0 0 b',
+  );
   const before = codec.encode(editor.inspect());
   assert.ok(editor.inspect().get('b') instanceof Box);
   assert.equal(editor.inspect().get('b-rect').attributes.get('fill'), 'red');
@@ -162,8 +212,10 @@ test('injected box provider supports commands, clone history and SVG restoration
 test('container capability supports a container that does not inherit Group', () => {
   const factory = new ShapeFactory();
   factory.register({
-    type: 'alternate', svgTag: 'g', kind: 'alternate',
-    create: id => new AlternateContainer(id),
+    type: 'alternate',
+    svgTag: 'g',
+    kind: 'alternate',
+    create: (id) => new AlternateContainer(id),
     fromSvg: (id, attributes, _content, children) => {
       const result = new AlternateContainer(id);
       for (const child of children) result.add(child);
@@ -175,10 +227,18 @@ test('container capability supports a container that does not inherit Group', ()
   });
   const editor = new Editor(new MemoryDocumentStore(), factory);
   const cli = new CommandDispatcher(editor);
-  execute(cli, 'init', 'create alternate custom', 'create g inner in custom',
-    'create rect r 1 2 3 4 in inner', 'layer enter custom', 'ungroup inner', 'move-many 2 3 r');
+  execute(
+    cli,
+    'init',
+    'create alternate custom',
+    'create g inner in custom',
+    'create rect r 1 2 3 4 in inner',
+    'layer enter custom',
+    'ungroup inner',
+    'move-many 2 3 r',
+  );
   const document = editor.inspect();
-  assert.equal(document.parentLabel(document.get('r')), 'g#custom');
+  assert.equal(document.parentOf(document.get('r'))?.id, 'custom');
   const codec = new SvgCodec(factory);
   const restored = codec.decode(codec.encode(document)).document;
   assert.ok(restored.get('custom') instanceof AlternateContainer);
@@ -187,7 +247,7 @@ test('container capability supports a container that does not inherit Group', ()
 
 test('new commands can be registered without changing the dispatcher', () => {
   const editor = new Editor(new MemoryDocumentStore());
-  const commands = new CommandFactory(editor).register('nudge', args => {
+  const commands = new CommandFactory(editor).register('nudge', (args) => {
     args.count(1, Number.MAX_SAFE_INTEGER);
     return new MoveManyCommand(editor, args.all(), 1, 2);
   });
@@ -196,12 +256,18 @@ test('new commands can be registered without changing the dispatcher', () => {
   assert.equal(editor.inspect().get('r').attributes.get('x'), '1');
   execute(cli, 'undo');
   assert.equal(editor.inspect().get('r').attributes.get('x'), '0');
-  assert.throws(() => commands.register('nudge', () => new MoveManyCommand(editor, [], 0, 0)), /already registered/);
+  assert.throws(
+    () => commands.register('nudge', () => new MoveManyCommand(editor, [], 0, 0)),
+    /already registered/,
+  );
 });
 
 test('CLI loads box only when explicitly enabled', () => {
   const input = 'init\ncreate box b 0 0 100 60 "Box"\nrotate 90 0 0 b\nshow b\nexit\n';
-  const enabled = spawnSync(process.execPath, ['build/src/Main.js', '--box'], { input, encoding: 'utf8' });
+  const enabled = spawnSync(process.execPath, ['build/src/Main.js', '--box'], {
+    input,
+    encoding: 'utf8',
+  });
   assert.equal(enabled.status, 0, enabled.stderr);
   assert.doesNotMatch(enabled.stdout, /error:/);
   assert.match(enabled.stdout, /data-kind=box/);

@@ -15,9 +15,6 @@ export abstract class Shape {
     return this.identifier;
   }
   abstract get tag(): string;
-  get label(): string {
-    return `${this.tag}#${this.id}`;
-  }
   get children(): readonly Shape[] {
     return [];
   }
@@ -47,7 +44,6 @@ export abstract class Shape {
   abstract move(dx: number, dy: number): void;
   abstract scale(factor: number): void;
   abstract clone(): Shape;
-  abstract summary(): string;
 
   set(attribute: string, value: string): void {
     if (!['fill', 'stroke', 'stroke-width'].includes(attribute))
@@ -101,12 +97,6 @@ export abstract class Shape {
     target.placement = this.placement;
     for (const [name, value] of this.appearance) target.appearance.set(name, value);
     return target;
-  }
-  protected styleSummary(): string {
-    return [...this.attributes]
-      .filter(([key]) => this.appearance.has(key) || key === 'transform')
-      .map(([key, value]) => `${key}=${value}`)
-      .join(' ');
   }
   *walk(): IterableIterator<Shape> {
     yield this;
