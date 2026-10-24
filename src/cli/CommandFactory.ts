@@ -17,48 +17,127 @@ import { ExitCommand } from '../application/commands/ExitCommand.js';
 import { TreeCommand } from '../application/commands/TreeCommand.js';
 import { ShowCommand } from '../application/commands/ShowCommand.js';
 import { HelpCommand } from '../application/commands/HelpCommand.js';
+import { LayerCommand } from '../application/commands/LayerCommand.js';
 import type { Command } from '../application/Command.js';
 import { Editor } from '../application/Editor.js';
 import { Arguments } from './Arguments.js';
+
 export class CommandFactory {
-  private readonly commands: ReadonlyMap<string, (a: Arguments) => Command>;
+  private readonly commands = new Map<string, (arguments_: Arguments) => Command>();
+
   constructor(private readonly editor: Editor) {
-    // TODO: 支持外部注册命令。
-    const r = editor;
-    this.commands = new Map<string, (a: Arguments) => Command>([
-      ['init', a => { const args = a.all(); if (![0, 1, 2].includes(args.length)) a.count(0, 2); return new InitCommand(r, args.length ? a.number(0) : 800, args.length > 1 ? a.number(1) : 600); }],
-      ['read', a => { a.count(1); return new ReadCommand(r, a.text(0)); }],
-      ['save', a => { a.count(0, 1); return new SaveCommand(r, a.optional(0)); }],
-      ['canvas', a => { if (a.all().length === 0) return new CanvasCommand(r); a.count(2); return new CanvasCommand(r, a.number(0), a.number(1)); }],
-      ['create', a => this.createShape(a)],
-      ['delete', a => { a.count(1); return new DeleteCommand(r, a.text(0)); }],
-      ['move', a => { a.count(3); return new MoveCommand(r, a.text(0), a.number(1), a.number(2)); }],
-      ['scale', a => { a.count(2); return new ScaleCommand(r, a.text(0), a.number(1)); }],
-      ['set', a => { a.count(3); return new SetCommand(r, a.text(0), a.text(1), a.text(2)); }],
-      ['group', a => { a.count(2, Number.MAX_SAFE_INTEGER); return new GroupCommand(r, a.text(0), a.all().slice(1)); }],
-      ['ungroup', a => { a.count(1); return new UngroupCommand(r, a.text(0)); }],
-      ['addto', a => { a.count(2); return new AddToCommand(r, a.text(0), a.text(1)); }],
-      ['front', a => { a.count(1); return new ZOrderCommand(r, a.text(0), true); }],
-      ['back', a => { a.count(1); return new ZOrderCommand(r, a.text(0), false); }],
-      ['tree', a => { a.count(0, 1); return new TreeCommand(r, a.optional(0)); }],
-      ['show', a => { a.count(1); return new ShowCommand(r, a.text(0)); }],
-      ['help', a => { a.count(0); return new HelpCommand(r); }],
-      ['undo', a => { a.count(0); return new UndoCommand(r); }],
-      ['redo', a => { a.count(0); return new RedoCommand(r); }],
-      ['exit', a => { a.count(0); return new ExitCommand(r); }],
-    ]);
+    this.register('init', args => {
+      args.count(0, 2);
+      return new InitCommand(editor, args.all().length ? args.number(0) : 800, args.all().length > 1 ? args.number(1) : 600);
+    });
+    this.register('read', args => {
+      args.count(1);
+      return new ReadCommand(editor, args.text(0));
+    });
+    this.register('save', args => {
+      args.count(0, 1);
+      return new SaveCommand(editor, args.optional(0));
+    });
+    this.register('canvas', args => {
+      if (args.all().length === 0) return new CanvasCommand(editor);
+      args.count(2);
+      return new CanvasCommand(editor, args.number(0), args.number(1));
+    });
+    this.register('create', args => this.createShape(args));
+    this.register('delete', args => {
+      args.count(1);
+      return new DeleteCommand(editor, args.text(0));
+    });
+    this.register('move', args => {
+      args.count(3);
+      return new MoveCommand(editor, args.text(0), args.number(1), args.number(2));
+    });
+    this.register('scale', args => {
+      args.count(2);
+      return new ScaleCommand(editor, args.text(0), args.number(1));
+    });
+    this.register('set', args => {
+      args.count(3);
+      return new SetCommand(editor, args.text(0), args.text(1), args.text(2));
+    });
+    this.register('group', args => {
+      args.count(2, Number.MAX_SAFE_INTEGER);
+      return new GroupCommand(editor, args.text(0), args.all().slice(1));
+    });
+    this.register('ungroup', args => {
+      args.count(1);
+      return new UngroupCommand(editor, args.text(0));
+    });
+    this.register('addto', args => {
+      args.count(2);
+      return new AddToCommand(editor, args.text(0), args.text(1));
+    });
+    this.register('front', args => {
+      args.count(1);
+      return new ZOrderCommand(editor, args.text(0), true);
+    });
+    this.register('back', args => {
+      args.count(1);
+      return new ZOrderCommand(editor, args.text(0), false);
+    });
+    this.register('tree', args => {
+      args.count(0, 1);
+      return new TreeCommand(editor, args.optional(0));
+    });
+    this.register('show', args => {
+      args.count(1);
+      return new ShowCommand(editor, args.text(0));
+    });
+    this.register('help', args => {
+      args.count(0);
+      return new HelpCommand(editor);
+    });
+    this.register('undo', args => {
+      args.count(0);
+      return new UndoCommand(editor);
+    });
+    this.register('redo', args => {
+      args.count(0);
+      return new RedoCommand(editor);
+    });
+    this.register('exit', args => {
+      args.count(0);
+      return new ExitCommand(editor);
+    });
+    this.register('layer', args => {
+      if (args.all().length === 0) return new LayerCommand(editor);
+      if (args.text(0) === 'enter') {
+        args.count(2);
+        return new LayerCommand(editor, args.text(1));
+      }
+      if (args.text(0) === 'leave') {
+        args.count(1);
+        return new LayerCommand(editor, null);
+      }
+      throw new Error('usage: layer [enter <gid> | leave]');
+    });
   }
+
+  register(name: string, construct: (arguments_: Arguments) => Command): this {
+    if (!name || /\s/.test(name)) throw new Error('invalid command name');
+    if (this.commands.has(name)) throw new Error(`command already registered: ${name}`);
+    this.commands.set(name, construct);
+    return this;
+  }
+
   create(name: string, values: readonly string[]): Command {
-    const command = this.commands.get(name);
-    if (!command) throw new Error(`unknown command: ${name}`);
-    return command(new Arguments(values, name + ' (see help for syntax)'));
+    const construct = this.commands.get(name);
+    if (!construct) throw new Error(`unknown command: ${name}`);
+    return construct(new Arguments(values, name + ' (see help for syntax)'));
   }
+
   private createShape(args: Arguments): Command {
     args.count(2, Number.MAX_SAFE_INTEGER);
     const parameters = args.all().slice(2);
     let container: string | undefined;
     if (parameters.length >= 2 && parameters[parameters.length - 2] === 'in') {
-      container = parameters.pop()!; parameters.pop();
+      container = parameters.pop()!;
+      parameters.pop();
     }
     return new CreateCommand(this.editor, args.text(0), args.text(1), parameters, container);
   }
