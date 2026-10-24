@@ -1,5 +1,6 @@
 import { Shape } from './Shape.js';
 import { Numbers } from './Numbers.js';
+import type { AffineTransform } from './AffineTransform.js';
 export class Group extends Shape {
   private readonly members: Shape[] = [];
   constructor(id: string) { super(id); }
@@ -32,8 +33,11 @@ export class Group extends Shape {
     Numbers.positive(factor, 'scale factor');
     for (const child of this.members) child.scale(factor);
   }
+  override applyTransform(transform: AffineTransform): void {
+    for (const child of this.members) child.applyTransform(transform);
+  }
   override clone(): Group {
-    const result = this.copyAppearance(new Group(this.id));
+    const result = this.copyState(new Group(this.id));
     for (const child of this.members) result.add(child.clone());
     return result;
   }

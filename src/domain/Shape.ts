@@ -1,9 +1,11 @@
 import { Numbers } from './Numbers.js';
+import { AffineTransform } from './AffineTransform.js';
 import type { ShapeContainer } from './ShapeContainer.js';
 
 export abstract class Shape {
   private readonly identifier: string;
   private readonly appearance = new Map<string, string>();
+  private placement = AffineTransform.identity();
   protected constructor(id: string) {
     if (!id || /[\s\x00-\x1f]/u.test(id)) throw new Error('id must be non-empty and contain no whitespace');
     this.identifier = id;
@@ -15,7 +17,14 @@ export abstract class Shape {
   get container(): ShapeContainer | undefined { return undefined; }
   get opacity(): number { return Number(this.appearance.get('opacity') ?? '1'); }
   get text(): string | null { return null; }
-  get attributes(): ReadonlyMap<string, string> { return new Map(this.appearance); }
+  get transform(): AffineTransform { return this.placement; }
+  get attributes(): ReadonlyMap<string, string> {
+    const result = new Map(this.appearance);
+    if (!this.placement.isIdentity) result.set('transform', this.placement.toSvg());
+    return result;
+  }
+  applyTransform(transform: AffineTransform): void { this.placement = transform.multiply(this.placement); }
+  protected replaceTransform(transform: AffineTransform): void { this.placement = transform; }
   abstract move(dx: number, dy: number): void;
   abstract scale(factor: number): void;
   abstract clone(): Shape;
@@ -44,12 +53,13 @@ export abstract class Shape {
     }
     if (parent.opacity !== 1) this.appearance.set('opacity', Numbers.format(parent.opacity * this.opacity));
   }
-  protected copyAppearance<T extends Shape>(target: T): T {
+  protected copyState<T extends Shape>(target: T): T {
+    target.placement = this.placement;
     for (const [name, value] of this.appearance) target.appearance.set(name, value);
     return target;
   }
   protected styleSummary(): string {
-    return [...this.appearance].map(([key, value]) => `${key}=${value}`).join(' ');
+    return [...this.attributes].filter(([key]) => this.appearance.has(key) || key === 'transform').map(([key, value]) => `${key}=${value}`).join(' ');
   }
   *walk(): IterableIterator<Shape> {
     yield this;

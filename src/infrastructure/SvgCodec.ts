@@ -1,3 +1,4 @@
+import { AffineTransform } from '../domain/AffineTransform.js';
 import { DOMImplementation, DOMParser, XMLSerializer } from '@xmldom/xmldom';
 import type { Document as XmlDocument, Element } from '@xmldom/xmldom';
 import { SvgDocument } from '../domain/SvgDocument.js';
@@ -33,7 +34,7 @@ export class SvgCodec {
       if (reserved.has(id)) throw new Error(`id already exists: ${id}`);
       reserved.add(id);
     }
-    const importElement = (element: Element, inherited: ReadonlyMap<string, string>, outer: SvgTransform, depth: number): Shape => {
+    const importElement = (element: Element, inherited: ReadonlyMap<string, string>, outer: AffineTransform, depth: number): Shape => {
       if (depth > 256) throw new Error('SVG nesting exceeds 256 levels');
       if (element.namespaceURI && element.namespaceURI !== this.namespace) throw new Error('unsupported element namespace');
       const tag = element.localName ?? element.tagName;
@@ -49,7 +50,7 @@ export class SvgCodec {
         const attr = element.attributes.item(i)!;
         if (!attr.name.startsWith('xmlns:')) attrs.set(attr.name, attr.value);
       }
-      const transform = outer.compose(SvgTransform.parse(attrs.get('transform') ?? ''));
+      const transform = outer.multiply(SvgTransform.parse(attrs.get('transform') ?? ''));
       const shape = this.factory.fromSvg(tag, id, attrs, element.textContent ?? '');
       const lengths = new Map(inherited);
       for (const key of ['font-size', 'stroke-width']) if (attrs.has(key)) lengths.set(key, attrs.get(key)!);
@@ -59,20 +60,33 @@ export class SvgCodec {
       } else {
         if (this.elements(element).length) throw new Error(`child elements not supported in <${tag}>`);
         if (shape.text === null && element.textContent?.trim()) throw new Error(`unexpected text in <${tag}>`);
-        shape.scale(transform.scale); shape.move(transform.dx, transform.dy);
-        if (transform.scale !== 1) {
-          shape.importPresentation('stroke-width', String(this.length(lengths.get('stroke-width') ?? '1', 'stroke-width') * transform.scale));
-          if (shape.text !== null) shape.importPresentation('font-size', String(Numbers.finite(this.length(lengths.get('font-size') ?? '16', 'font-size') * transform.scale, 'font-size')));
-        }
+        this.importTransform(shape, transform, lengths);
       }
       return shape;
     };
     this.assertContainerText(root);
     if (all.length > 20000) throw new Error('SVG exceeds 20000 elements');
-    for (const child of this.elements(root)) document.add(importElement(child, new Map(), new SvgTransform(), 1));
+    for (const child of this.elements(root)) document.add(importElement(child, new Map(), AffineTransform.identity(), 1));
     document.assertValid();
     return { document, warnings };
   }
+  private importTransform(shape: Shape, transform: AffineTransform, lengths: ReadonlyMap<string, string>): void {
+    const scale = transform.positiveUniformScale;
+    if (scale === undefined) {
+      shape.applyTransform(transform);
+      return;
+    }
+    // 平移和正等比缩放仍写入几何属性，保持原有 CLI 坐标表示。
+    shape.scale(scale);
+    shape.move(transform.e, transform.f);
+    if (scale !== 1) {
+      shape.importPresentation('stroke-width', String(this.length(lengths.get('stroke-width') ?? '1', 'stroke-width') * scale));
+      if (shape.text !== null) {
+        shape.importPresentation('font-size', String(Numbers.finite(this.length(lengths.get('font-size') ?? '16', 'font-size') * scale, 'font-size')));
+      }
+    }
+  }
+
   private elements(parent: Element): Element[] {
     const children: Element[] = [];
     for (let i = 0; i < parent.childNodes.length; i++) {

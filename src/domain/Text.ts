@@ -9,6 +9,6 @@ export class Text extends GeometryShape {
     if (attribute === 'text') this.content = value;
     else super.set(attribute, value);
   }
-  override clone(): Text { return this.copyAppearance(new Text(this.id, this.value('x'), this.value('y'), this.content)); }
+  override clone(): Text { return this.copyState(new Text(this.id, this.value('x'), this.value('y'), this.content)); }
   override summary(): string { return `${this.label}  (${this.value('x')},${this.value('y')}) ${JSON.stringify(this.content)} ${this.styleSummary()}`.trimEnd(); }
 }
