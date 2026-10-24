@@ -17,6 +17,8 @@ import { ExitCommand } from '../application/commands/ExitCommand.js';
 import { TreeCommand } from '../application/commands/TreeCommand.js';
 import { ShowCommand } from '../application/commands/ShowCommand.js';
 import { HelpCommand } from '../application/commands/HelpCommand.js';
+import { RotateCommand } from '../application/commands/RotateCommand.js';
+import { MoveManyCommand } from '../application/commands/MoveManyCommand.js';
 import { LayerCommand } from '../application/commands/LayerCommand.js';
 import type { Command } from '../application/Command.js';
 import { Editor } from '../application/Editor.js';
@@ -103,6 +105,14 @@ export class CommandFactory {
     this.register('exit', args => {
       args.count(0);
       return new ExitCommand(editor);
+    });
+    this.register('rotate', args => {
+      args.count(4, Number.MAX_SAFE_INTEGER);
+      return new RotateCommand(editor, args.all().slice(3), args.number(0), args.number(1), args.number(2));
+    });
+    this.register('move-many', args => {
+      args.count(3, Number.MAX_SAFE_INTEGER);
+      return new MoveManyCommand(editor, args.all().slice(2), args.number(0), args.number(1));
     });
     this.register('layer', args => {
       if (args.all().length === 0) return new LayerCommand(editor);
