@@ -3,6 +3,8 @@ import { ShapeFactory } from '../domain/ShapeFactory.js';
 import type { Shape } from '../domain/Shape.js';
 import type { EditScope } from './EditScope.js';
 import { ShapeFormatter } from './ShapeFormatter.js';
+import type { Bounds } from '../domain/Bounds.js';
+import type { BoundsContext } from '../domain/BoundsContext.js';
 
 export class EditContext {
   private readonly formatter = new ShapeFormatter();
@@ -17,6 +19,10 @@ export class EditContext {
     this.scope.assertEditable(this.document, id);
     return this.document.get(id);
   }
+  bounds(id: string, context: BoundsContext = {}): Bounds | undefined {
+    this.get(id);
+    return this.document.bounds(id, context);
+  }
   create(
     type: string,
     id: string,
@@ -28,7 +34,9 @@ export class EditContext {
     this.document.add(shape, containerId);
     return shape;
   }
-  label(shape: Shape): string { return this.formatter.label(shape); }
+  label(shape: Shape): string {
+    return this.formatter.label(shape);
+  }
   parentLabel(shape: Shape): string {
     return this.formatter.parent(this.document, shape);
   }
@@ -56,6 +64,7 @@ export class EditContext {
   targets(ids: readonly string[]): readonly Shape[] {
     if (!ids.length) throw new Error('selection requires at least one shape');
     if (new Set(ids).size !== ids.length) throw new Error('duplicate shape in selection');
+    // 容器操作会遍历后代，选中祖先后要排除重复选中的后代，避免变换两次。
     const selected = ids.map((id) => this.get(id));
     return this.document.shapes.filter(
       (shape) =>
