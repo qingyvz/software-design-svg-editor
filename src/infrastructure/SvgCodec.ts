@@ -62,14 +62,14 @@ export class SvgCodec {
         shape.scale(transform.scale); shape.move(transform.dx, transform.dy);
         if (transform.scale !== 1) {
           shape.importPresentation('stroke-width', String(this.length(lengths.get('stroke-width') ?? '1', 'stroke-width') * transform.scale));
-          if (shape.text !== null) shape.importPresentation('font-size', String(this.length(lengths.get('font-size') ?? '16', 'font-size') * transform.scale));
+          if (shape.text !== null) shape.importPresentation('font-size', String(Numbers.finite(this.length(lengths.get('font-size') ?? '16', 'font-size') * transform.scale, 'font-size')));
         }
       }
       return shape;
     };
     this.assertContainerText(root);
     if (all.length > 20000) throw new Error('SVG exceeds 20000 elements');
-    for (const child of this.elements(root)) document.add(importElement(child, new Map(), new SvgTransform(), 0));
+    for (const child of this.elements(root)) document.add(importElement(child, new Map(), new SvgTransform(), 1));
     document.assertValid();
     return { document, warnings };
   }
