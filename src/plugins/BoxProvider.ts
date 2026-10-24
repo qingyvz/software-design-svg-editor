@@ -12,7 +12,9 @@ export class BoxProvider implements ShapeProvider {
 
   create(id: string, parameters: readonly string[]): Box {
     if (parameters.length !== 5) throw new Error('box requires x y width height "label"');
-    const [x, y, width, height] = parameters.slice(0, 4).map(value => Numbers.parse(value, 'box geometry')) as [number, number, number, number];
+    const [x, y, width, height] = parameters
+      .slice(0, 4)
+      .map((value) => Numbers.parse(value, 'box geometry')) as [number, number, number, number];
     const box = new Box(id);
     const body = new Rect(id + '-rect', x, y, width, height);
     body.set('fill', '#4a90d9');
@@ -21,9 +23,17 @@ export class BoxProvider implements ShapeProvider {
     return box;
   }
 
-  fromSvg(id: string, attributes: ReadonlyMap<string, string>, _content: string, children: readonly Shape[]): Box {
-    if (!children.some(child => child.id === id + '-rect' && child instanceof Rect) ||
-      !children.some(child => child.id === id + '-label' && child instanceof Text)) throw new Error(`invalid box structure: ${id}`);
+  fromSvg(
+    id: string,
+    attributes: ReadonlyMap<string, string>,
+    _content: string,
+    children: readonly Shape[],
+  ): Box {
+    if (
+      !children.some((child) => child.id === id + '-rect' && child instanceof Rect) ||
+      !children.some((child) => child.id === id + '-label' && child instanceof Text)
+    )
+      throw new Error(`invalid box structure: ${id}`);
     const box = new Box(id);
     for (const child of children) box.add(child);
     for (const [key, value] of attributes) {

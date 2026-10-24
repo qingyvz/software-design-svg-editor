@@ -1,7 +1,9 @@
 import { Command } from '../Command.js';
 import type { Editor } from '../Editor.js';
 export class HelpCommand extends Command {
-  constructor(receiver: Editor) { super(receiver); }
+  constructor(receiver: Editor) {
+    super(receiver);
+  }
   override execute(): readonly string[] {
     return [
       'init [w h] | read <file.svg> | save [file.svg] | canvas [w h]',

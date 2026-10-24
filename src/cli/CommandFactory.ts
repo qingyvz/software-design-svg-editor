@@ -28,93 +28,103 @@ export class CommandFactory {
   private readonly commands = new Map<string, (arguments_: Arguments) => Command>();
 
   constructor(private readonly editor: Editor) {
-    this.register('init', args => {
+    this.register('init', (args) => {
       args.count(0, 2);
-      return new InitCommand(editor, args.all().length ? args.number(0) : 800, args.all().length > 1 ? args.number(1) : 600);
+      return new InitCommand(
+        editor,
+        args.all().length ? args.number(0) : 800,
+        args.all().length > 1 ? args.number(1) : 600,
+      );
     });
-    this.register('read', args => {
+    this.register('read', (args) => {
       args.count(1);
       return new ReadCommand(editor, args.text(0));
     });
-    this.register('save', args => {
+    this.register('save', (args) => {
       args.count(0, 1);
       return new SaveCommand(editor, args.optional(0));
     });
-    this.register('canvas', args => {
+    this.register('canvas', (args) => {
       if (args.all().length === 0) return new CanvasCommand(editor);
       args.count(2);
       return new CanvasCommand(editor, args.number(0), args.number(1));
     });
-    this.register('create', args => this.createShape(args));
-    this.register('delete', args => {
+    this.register('create', (args) => this.createShape(args));
+    this.register('delete', (args) => {
       args.count(1);
       return new DeleteCommand(editor, args.text(0));
     });
-    this.register('move', args => {
+    this.register('move', (args) => {
       args.count(3);
       return new MoveCommand(editor, args.text(0), args.number(1), args.number(2));
     });
-    this.register('scale', args => {
+    this.register('scale', (args) => {
       args.count(2);
       return new ScaleCommand(editor, args.text(0), args.number(1));
     });
-    this.register('set', args => {
+    this.register('set', (args) => {
       args.count(3);
       return new SetCommand(editor, args.text(0), args.text(1), args.text(2));
     });
-    this.register('group', args => {
+    this.register('group', (args) => {
       args.count(2, Number.MAX_SAFE_INTEGER);
       return new GroupCommand(editor, args.text(0), args.all().slice(1));
     });
-    this.register('ungroup', args => {
+    this.register('ungroup', (args) => {
       args.count(1);
       return new UngroupCommand(editor, args.text(0));
     });
-    this.register('addto', args => {
+    this.register('addto', (args) => {
       args.count(2);
       return new AddToCommand(editor, args.text(0), args.text(1));
     });
-    this.register('front', args => {
+    this.register('front', (args) => {
       args.count(1);
       return new ZOrderCommand(editor, args.text(0), true);
     });
-    this.register('back', args => {
+    this.register('back', (args) => {
       args.count(1);
       return new ZOrderCommand(editor, args.text(0), false);
     });
-    this.register('tree', args => {
+    this.register('tree', (args) => {
       args.count(0, 1);
       return new TreeCommand(editor, args.optional(0));
     });
-    this.register('show', args => {
+    this.register('show', (args) => {
       args.count(1);
       return new ShowCommand(editor, args.text(0));
     });
-    this.register('help', args => {
+    this.register('help', (args) => {
       args.count(0);
       return new HelpCommand(editor);
     });
-    this.register('undo', args => {
+    this.register('undo', (args) => {
       args.count(0);
       return new UndoCommand(editor);
     });
-    this.register('redo', args => {
+    this.register('redo', (args) => {
       args.count(0);
       return new RedoCommand(editor);
     });
-    this.register('exit', args => {
+    this.register('exit', (args) => {
       args.count(0);
       return new ExitCommand(editor);
     });
-    this.register('rotate', args => {
+    this.register('rotate', (args) => {
       args.count(4, Number.MAX_SAFE_INTEGER);
-      return new RotateCommand(editor, args.all().slice(3), args.number(0), args.number(1), args.number(2));
+      return new RotateCommand(
+        editor,
+        args.all().slice(3),
+        args.number(0),
+        args.number(1),
+        args.number(2),
+      );
     });
-    this.register('move-many', args => {
+    this.register('move-many', (args) => {
       args.count(3, Number.MAX_SAFE_INTEGER);
       return new MoveManyCommand(editor, args.all().slice(2), args.number(0), args.number(1));
     });
-    this.register('layer', args => {
+    this.register('layer', (args) => {
       if (args.all().length === 0) return new LayerCommand(editor);
       if (args.text(0) === 'enter') {
         args.count(2);

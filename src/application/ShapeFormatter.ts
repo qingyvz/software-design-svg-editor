@@ -2,7 +2,9 @@ import type { Shape } from '../domain/Shape.js';
 import type { SvgDocument } from '../domain/SvgDocument.js';
 
 export class ShapeFormatter {
-  label(shape: Shape): string { return `${shape.tag}#${shape.id}`; }
+  label(shape: Shape): string {
+    return `${shape.tag}#${shape.id}`;
+  }
 
   parent(document: SvgDocument, shape: Shape): string {
     const parent = document.parentOf(shape);
@@ -21,7 +23,7 @@ export class ShapeFormatter {
       const position = `(${take('x')},${take('y')})`;
       return `${label}  ${position} ${JSON.stringify(shape.text)} ${this.properties(attributes)}`.trimEnd();
     }
-    if (['x1', 'y1', 'x2', 'y2'].every(key => attributes.has(key))) {
+    if (['x1', 'y1', 'x2', 'y2'].every((key) => attributes.has(key))) {
       const endpoints = `(${take('x1')},${take('y1')}) -> (${take('x2')},${take('y2')})`;
       return `${label}  ${endpoints} ${this.properties(attributes)}`.trimEnd();
     }

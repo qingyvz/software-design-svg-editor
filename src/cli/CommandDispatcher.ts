@@ -4,7 +4,9 @@ import { CommandFactory } from './CommandFactory.js';
 export class CommandDispatcher {
   private readonly tokenizer = new Tokenizer();
   private readonly factory: CommandFactory;
-  constructor(editor: Editor, factory = new CommandFactory(editor)) { this.factory = factory; }
+  constructor(editor: Editor, factory = new CommandFactory(editor)) {
+    this.factory = factory;
+  }
   run(line: string): readonly string[] {
     try {
       const tokens = this.tokenizer.parse(line);
