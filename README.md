@@ -2,6 +2,8 @@
 
 软件设计 PJ1 Phase 1。使用 TypeScript 实现命令行 SVG 编辑器，支持六种图形、嵌套分组、文件读写、属性编辑和撤销重做。
 
+代码仓库：[qingyvz/software-design-svg-editor](https://github.com/qingyvz/software-design-svg-editor)；提交版本为 `final` 标签。
+
 需要 Node.js 22 或以上版本。
 
 ```sh
