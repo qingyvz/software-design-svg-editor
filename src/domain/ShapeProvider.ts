@@ -5,5 +5,10 @@ export interface ShapeProvider {
   readonly svgTag: string;
   readonly kind?: string;
   create(id: string, parameters: readonly string[]): Shape;
-  fromSvg(id: string, attributes: ReadonlyMap<string, string>, content: string, children: readonly Shape[]): Shape;
+  fromSvg(
+    id: string,
+    attributes: ReadonlyMap<string, string>,
+    content: string,
+    children: readonly Shape[],
+  ): Shape;
 }

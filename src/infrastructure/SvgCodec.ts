@@ -19,18 +19,39 @@ export class SvgCodec {
   constructor(private readonly factory = new ShapeFactory()) {}
 
   decode(source: string): LoadedDocument {
-    if (/<!DOCTYPE|<!ENTITY/i.test(source)) throw new Error('DOCTYPE and entities are not supported');
-    const parsed = new DOMParser({ onError: (_level, message) => { throw new Error(message); } }).parseFromString(source, 'application/xml');
+    if (/<!DOCTYPE|<!ENTITY/i.test(source))
+      throw new Error('DOCTYPE and entities are not supported');
+    const parsed = new DOMParser({
+      onError: (_level, message) => {
+        throw new Error(message);
+      },
+    }).parseFromString(source, 'application/xml');
     const root = parsed.documentElement;
-    if (!root || root.localName !== 'svg' || (root.namespaceURI && root.namespaceURI !== this.namespace)) throw new Error('root element must be svg');
+    if (
+      !root ||
+      root.localName !== 'svg' ||
+      (root.namespaceURI && root.namespaceURI !== this.namespace)
+    )
+      throw new Error('root element must be svg');
     const rootAllowed = new Set(['xmlns', 'width', 'height', 'viewBox', 'version', 'id']);
     for (let i = 0; i < root.attributes.length; i++) {
       const name = root.attributes.item(i)!.name;
-      if (!rootAllowed.has(name) && !name.startsWith('xmlns:')) throw new Error(`unsupported SVG root attribute: ${name}`);
+      if (!rootAllowed.has(name) && !name.startsWith('xmlns:'))
+        throw new Error(`unsupported SVG root attribute: ${name}`);
     }
-    const viewport = root.getAttribute('viewBox')?.trim().split(/[\s,]+/).map(n => Numbers.parse(n, 'viewBox'));
-    const width = this.length(root.getAttribute('width') ?? (viewport ? String(viewport[2]) : '800'), 'width');
-    const height = this.length(root.getAttribute('height') ?? (viewport ? String(viewport[3]) : '600'), 'height');
+    const viewport = root
+      .getAttribute('viewBox')
+      ?.trim()
+      .split(/[\s,]+/)
+      .map((n) => Numbers.parse(n, 'viewBox'));
+    const width = this.length(
+      root.getAttribute('width') ?? (viewport ? String(viewport[2]) : '800'),
+      'width',
+    );
+    const height = this.length(
+      root.getAttribute('height') ?? (viewport ? String(viewport[3]) : '600'),
+      'height',
+    );
     const document = new SvgDocument(width, height, viewport);
     const state: ImportState = { reserved: new Set(), counters: new Map(), warnings: [] };
     const all = root.getElementsByTagName('*');
@@ -42,14 +63,22 @@ export class SvgCodec {
       state.reserved.add(id);
     }
     this.assertContainerText(root);
-    for (const child of this.elements(root)) document.add(this.importElement(child, new Map(), AffineTransform.identity(), 1, state));
+    for (const child of this.elements(root))
+      document.add(this.importElement(child, new Map(), AffineTransform.identity(), 1, state));
     document.assertValid();
     return { document, warnings: state.warnings };
   }
 
-  private importElement(element: Element, inherited: ReadonlyMap<string, string>, outer: AffineTransform, depth: number, state: ImportState): Shape {
+  private importElement(
+    element: Element,
+    inherited: ReadonlyMap<string, string>,
+    outer: AffineTransform,
+    depth: number,
+    state: ImportState,
+  ): Shape {
     if (depth > 256) throw new Error('SVG nesting exceeds 256 levels');
-    if (element.namespaceURI && element.namespaceURI !== this.namespace) throw new Error('unsupported element namespace');
+    if (element.namespaceURI && element.namespaceURI !== this.namespace)
+      throw new Error('unsupported element namespace');
     const tag = element.localName ?? element.tagName;
     const id = element.getAttribute('id') || this.assignId(tag, state);
     const attributes = new Map<string, string>();
@@ -59,19 +88,27 @@ export class SvgCodec {
     }
     const transform = outer.multiply(SvgTransform.parse(attributes.get('transform') ?? ''));
     const lengths = new Map(inherited);
-    for (const key of ['font-size', 'stroke-width']) if (attributes.has(key)) lengths.set(key, attributes.get(key)!);
-    const children = this.elements(element).map(child => this.importElement(child, lengths, transform, depth + 1, state));
+    for (const key of ['font-size', 'stroke-width'])
+      if (attributes.has(key)) lengths.set(key, attributes.get(key)!);
+    const children = this.elements(element).map((child) =>
+      this.importElement(child, lengths, transform, depth + 1, state),
+    );
     const shape = this.factory.fromSvg(tag, id, attributes, element.textContent ?? '', children);
     if (shape.container) this.assertContainerText(element);
     else {
       if (children.length) throw new Error(`child elements not supported in <${tag}>`);
-      if (shape.text === null && element.textContent?.trim()) throw new Error(`unexpected text in <${tag}>`);
+      if (shape.text === null && element.textContent?.trim())
+        throw new Error(`unexpected text in <${tag}>`);
       this.importTransform(shape, transform, lengths);
     }
     return shape;
   }
 
-  private importTransform(shape: Shape, transform: AffineTransform, lengths: ReadonlyMap<string, string>): void {
+  private importTransform(
+    shape: Shape,
+    transform: AffineTransform,
+    lengths: ReadonlyMap<string, string>,
+  ): void {
     const scale = transform.positiveUniformScale;
     if (scale === undefined) {
       shape.applyTransform(transform);
@@ -81,9 +118,20 @@ export class SvgCodec {
     shape.scale(scale);
     shape.move(transform.e, transform.f);
     if (scale !== 1) {
-      shape.importPresentation('stroke-width', String(this.length(lengths.get('stroke-width') ?? '1', 'stroke-width') * scale));
+      shape.importPresentation(
+        'stroke-width',
+        String(this.length(lengths.get('stroke-width') ?? '1', 'stroke-width') * scale),
+      );
       if (shape.text !== null) {
-        shape.importPresentation('font-size', String(Numbers.finite(this.length(lengths.get('font-size') ?? '16', 'font-size') * scale, 'font-size')));
+        shape.importPresentation(
+          'font-size',
+          String(
+            Numbers.finite(
+              this.length(lengths.get('font-size') ?? '16', 'font-size') * scale,
+              'font-size',
+            ),
+          ),
+        );
       }
     }
   }
@@ -91,7 +139,9 @@ export class SvgCodec {
   private assignId(tag: string, state: ImportState): string {
     let serial = state.counters.get(tag) ?? 0;
     let id: string;
-    do { id = tag + ++serial; } while (state.reserved.has(id));
+    do {
+      id = tag + ++serial;
+    } while (state.reserved.has(id));
     state.counters.set(tag, serial);
     state.reserved.add(id);
     state.warnings.push(`warning: assigned id ${id} to unnamed <${tag}>`);
@@ -110,11 +160,17 @@ export class SvgCodec {
   private assertContainerText(element: Element): void {
     for (let i = 0; i < element.childNodes.length; i++) {
       const child = element.childNodes.item(i)!;
-      if ((child.nodeType === child.TEXT_NODE || child.nodeType === child.CDATA_SECTION_NODE) && child.nodeValue?.trim()) throw new Error('unexpected text in container');
+      if (
+        (child.nodeType === child.TEXT_NODE || child.nodeType === child.CDATA_SECTION_NODE) &&
+        child.nodeValue?.trim()
+      )
+        throw new Error('unexpected text in container');
     }
   }
 
-  private length(value: string, name: string): number { return Numbers.parse(value.trim().replace(/px$/, ''), name); }
+  private length(value: string, name: string): number {
+    return Numbers.parse(value.trim().replace(/px$/, ''), name);
+  }
 
   encode(document: SvgDocument): string {
     document.assertValid();
@@ -128,7 +184,9 @@ export class SvgCodec {
       root.appendChild(this.element(xml, shape, '  '));
     }
     if (document.count) root.appendChild(xml.createTextNode('\n'));
-    return '<?xml version="1.0" encoding="UTF-8"?>\n' + new XMLSerializer().serializeToString(xml) + '\n';
+    return (
+      '<?xml version="1.0" encoding="UTF-8"?>\n' + new XMLSerializer().serializeToString(xml) + '\n'
+    );
   }
 
   private element(xml: XmlDocument, shape: Shape, indent: string): Element {

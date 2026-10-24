@@ -5,7 +5,9 @@ export class TreeFormatter {
   private readonly formatter = new ShapeFormatter();
   tree(document: SvgDocument, id?: string): readonly string[] {
     const shape = id === undefined ? undefined : document.get(id);
-    const lines = [shape ? this.formatter.summary(shape) : `svg (${document.width}x${document.height})`];
+    const lines = [
+      shape ? this.formatter.summary(shape) : `svg (${document.width}x${document.height})`,
+    ];
     this.children(shape ? shape.children : document.children, '', lines);
     return lines;
   }

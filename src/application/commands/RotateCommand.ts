@@ -4,9 +4,18 @@ import type { EditContext } from '../EditContext.js';
 import { AffineTransform } from '../../domain/AffineTransform.js';
 
 export class RotateCommand extends EditingCommand {
-  constructor(receiver: Editor, private readonly ids: readonly string[], private readonly degrees: number,
-    private readonly cx = 0, private readonly cy = 0) { super(receiver); }
-  override get description(): string { return `rotate ${this.ids.join(' ')} by ${this.degrees}`; }
+  constructor(
+    receiver: Editor,
+    private readonly ids: readonly string[],
+    private readonly degrees: number,
+    private readonly cx = 0,
+    private readonly cy = 0,
+  ) {
+    super(receiver);
+  }
+  override get description(): string {
+    return `rotate ${this.ids.join(' ')} by ${this.degrees}`;
+  }
   override apply(context: EditContext): string {
     const targets = context.targets(this.ids);
     const transform = AffineTransform.rotation(this.degrees, this.cx, this.cy);
