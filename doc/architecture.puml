@@ -3,45 +3,35 @@
 skinparam componentStyle rectangle
 skinparam shadowing false
 skinparam defaultFontName SansSerif
-skinparam packageStyle rectangle
 skinparam ArrowColor #536273
 skinparam componentBackgroundColor #F6F8FA
 skinparam packageBackgroundColor #FFFFFF
-title SVG editor - module dependencies
 top to bottom direction
-component "Main\ncomposition root" as Main
+title SVG editor - module dependencies
+component "Main\nassembly / plugin registration" as Main
 package cli {
-  component "ConsoleApp\nCommandDispatcher\nTokenizer / Arguments\nCommandFactory" as CLI
+  component "ConsoleApp / CommandDispatcher\nCommandFactory / Tokenizer / Arguments" as CLI
 }
 package application {
-  component "Command / EditingCommand\nconcrete command classes" as Commands
-  component "Editor\ntransaction boundary" as Editor
-  component "History / EditRecord" as History
-  interface DocumentPort
-  component TreeFormatter
-}
-package domain {
-  component "SvgDocument\nidentity and tree rules" as Doc
-  component "Shape\nRect / Circle / Ellipse\nLine / Text / Group" as Shapes
-  component "ShapeFactory" as Factory
+  component "Editor / EditContext / EditScope\nCommand / EditingCommand / commands\nHistory / EditRecord / TreeFormatter / ShapeFormatter\nDocumentPort" as App
 }
 package infrastructure {
-  component NodeDocumentStore as Store
-  component "SvgCodec / SvgTransform" as Codec
+  component "NodeDocumentStore\nSvgCodec / SvgTransform / CanvasTextMeasurer" as Infra
+}
+package domain {
+  component "SvgDocument / ShapeContainer\nShape / Group / geometry classes\nAffineTransform / Bounds / TextMeasurer\nShapeFactory / ShapeProvider" as Domain
+}
+package plugins {
+  component "Box / BoxProvider" as Plugin
 }
 Main --> CLI
-Main --> Store
-CLI --> Commands
-Commands --> Editor
-Editor --> History
-Editor --> DocumentPort
-Editor --> Doc
-Commands --> Doc
-TreeFormatter --> Doc
-Doc --> Shapes
-Factory --> Shapes
-Store ..|> DocumentPort
-Store --> Codec
-Codec --> Doc
-Codec --> Factory
+Main --> Infra
+Main --> Domain : shared factory
+Main --> Plugin : optional
+CLI --> App
+CLI --> Domain : Numbers
+Infra --> App : DocumentPort
+Infra --> Domain
+App --> Domain
+Plugin --> Domain
 @enduml

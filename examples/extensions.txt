@@ -1,0 +1,17 @@
+# 启用 box：npm run cli -- --box --script examples/extensions.txt
+init 640 400
+create g scene
+layer enter scene
+create box start 60 100 150 60 "开始"
+create box process 350 100 170 60 "处理数据"
+create line arrow 210 130 350 130 black
+set process fill #f5a623
+set process label "处理数据 v2"
+rotate 15 320 200 start process arrow
+move-many 10 20 start process arrow
+undo
+redo
+layer leave
+tree
+save examples/extensions.svg
+exit
