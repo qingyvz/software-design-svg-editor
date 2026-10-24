@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
-const allowed = { domain: ['domain'], application: ['application', 'domain'], cli: ['cli', 'application', 'domain'], infrastructure: ['infrastructure', 'application', 'domain'] };
+const allowed = { domain: ['domain'], application: ['application', 'domain'], cli: ['cli', 'application', 'domain'], infrastructure: ['infrastructure', 'application', 'domain'], plugins: ['plugins', 'domain'] };
 let checked = 0;
 function walk(dir) {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
