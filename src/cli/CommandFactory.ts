@@ -23,7 +23,7 @@ import { Arguments } from './Arguments.js';
 export class CommandFactory {
   private readonly commands: ReadonlyMap<string, (a: Arguments) => Command>;
   constructor(private readonly editor: Editor) {
-    // 命令名只在这里分派；后续增加入口无需改领域模型。
+    // TODO: 支持外部注册命令。
     const r = editor;
     this.commands = new Map<string, (a: Arguments) => Command>([
       ['init', a => { const args = a.all(); if (![0, 1, 2].includes(args.length)) a.count(0, 2); return new InitCommand(r, args.length ? a.number(0) : 800, args.length > 1 ? a.number(1) : 600); }],

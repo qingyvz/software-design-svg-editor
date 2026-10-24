@@ -1,4 +1,4 @@
-# 题目第 6 节会话。最终读取的 other.svg 含一个缺失 id 的矩形。
+# 末尾读入 other.svg，检查缺失 id 的自动补全。
 init 800 600
 create rect bg 0 0 800 600 #ffffff
 create text title 20 40 "My Diagram"

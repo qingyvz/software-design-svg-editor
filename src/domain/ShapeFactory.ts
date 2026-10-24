@@ -14,7 +14,7 @@ interface Definition {
   readonly paint?: string;
 }
 export class ShapeFactory {
-  // 类型名只在这里分派；后续插件化将把登记表变成显式注册接口。
+  // TODO: 支持外部注册图形类型。
   private readonly definitions = new Map<string, Definition>([
     ['rect', { geometry: ['x', 'y', 'width', 'height'], construct: (id, n) => new Rect(id, n[0]!, n[1]!, n[2]!, n[3]!), paint: 'fill' }],
     ['circle', { geometry: ['cx', 'cy', 'r'], construct: (id, n) => new Circle(id, n[0]!, n[1]!, n[2]!), paint: 'fill' }],
