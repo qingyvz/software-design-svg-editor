@@ -1,5 +1,6 @@
 import { Shape } from './Shape.js';
 import { Group } from './Group.js';
+import type { ShapeContainer } from './ShapeContainer.js';
 import { Numbers } from './Numbers.js';
 
 export class SvgDocument {
@@ -28,14 +29,14 @@ export class SvgDocument {
     if (!result) throw new Error(`no such shape: ${id}`);
     return result;
   }
-  container(id: string): Group {
+  container(id: string): ShapeContainer {
     const target = this.shapes.find(shape => shape.id === id);
     if (!target) throw new Error(`no such container: ${id}`);
-    if (!(target instanceof Group)) throw new Error(`not a container: ${id}`);
-    return target;
+    if (!target.container) throw new Error(`not a container: ${id}`);
+    return target.container;
   }
-  private parent(shape: Shape): Group {
-    const parent = [this.root, ...this.shapes.filter((item): item is Group => item instanceof Group)].find(group => group.children.includes(shape));
+  private parent(shape: Shape): ShapeContainer {
+    const parent = [this.root, ...this.shapes.flatMap(item => item.container ? [item.container] : [])].find(group => group.children.includes(shape));
     if (!parent) throw new Error(`detached shape: ${shape.id}`);
     return parent;
   }
@@ -62,7 +63,7 @@ export class SvgDocument {
     }
     const ordered = this.shapes.filter(shape => selected.includes(shape));
     const paths = ordered.map(shape => this.ancestors(shape));
-    let parent = this.root;
+    let parent: ShapeContainer = this.root;
     for (let i = 0; paths.every(path => path[i] !== undefined && path[i] === paths[0]![i]); i++) parent = paths[0]![i]!;
     const first = ordered[0]!;
     const branch = parent.children.find(child => [...child.walk()].includes(first))!;
@@ -72,8 +73,8 @@ export class SvgDocument {
     parent.add(result, parent.children.filter(child => earlier.includes(child)).length);
     return result;
   }
-  private ancestors(shape: Shape): Group[] {
-    const result: Group[] = [];
+  private ancestors(shape: Shape): ShapeContainer[] {
+    const result: ShapeContainer[] = [];
     let parent = this.parent(shape);
     result.unshift(parent);
     while (parent !== this.root) { parent = this.parent(parent); result.unshift(parent); }
@@ -81,6 +82,7 @@ export class SvgDocument {
   }
   ungroup(id: string): void {
     const group = this.container(id);
+    group.assertCanUngroup();
     const parent = this.parent(group);
     if (parent === this.root) throw new Error(`cannot ungroup top-level container: ${id}`);
     const index = parent.remove(group);
