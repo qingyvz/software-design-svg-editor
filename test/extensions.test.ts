@@ -8,8 +8,8 @@ import { CommandDispatcher } from '../src/cli/CommandDispatcher.js';
 import { CommandFactory } from '../src/cli/CommandFactory.js';
 import { AffineTransform } from '../src/domain/AffineTransform.js';
 import { SvgTransform } from '../src/infrastructure/SvgTransform.js';
-import { Box } from './support/box/Box.js';
-import { BoxProvider } from './support/box/BoxProvider.js';
+import { Box } from '../src/plugins/box/Box.js';
+import { BoxProvider } from '../src/plugins/box/BoxProvider.js';
 import { MemoryDocumentStore } from './MemoryDocumentStore.js';
 import { AlternateContainer } from './AlternateContainer.js';
 

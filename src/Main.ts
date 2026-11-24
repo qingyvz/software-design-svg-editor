@@ -1,3 +1,4 @@
+import { BoxPlugin } from './plugins/box/BoxPlugin.js';
 import { readFileSync } from 'node:fs';
 import { Readable } from 'node:stream';
 import { Editor } from './application/Editor.js';
@@ -41,8 +42,8 @@ try {
   const failures: string[] = [];
   if (withPlugins || withBox) {
     for (const plugin of withPlugins
-      ? [new StatsPlugin(), new DirPlugin(), new StarPlugin()]
-      : []) {
+      ? [new StatsPlugin(), new DirPlugin(), new BoxPlugin(), new StarPlugin()]
+      : [new BoxPlugin()]) {
       const failure = installer.install(plugin);
       if (failure) failures.push(failure);
     }

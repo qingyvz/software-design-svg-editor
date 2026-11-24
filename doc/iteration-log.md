@@ -17,3 +17,8 @@ Moved six default provider registrations out of ShapeFactory into host/DefaultSh
 ## Independent package framework milestone
 
 Stats, dir and modified-star now have independent package.json contributes declarations. A generic build copies their metadata and cleans only the checked repository build directory, preventing stale JS from hiding removed plugins. For the OCP experiment, the historical optional box implementation is temporarily a test fixture, not runtime code. The runtime milestone intentionally has no box. 72 tests pass; two CLI box/composition integration cases are explicitly deferred at this milestone and will run again on the complete candidate. This is an experimental baseline, not a release or a full-score claim. Next, box is reintroduced as a new independent runtime package in two real branches.
+
+
+## A: reintroduce box by code assembly
+
+From the box-free independent-package milestone, add src/plugins/box (provider, composite, attribute handler, type label, default export and package manifest). Runtime changes outside that new package are limited to src/Main.ts. Historical test fixtures move back into the new runtime package; all box CLI cases run again. Test configuration is generated outside its fixed cwd so code/config plugin sets match without changing another runtime file in this proof commit.

@@ -1,7 +1,7 @@
-import { Group } from '../../../src/domain/Group.js';
-import type { Shape } from '../../../src/domain/Shape.js';
-import { Rect } from '../../../src/domain/Rect.js';
-import { Text } from '../../../src/domain/Text.js';
+import { Group } from '../../domain/Group.js';
+import type { Shape } from '../../domain/Shape.js';
+import { Rect } from '../../domain/Rect.js';
+import { Text } from '../../domain/Text.js';
 
 export class Box extends Group {
   constructor(id: string) {

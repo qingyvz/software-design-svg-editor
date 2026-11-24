@@ -1,6 +1,6 @@
-import type { SvgDocument } from '../../../src/domain/SvgDocument.js';
-import type { Shape } from '../../../src/domain/Shape.js';
-import type { TreeDecorator } from '../../../src/application/TreeDecorator.js';
+import type { SvgDocument } from '../../domain/SvgDocument.js';
+import type { Shape } from '../../domain/Shape.js';
+import type { TreeDecorator } from '../../application/TreeDecorator.js';
 import { Box } from './Box.js';
 
 export class BoxTypeLabel implements TreeDecorator {

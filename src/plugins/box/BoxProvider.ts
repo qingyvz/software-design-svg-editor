@@ -1,9 +1,9 @@
 import { Box } from './Box.js';
-import { Rect } from '../../../src/domain/Rect.js';
-import { Text } from '../../../src/domain/Text.js';
-import { Numbers } from '../../../src/domain/Numbers.js';
-import type { Shape } from '../../../src/domain/Shape.js';
-import type { ShapeProvider } from '../../../src/domain/ShapeProvider.js';
+import { Rect } from '../../domain/Rect.js';
+import { Text } from '../../domain/Text.js';
+import { Numbers } from '../../domain/Numbers.js';
+import type { Shape } from '../../domain/Shape.js';
+import type { ShapeProvider } from '../../domain/ShapeProvider.js';
 
 export class BoxProvider implements ShapeProvider {
   readonly type = 'box';

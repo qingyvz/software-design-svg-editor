@@ -1,4 +1,4 @@
-import type { Plugin, PluginContext } from '../../../src/application/Plugin.js';
+import type { Plugin, PluginContext } from '../../application/Plugin.js';
 import { BoxProvider } from './BoxProvider.js';
 import { BoxAttributes } from './BoxAttributes.js';
 import { BoxTypeLabel } from './BoxTypeLabel.js';

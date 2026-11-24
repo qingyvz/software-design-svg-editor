@@ -15,7 +15,7 @@ import { TreeDecorators } from '../src/application/TreeDecorators.js';
 import type { CommandReceiver } from '../src/application/CommandReceiver.js';
 import { Command } from '../src/application/Command.js';
 import { Rect } from '../src/domain/Rect.js';
-import { BoxPlugin } from './support/box/BoxPlugin.js';
+import { BoxPlugin } from '../src/plugins/box/BoxPlugin.js';
 import type { Plugin } from '../src/application/Plugin.js';
 import { MemoryDocumentStore } from './MemoryDocumentStore.js';
 

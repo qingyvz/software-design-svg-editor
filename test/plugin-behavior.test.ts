@@ -12,8 +12,8 @@ import { TreeDecorators } from '../src/application/TreeDecorators.js';
 import { CommandFactory } from '../src/cli/CommandFactory.js';
 import { CommandDispatcher } from '../src/cli/CommandDispatcher.js';
 import { PluginInstaller } from '../src/cli/PluginInstaller.js';
-import { Box } from './support/box/Box.js';
-import { BoxPlugin } from './support/box/BoxPlugin.js';
+import { Box } from '../src/plugins/box/Box.js';
+import { BoxPlugin } from '../src/plugins/box/BoxPlugin.js';
 import { DirPlugin } from '../src/plugins/dir/DirPlugin.js';
 import type { DirectoryAccess } from '../src/plugins/dir/DirectoryAccess.js';
 import { NodeDirectoryAccess } from '../src/plugins/dir/NodeDirectoryAccess.js';
@@ -327,12 +327,15 @@ test('dir uses process cwd rather than read/save document directory', () => {
 });
 
 test('code and config composition produce byte-identical CLI output for same session and fixed directory', { skip: !existsSync(new URL('../src/plugins/box/BoxPlugin.js', import.meta.url)) }, () => {
-  const path = mkdtempSync(join(tmpdir(), 'svg-composition-'));
+  const scratch = mkdtempSync(join(tmpdir(), 'svg-composition-'));
+  const path = join(scratch, 'work');
   try {
+    mkdirSync(path);
     mkdirSync(join(path, 'docs'));
     writeFileSync(join(path, 'a.txt'), 'content');
     const entry = resolve('build/src/Main.js');
-    const config = resolve('plugins.config.json');
+    const config = join(scratch, 'plugins.config.json');
+    writeFileSync(config, JSON.stringify({ plugins: ['stats', 'dir', 'box', 'star'].map(name => ({ module: resolve('build/src/plugins', name, 'index.js') })) }));
     const input = 'dir\ninit\nstats\ncreate box b 0 0 10 20 "old"\nset b label "new"\ntree\nstats\nexit\n';
     const run = (args: string[]) => spawnSync(process.execPath, [entry, ...args], { input, encoding: 'utf8', cwd: path });
     const code = run(['--plugins']);
@@ -342,5 +345,5 @@ test('code and config composition produce byte-identical CLI output for same ses
     assert.equal(code.stdout, configured.stdout);
     assert.match(code.stdout, /\[DIR\]  docs\n\[FILE\]  a.txt/);
     assert.match(code.stdout, /rect: 1  text: 1  \(total 2, containers 1\)/);
-  } finally { rmSync(path, { recursive: true, force: true }); }
+  } finally { rmSync(scratch, { recursive: true, force: true }); }
 });
