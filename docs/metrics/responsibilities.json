@@ -90,6 +90,9 @@
   "src/application/commands/UndoCommand.ts": "Encapsulate parameters and delegate the request to restore the previous history record.",
   "src/application/commands/UngroupCommand.ts": "Encapsulate parameters and delegate the request to dissolve a permitted generic group.",
   "src/application/commands/ZOrderCommand.ts": "Encapsulate parameters and delegate the request to reorder one node among its siblings.",
-  "vscode-extension/src/extension.ts": "Register real VS Code file-decoration and native document-symbol providers.",
-  "vscode-extension/src/svgSymbols.ts": "Validate SVG text and produce nested symbols with exact UTF-16 source ranges."
+  "vscode-extension/src/extension.ts": "Register provider instances and dispose registrations through the VSCode activation lifecycle.",
+  "vscode-extension/src/svgSymbols.ts": "Validate SVG text and produce nested symbols with exact UTF-16 source ranges.",
+  "vscode-extension/src/SvgFileDecorations.ts": "Adapt file suffix and filesystem type checks to native Explorer badge metadata.",
+  "vscode-extension/src/SvgOutline.ts": "Adapt parsed SVG hierarchy and UTF-16 ranges to native document symbols.",
+  "vscode-extension/src/svgFiles.ts": "Share pure SVG filename recognition between the two host API adapters."
 }

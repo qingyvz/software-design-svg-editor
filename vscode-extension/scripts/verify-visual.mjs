@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
@@ -52,6 +52,7 @@ try {
   const sha = data => createHash('sha256').update(data).digest('hex');
   current.extensionSourceSha256 = sha(readFileSync(resolve(root, 'src/extension.ts')));
   current.parserSourceSha256 = sha(readFileSync(resolve(root, 'src/svgSymbols.ts')));
+  current.sourceHashes = Object.fromEntries(readdirSync(resolve(root, 'src')).filter(name => name.endsWith('.ts')).sort().map(name => ['src/' + name, sha(readFileSync(resolve(root, 'src', name)))]));
   current.screenshots = ['explorer-badge.png','outline-location.png','outline-updated.png','outline-incomplete.png'].map(file => {
     const bytes = readFileSync(resolve(evidence, file));
     assert.equal(bytes.subarray(1,4).toString(), 'PNG');

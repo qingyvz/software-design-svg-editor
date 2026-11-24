@@ -41,4 +41,5 @@ function walk(dir) {
   }
 }
 walk('src');
+walk('vscode-extension/src');
 console.log('Architecture checks passed (' + checked + ' relative imports).');
