@@ -1,0 +1,130 @@
+TAP version 13
+# Subtest: review: zero handlers use the original whitelist and preserve a redo branch
+ok 1 - review: zero handlers use the original whitelist and preserve a redo branch
+  ---
+  duration_ms: 13.1267
+  ...
+# Subtest: review: successful init isolates a throwing checkpoint and reports it
+ok 2 - review: successful init isolates a throwing checkpoint and reports it
+  ---
+  duration_ms: 1.9433
+  ...
+# Subtest: review: successful read isolates a throwing checkpoint and reports it
+ok 3 - review: successful read isolates a throwing checkpoint and reports it
+  ---
+  duration_ms: 1.1555
+  ...
+# Subtest: review: successful save isolates a throwing checkpoint and reports it
+ok 4 - review: successful save isolates a throwing checkpoint and reports it
+  ---
+  duration_ms: 0.7619
+  ...
+# Subtest: review: same-parent order changes do not detach required composite children
+ok 5 - review: same-parent order changes do not detach required composite children
+  ---
+  duration_ms: 2.0961
+  ...
+# Subtest: review: one attribute operation affecting two parts is one undo unit
+ok 6 - review: one attribute operation affecting two parts is one undo unit
+  ---
+  duration_ms: 1.4268
+  ...
+# Subtest: review: ESM package resolution selects import conditions (import-only)
+ok 7 - review: ESM package resolution selects import conditions (import-only)
+  ---
+  duration_ms: 104.3543
+  ...
+# Subtest: review: ESM package resolution selects import conditions (dual)
+ok 8 - review: ESM package resolution selects import conditions (dual)
+  ---
+  duration_ms: 76.0789
+  ...
+# Subtest: review: missing exports target reports not found and continues (absent.mjs)
+not ok 9 - review: missing exports target reports not found and continues (absent.mjs)
+  ---
+  duration_ms: 24.7649
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\build\\test\\review-regressions.test.js:129:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    +   "error: plugin failed to activate: missing-entry (Cannot find module 'C:\\Users\\Administrator\\AppData\\Local\\Temp\\svg-review-absent-IAjSUo\\node_modules\\missing-entry\\absent.mjs' imported from D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\build\\src\\cli\\PluginLoader.js)"
+    -   'error: plugin not found: missing-entry'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'error: plugin not found: missing-entry'
+  actual:
+    0: "error: plugin failed to activate: missing-entry (Cannot find module 'C:\\Users\\Administrator\\AppData\\Local\\Temp\\svg-review-absent-IAjSUo\\node_modules\\missing-entry\\absent.mjs' imported from D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\build\\src\\cli\\PluginLoader.js)"
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/build/test/review-regressions.test.js:141:20)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: review: missing exports target reports not found and continues (not-a-directory/entry.mjs)
+not ok 10 - review: missing exports target reports not found and continues (not-a-directory/entry.mjs)
+  ---
+  duration_ms: 23.8348
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\build\\test\\review-regressions.test.js:129:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    +   "error: plugin failed to activate: missing-entry (Cannot find module 'C:\\Users\\Administrator\\AppData\\Local\\Temp\\svg-review-absent-HM9y2N\\node_modules\\missing-entry\\not-a-directory\\entry.mjs' imported from D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\build\\src\\cli\\PluginLoader.js)"
+    -   'error: plugin not found: missing-entry'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'error: plugin not found: missing-entry'
+  actual:
+    0: "error: plugin failed to activate: missing-entry (Cannot find module 'C:\\Users\\Administrator\\AppData\\Local\\Temp\\svg-review-absent-HM9y2N\\node_modules\\missing-entry\\not-a-directory\\entry.mjs' imported from D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\build\\src\\cli\\PluginLoader.js)"
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/build/test/review-regressions.test.js:141:20)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: review: package manifest is authoritative with configuration outside its package
+ok 11 - review: package manifest is authoritative with configuration outside its package
+  ---
+  duration_ms: 40.3576
+  ...
+# Subtest: review: package manifest is authoritative with configuration inside its package
+not ok 12 - review: package manifest is authoritative with configuration inside its package
+  ---
+  duration_ms: 9.2622
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\build\\test\\review-regressions.test.js:150:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/build/test/review-regressions.test.js:167:28)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 9
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 737.4772

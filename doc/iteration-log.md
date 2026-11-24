@@ -49,3 +49,13 @@ Added eight persistent regression cases before the fixes: seven failed and one p
 The user authorized this review/optimization loop. Causes were explained before fixing; the rubric was not weakened or rewritten. Full root check: 86/86, zero failures/skips; extension: 7/7. Logs are preserved under doc/evidence/tests. An isolated real desktop VSCode host was rerun after the split: four native screenshots, source-line navigation, live update, malformed input, recovery and unchanged disk hash passed. All four screenshots were visually inspected again: sidebar/editor proportions remain about 24%/76%, labels and source are readable, with no overlap or clipped acceptance information. Every extension source hash is now recorded in the host trace.
 
 No p2 tag is created until the revised code passes the next independent review. Formal Canvas submission remains a separate approval.
+
+## Independent review round 2 and loader boundaries
+
+The frozen 94b28b0 candidate received 97.50/100 confirmed, 0.50 deducted only in D3, and 2.00 pending final release. The original six defects passed expanded independent probes. The reviewer found two further loader boundaries: an exports resolver may return a missing entry URL, and skipping every configuration directory's package.json bypasses a plugin's own manifest when the configuration lives there.
+
+Added four persistent cases first. The regression file ran 12 cases: 9 passed, 3 failed (missing file, ENOTDIR, and package-root manifest conflict); outside-package and existing positive controls passed. The red log is retained as review-round3-red.txt. Corrections: stat only the top-level resolved entry before importing, classify ENOENT/ENOTDIR there as not found, and leave import/dependency/evaluation failures in the loading catch. Package metadata discovery now excludes only the actual host package, independently of configuration location.
+
+The clean clone also exposed three CRLF working-tree files that Git had normalized to LF. Code was equivalent and screenshots identical, but the bytes in the host trace differed from published Git blobs. Normalize those working files under the existing .gitattributes rule and rerun the actual host; verify every source hash against Git's canonical file bytes. Do not call normalization equivalence byte identity.
+
+Full root regression after these fixes: 90/90, no failures/skips; extension 7/7. The fixed rubric is unchanged. The next independent review checks these boundaries and the complete rubric again before creating p2.
