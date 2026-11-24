@@ -1,8 +1,13 @@
 {
   "plugins": [
-    { "module": "./build/src/plugins/config/stats.js" },
-    { "module": "./build/src/plugins/config/dir.js" },
-    { "module": "./build/src/plugins/config/box.js" },
-    { "module": "./build/src/plugins/config/star.js" }
+    {
+      "module": "./build/src/plugins/stats/index.js"
+    },
+    {
+      "module": "./build/src/plugins/dir/index.js"
+    },
+    {
+      "module": "./build/src/plugins/star/index.js"
+    }
   ]
 }

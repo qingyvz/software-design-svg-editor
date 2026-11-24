@@ -1,7 +1,7 @@
-import type { SvgDocument } from '../domain/SvgDocument.js';
-import type { Shape } from '../domain/Shape.js';
-import type { TreeDecorator } from '../application/TreeDecorator.js';
-import { SvgDocument as Document } from '../domain/SvgDocument.js';
+import type { SvgDocument } from '../../domain/SvgDocument.js';
+import type { Shape } from '../../domain/Shape.js';
+import type { TreeDecorator } from '../../application/TreeDecorator.js';
+import { SvgDocument as Document } from '../../domain/SvgDocument.js';
 
 /** Content-difference semantics; an ancestor is marked when any descendant changes. */
 export class ModifiedStar implements TreeDecorator {

@@ -15,7 +15,7 @@ import { TreeDecorators } from '../src/application/TreeDecorators.js';
 import type { CommandReceiver } from '../src/application/CommandReceiver.js';
 import { Command } from '../src/application/Command.js';
 import { Rect } from '../src/domain/Rect.js';
-import { BoxPlugin } from '../src/plugins/BoxPlugin.js';
+import { BoxPlugin } from './support/box/BoxPlugin.js';
 import type { Plugin } from '../src/application/Plugin.js';
 import { MemoryDocumentStore } from './MemoryDocumentStore.js';
 
@@ -257,7 +257,7 @@ test('CLI prints invalid-config error and continues using only builtin commands'
 test('config paths resolve relative to config file rather than current process', async () => fixture(async (dir) => {
   const h = harness();
   const config = join(dir, 'plugins.config.json');
-  const source = resolve('build/src/plugins/config/stats.js');
+  const source = resolve('build/src/plugins/stats/index.js');
   writeFileSync(config, JSON.stringify({ plugins: [{ module: source }] }));
   assert.deepEqual(await new PluginLoader(h.installer).load(config), []);
   assert.deepEqual(h.cli.run('init'), ['canvas 800x600 created']);

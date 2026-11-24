@@ -1,8 +1,8 @@
-import type { AttributeHandler } from '../application/AttributeHandler.js';
-import type { Shape } from '../domain/Shape.js';
+import type { AttributeHandler } from '../../../src/application/AttributeHandler.js';
+import type { Shape } from '../../../src/domain/Shape.js';
 import { Box } from './Box.js';
-import { Rect } from '../domain/Rect.js';
-import { Text } from '../domain/Text.js';
+import { Rect } from '../../../src/domain/Rect.js';
+import { Text } from '../../../src/domain/Text.js';
 
 export class BoxAttributes implements AttributeHandler {
   readonly name = 'box-attributes';

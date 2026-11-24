@@ -7,7 +7,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "node scripts/build.mjs",
     "cli": "npm run build --silent && node build/src/Main.js",
     "test": "npm run build --silent && node --test build/test/*.test.js",
     "test:coverage": "npm run build --silent && node --experimental-test-coverage --test-coverage-include=build/src/**/*.js --test build/test/*.test.js",

@@ -1,0 +1,13 @@
+import { existsSync, lstatSync, realpathSync, rmSync } from 'node:fs';
+import { dirname, resolve, basename } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { spawnSync } from 'node:child_process';
+const root = realpathSync(fileURLToPath(new URL('..', import.meta.url)));
+const output = resolve(root, 'build');
+if (dirname(output) !== root || basename(output) !== 'build') throw new Error('unsafe build path');
+if (existsSync(output) && lstatSync(output).isSymbolicLink()) throw new Error('build must not be a link');
+rmSync(output, { recursive: true, force: true });
+const compiled = spawnSync(process.execPath, [resolve(root, 'node_modules/typescript/bin/tsc'), '-p', resolve(root, 'tsconfig.json')], { cwd: root, stdio: 'inherit' });
+if (compiled.error) throw compiled.error;
+if (compiled.status !== 0) process.exit(compiled.status ?? 1);
+await import('./copy-plugin-metadata.mjs');

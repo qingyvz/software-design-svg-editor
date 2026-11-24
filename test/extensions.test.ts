@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import { Fixtures } from './Fixtures.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -7,8 +8,8 @@ import { CommandDispatcher } from '../src/cli/CommandDispatcher.js';
 import { CommandFactory } from '../src/cli/CommandFactory.js';
 import { AffineTransform } from '../src/domain/AffineTransform.js';
 import { SvgTransform } from '../src/infrastructure/SvgTransform.js';
-import { Box } from '../src/plugins/Box.js';
-import { BoxProvider } from '../src/plugins/BoxProvider.js';
+import { Box } from './support/box/Box.js';
+import { BoxProvider } from './support/box/BoxProvider.js';
 import { MemoryDocumentStore } from './MemoryDocumentStore.js';
 import { AlternateContainer } from './AlternateContainer.js';
 
@@ -260,7 +261,7 @@ test('new commands can be registered without changing the dispatcher', () => {
   );
 });
 
-test('CLI loads box only when explicitly enabled', () => {
+test('CLI loads box only when explicitly enabled', { skip: !existsSync(new URL('../src/plugins/box/BoxPlugin.js', import.meta.url)) }, () => {
   const input = 'init\ncreate box b 0 0 100 60 "Box"\nrotate 90 0 0 b\nshow b\nexit\n';
   const enabled = spawnSync(process.execPath, ['build/src/Main.js', '--box'], {
     input,

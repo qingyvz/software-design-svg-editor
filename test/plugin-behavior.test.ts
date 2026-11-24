@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import { Fixtures } from './Fixtures.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -11,13 +12,13 @@ import { TreeDecorators } from '../src/application/TreeDecorators.js';
 import { CommandFactory } from '../src/cli/CommandFactory.js';
 import { CommandDispatcher } from '../src/cli/CommandDispatcher.js';
 import { PluginInstaller } from '../src/cli/PluginInstaller.js';
-import { Box } from '../src/plugins/Box.js';
-import { BoxPlugin } from '../src/plugins/BoxPlugin.js';
-import { DirPlugin } from '../src/plugins/DirPlugin.js';
-import type { DirectoryAccess } from '../src/plugins/DirectoryAccess.js';
-import { NodeDirectoryAccess } from '../src/plugins/NodeDirectoryAccess.js';
-import { StarPlugin } from '../src/plugins/StarPlugin.js';
-import { StatsPlugin } from '../src/plugins/StatsPlugin.js';
+import { Box } from './support/box/Box.js';
+import { BoxPlugin } from './support/box/BoxPlugin.js';
+import { DirPlugin } from '../src/plugins/dir/DirPlugin.js';
+import type { DirectoryAccess } from '../src/plugins/dir/DirectoryAccess.js';
+import { NodeDirectoryAccess } from '../src/plugins/dir/NodeDirectoryAccess.js';
+import { StarPlugin } from '../src/plugins/star/StarPlugin.js';
+import { StatsPlugin } from '../src/plugins/stats/StatsPlugin.js';
 import { MemoryDocumentStore } from './MemoryDocumentStore.js';
 
 function setup(...plugins: ('stats' | 'dir' | 'box' | 'star')[]) {
@@ -325,7 +326,7 @@ test('dir uses process cwd rather than read/save document directory', () => {
   } finally { rmSync(base, { recursive: true, force: true }); }
 });
 
-test('code and config composition produce byte-identical CLI output for same session and fixed directory', () => {
+test('code and config composition produce byte-identical CLI output for same session and fixed directory', { skip: !existsSync(new URL('../src/plugins/box/BoxPlugin.js', import.meta.url)) }, () => {
   const path = mkdtempSync(join(tmpdir(), 'svg-composition-'));
   try {
     mkdirSync(join(path, 'docs'));

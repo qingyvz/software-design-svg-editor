@@ -5,10 +5,9 @@ import { DefaultShapes } from './host/DefaultShapes.js';
 import { NodeDocumentStore } from './infrastructure/NodeDocumentStore.js';
 import { SvgCodec } from './infrastructure/SvgCodec.js';
 import { ConsoleApp } from './cli/ConsoleApp.js';
-import { BoxPlugin } from './plugins/BoxPlugin.js';
-import { StatsPlugin } from './plugins/StatsPlugin.js';
-import { DirPlugin } from './plugins/DirPlugin.js';
-import { StarPlugin } from './plugins/StarPlugin.js';
+import { StatsPlugin } from './plugins/stats/StatsPlugin.js';
+import { DirPlugin } from './plugins/dir/DirPlugin.js';
+import { StarPlugin } from './plugins/star/StarPlugin.js';
 import { AttributeHandlers } from './application/AttributeHandlers.js';
 import { TreeDecorators } from './application/TreeDecorators.js';
 import { CommandRegistry } from './application/CommandRegistry.js';
@@ -42,8 +41,8 @@ try {
   const failures: string[] = [];
   if (withPlugins || withBox) {
     for (const plugin of withPlugins
-      ? [new StatsPlugin(), new DirPlugin(), new BoxPlugin(), new StarPlugin()]
-      : [new BoxPlugin()]) {
+      ? [new StatsPlugin(), new DirPlugin(), new StarPlugin()]
+      : []) {
       const failure = installer.install(plugin);
       if (failure) failures.push(failure);
     }

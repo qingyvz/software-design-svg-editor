@@ -1,4 +1,4 @@
-import type { Plugin, PluginContext } from '../application/Plugin.js';
+import type { Plugin, PluginContext } from '../../application/Plugin.js';
 import { ModifiedStar } from './ModifiedStar.js';
 
 export class StarPlugin implements Plugin {

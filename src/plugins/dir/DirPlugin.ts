@@ -1,4 +1,4 @@
-import type { Plugin, PluginContext } from '../application/Plugin.js';
+import type { Plugin, PluginContext } from '../../application/Plugin.js';
 import type { DirectoryAccess } from './DirectoryAccess.js';
 import { NodeDirectoryAccess } from './NodeDirectoryAccess.js';
 import { DirCommand } from './DirCommand.js';

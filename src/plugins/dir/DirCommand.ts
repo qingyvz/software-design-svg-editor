@@ -1,4 +1,4 @@
-import { Command } from '../application/Command.js';
+import { Command } from '../../application/Command.js';
 import type { DirectoryAccess } from './DirectoryAccess.js';
 
 export class DirCommand extends Command<undefined> {

@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { ShapeFactory } from '../src/domain/ShapeFactory.js';
 import { DefaultShapes } from '../src/host/DefaultShapes.js';
-import { StatsCommand } from '../src/plugins/StatsCommand.js';
-import { DirCommand } from '../src/plugins/DirCommand.js';
+import { StatsCommand } from '../src/plugins/stats/StatsCommand.js';
+import { DirCommand } from '../src/plugins/dir/DirCommand.js';
 import { SvgDocument } from '../src/domain/SvgDocument.js';
 
 test('kernel registry has no hidden concrete providers; host chooses six defaults', () => {

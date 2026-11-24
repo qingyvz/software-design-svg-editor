@@ -1,6 +1,6 @@
-import { Command } from '../application/Command.js';
-import type { DocumentQuery } from '../application/DocumentQuery.js';
-import type { Shape } from '../domain/Shape.js';
+import { Command } from '../../application/Command.js';
+import type { DocumentQuery } from '../../application/DocumentQuery.js';
+import type { Shape } from '../../domain/Shape.js';
 
 export class StatsCommand extends Command<DocumentQuery> {
   constructor(receiver: DocumentQuery) { super(receiver); }
