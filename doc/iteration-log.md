@@ -22,3 +22,7 @@ Stats, dir and modified-star now have independent package.json contributes decla
 ## A: reintroduce box by code assembly
 
 From the box-free independent-package milestone, add src/plugins/box (provider, composite, attribute handler, type label, default export and package manifest). Runtime changes outside that new package are limited to src/Main.ts. Historical test fixtures move back into the new runtime package; all box CLI cases run again. Test configuration is generated outside its fixed cwd so code/config plugin sets match without changing another runtime file in this proof commit.
+
+## Combine both composition modes for delivery
+
+Retain both immutable demonstration branches. The delivery branch keeps A's code assembly and adds the configuration from B, so both supported entry points activate the same four packages. A and B remain separate historical experiments; their per-commit source diffs are not replaced by this combined delivery state.
