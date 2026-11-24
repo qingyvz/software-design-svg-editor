@@ -7,6 +7,9 @@
       "module": "./build/src/plugins/dir/index.js"
     },
     {
+      "module": "./build/src/plugins/box/index.js"
+    },
+    {
       "module": "./build/src/plugins/star/index.js"
     }
   ]

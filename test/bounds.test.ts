@@ -7,7 +7,7 @@ import { Editor } from '../src/application/Editor.js';
 import { EditingCommand } from '../src/application/EditingCommand.js';
 import type { EditContext } from '../src/application/EditContext.js';
 import { CommandDispatcher } from '../src/cli/CommandDispatcher.js';
-import { BoxProvider } from './support/box/BoxProvider.js';
+import { BoxProvider } from '../src/plugins/box/BoxProvider.js';
 import { MemoryDocumentStore } from './MemoryDocumentStore.js';
 
 const metrics = { measure: () => ({ advance: 100, ink: new Bounds(-2, -15, 98, 5) }) };
