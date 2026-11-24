@@ -1,11 +1,13 @@
-# ADR 004 — 插件清单检查与原子注册（当前工作树静态核对；测试待补）
+# ADR 004：清单、双装配与原子注册
 
-**背景。** Phase 2 §6 要求代码装配和配置装配使用同一注册/校验路径，`contributes` 与实际四类注册名严格一致，重复注册拒绝当前插件，失败后保留此前插件并继续加载。边装边改正式注册表会留下部分注册。
+状态：已实现，独立 A/B 提交与会话检查已生成。来源：Phase 2 §6。
 
-**决策及实现路径。** `Main.ts` 在代码方式实例化插件，配置方式用 `PluginLoader.load` 解析模块，再都调用 `PluginInstaller.install`。`install` 创建**每个插件独立的暂存上下文**，`activate(ctx, options)` 将四类对象推入暂存数组；通过 `manifest/names/same` 比较各类名称集合，检查重复与 SVG key 冲突，随后向正式注册表逐项写入。它不是不可中断的单步提交；`committed` 记录在提交异常时逆序 `remove`，做到按当前实现的尽力回滚。激活失败或清单不符时暂存区直接丢弃。`PluginLoader` 在配置中按数组顺序处理、`enabled:false` 先跳过；相对路径基于配置目录，包名通过 Node 的 `createRequire` 解析，options 透传。非法配置返回 `error: invalid plugin config` 并保留默认能力。**状态：静态路径存在，失败路径及确切输出尚未实测。**
+**决定。** PluginContext 只允许提交四类贡献。激活时先暂存，不直接写正式表。随后核对对象格式、稳定注册名、同类重名、声明／实际类别与名称集合，以及 ShapeProvider 的 SVG key。所有检查通过才逐表登记，登记阶段异常则逆序撤销本插件已登记项。已成功插件保留，宿主继续加载后面的插件。
 
-**错误分类与风险。** 目标模块本身解析不到才用 `plugin not found`；文件可找到但顶层求值或依赖失败用 `plugin failed to activate`（当前 loader 将两者合并在这一文本类别）；无默认导出、manifest mismatch、duplicate registration、activate 抛错分别按 §6 的前缀返回。异常 reason 会清理换行，但 `PluginLoader.reason` 目前没有移除绝对路径，**不得承诺不泄露本地路径**。`PluginInstaller.install` 的 `actual = names(pending)` 在 `try` 外，若恶意插件暂存 null 等畸形注册对象可能抛错；`PluginLoader.load` 可在外层 catch 转换，但直接代码装配的 `Main.ts` 可能被该异常中断。需增加针对性回归并在源码中修正，不能以 ADR 代替实现。
+代码装配和配置装配共用 PluginInstaller.install。前者在组合根实例化类，后者按配置数组解析／加载类或实例，options 原样传入 activate。enabled:false 完全跳过。相对路径基于配置文件所在目录，包名使用 Node 的解析规则；每个独立包在 package.json/contributes 声明贡献，构建通用复制元数据。加载器不枚举插件名。
 
-**备选及理由。** 先注册后回滚需逆操作和跨表同步，易漏撤销；失败直接退出会失去其他插件和基线能力。暂存-校验-提交让注册原子性清楚，也使两种装配共享校验。
+加载器分别报告模块不存在、无默认导出、清单不一致、激活失败；同类重名使用题目规定的类别／名称消息。模块求值或依赖失败归为加载失败。配置语法／结构非法输出 invalid plugin config，并继续默认能力。
 
-**验证前提。** 分别测试缺模块、无默认导出、清单与注册类别/名称不符、求值失败、activate 在注册后抛错、重复注册、非法配置、畸形注册对象和紧随失败的成功插件；比较同环境 A/B 的输出。目标模块解析与其依赖解析的错误归类及部分提交异常回滚须实测。**已有实现路径不等于这些测试已通过**。
+**取舍。** 只预先建立临时列表仍不足以保证登记原子性，提交阶段同样要跟踪并撤销。只比较数量会放过错名／错类，故按类别和名称集合核验。默认提供器由宿主装配，内核不因可选插件新增而更改。
+
+**验证。** `test/plugin-loader.test.ts` 覆盖四失败、options、路径／包解析、禁用、重名、SVG key 冲突、getter 读取异常、提交异常回滚和后续继续加载。A/B 共有框架父提交 de82fe9；A=fafb2ba 只额外改 Main，B=06900b9 只改配置；scripts/verify-transcripts.mjs 校验路径存在、空 diff、新包一致及三类会话逐字节相同。测试原始结果而非静态搜索是结论依据。

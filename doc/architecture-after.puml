@@ -3,61 +3,51 @@
 skinparam componentStyle rectangle
 skinparam shadowing false
 left to right direction
-title Phase 2 local working tree (uncommitted): CLI plugins + separate VS Code extension
-component "Main.ts\n--plugins / --box / --config" as Host
-component "PluginLoader + PluginInstaller\nresolve, stage, validate, rollback" as Loader
-component "application ports\nCommand, CommandContribution,\nTreeDecorator, AttributeHandler, PluginContext" as AppPorts
-component "domain port\nShapeProvider" as ShapePort
-component "Editor + TreeFormatter\ntransaction, history, tree rows" as App
-component "domain\nShapeFactory, SvgDocument, Shape" as Domain
+title Phase 2 - explicit host composition and abstract extension contracts
+component "Main + DefaultShapes\ncomposition root" as Host
+component "PluginLoader / PluginInstaller\nresolve, stage, validate, rollback" as Loader
+component "application public contracts\nCommand / CommandReceiver / DocumentQuery\nTreeDecorator / AttributeHandler / PluginContext" as Ports
+component "domain contracts\nShapeProvider / Shape / ShapeContainer" as ShapePorts
+component "application\nEditor / history / draft transaction\nTreeFormatter" as App
+component "domain\nShapeFactory / SvgDocument\ngeometry and invariants" as Domain
 component "CLI\nCommandFactory / Dispatcher / ConsoleApp" as CLI
-component "infrastructure\nSvgCodec, NodeDocumentStore" as Infra
-component "optional plugins\nStats, Dir, Box, Star" as Opt
-component "dir's DirectoryAccess\n(plugin-local port)" as DirPort
-component "NodeDirectoryAccess\n(plugin-local adapter)" as DirAdapter
-component "node:fs / Dirent" as NodeFS
-component "VS Code extension\nactivation + provider registration" as VS
-component "SvgFileDecorations\nFileDecorationProvider" as Badge
-component "SvgOutline\nDocumentSymbolProvider" as Outline
-component "parseSvgSymbols\nDOM validation + source offsets" as SymbolParser
-component "VS Code host\nExplorer, native Outline, buffer" as VSHost
-component "@xmldom/xmldom\nXML parser (shared dependency)" as XML
+component "infrastructure\nSvgCodec / NodeDocumentStore" as Infra
+component "stats / dir / box / star\nindependent manifests and classes" as Plugins
+component "DirectoryAccess\nplugin-owned target" as DirPort
+component "NodeDirectoryAccess\nadapter" as DirAdapter
+component "node:fs / Dirent / process\nadaptee" as NodeFS
+component "VSCode extension\nFileDecorationProvider\nDocumentSymbolProvider" as VS
+component "VSCode host\nExplorer / Outline / TextDocument" as VSHost
+component "SVG symbol parser\nXML + UTF-16 source ranges" as Parser
 Host --> CLI
-Host --> Loader
 Host --> App
 Host --> Domain
 Host --> Infra
-Host --> Opt : code assembly only
-Loader --> AppPorts : inspect manifest; register
-Loader --> Domain : register shape
-CLI --> App
-CLI --> AppPorts : command registry
-App --> AppPorts : call handlers/decorators/commands
+Host --> Plugins : code assembly
+Host --> Loader : config assembly
+Loader --> Ports
+Loader --> ShapePorts
+CLI --> Ports
+App --> Ports
 App --> Domain
-Domain --> ShapePort : create/fromSvg
+Domain --> ShapePorts : calls registered providers
 Infra --> Domain
-Infra --> AppPorts : DocumentPort
-Opt ..> AppPorts : implements
-Opt ..> ShapePort : implements
-Opt --> DirPort : DirCommand (client)
+Infra --> Ports : DocumentPort
+Plugins ..> Ports : implements
+Plugins ..> ShapePorts : implements / consumes public domain behavior
+Plugins --> DirPort : DirCommand client
 DirAdapter ..> DirPort : implements
-DirAdapter --> NodeFS : readdirSync, cwd
-VSHost --> VS : activate
-VS --> Badge : register
-VS --> Outline : register
-VSHost --> Badge : URI + fs.stat
-VSHost --> Outline : current TextDocument
-Outline --> SymbolParser : parse text / ranges
-SymbolParser --> XML : validate XML, get id/structure
-Infra --> XML : CLI SVG parsing (separate use)
+DirAdapter --> NodeFS
+VSHost --> VS : activate / call registered providers
+VS --> Parser
 note bottom of Host
-  ShapeFactory and CommandFactory still register baseline implementations
-  in their constructors. Separate A/B plugin commits and p2 tag pending.
+Six built-in provider choices live in DefaultShapes.
+The registry does not import concrete providers.
+A/B proof commits have the same box-free parent.
 end note
 note bottom of VS
-  vscode-extension/src/extension.ts and svgSymbols.ts exist.
-  Node tests 7/7; host-result.json says passed (API behavior only).
-  No actual Explorer/Outline screenshot captured; not delivered.
-  CLI does not depend on the VS Code extension.
+Independent package, not a CLI dependency.
+Screenshots capture actual Explorer/Outline;
+unsaved edits are restored without disk writes.
 end note
 @enduml

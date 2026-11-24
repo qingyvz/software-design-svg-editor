@@ -1,11 +1,13 @@
-# ADR 001 — 属性处理器、冲突与事务（当前工作树静态核对；测试待补）
+# ADR 001：属性处理器、冲突与事务
 
-**背景。** `phase_cli_2.md` §3 要求处理器定义 `(图形类型, 属性)` 的领域语义；Phase 1 的 `SetCommand.apply` 直接调用 `shape.set`，而 `Box.set` 内含 fill/label 分支。后者不是 Phase 2 所要求的独立注册接口。单次 `set` 必须可撤销且部分失败不能污染历史。
+状态：已实现，见 `test/plugin-behavior.test.ts` 与独立 `test/box-plugin.test.ts`。来源：Phase 2 §3。
 
-**决策与现状。** 内核侧定义可独立注册的 `AttributeHandler` (`src/application/AttributeHandler.ts`)，在编辑草稿上先按注册顺序求值纯 `handles(shape, attr)`，**恰好一个**命中才调用 `apply`；多个命中先报冲突，零命中调用原 `shape.set`/白名单规则。`src/application/AttributeHandlers.ts:set` 实现了此分派；`BoxAttributes` 用公开 `Shape`/`Box.children` 和内部子部件的 `set` 修改 fill/label，不直接改私有字段。`handles` 不得修改文档，这是契约，**当前只由开发约定而非副作用检测强制**；`apply` 失败不回退默认属性。`BoxPlugin.activate` 注册稳定名 `box-attributes`。Phase 1 的 `Box.set` 兼容分支仍在 `Box.ts`，并非新接口的唯一实现；装上插件时先走独立 handler。注册名冲突另由加载器拦截。
+**问题。** box 的 fill 表示修改内部矩形，label 表示修改内部文本。把 label 写进通用白名单会让内核知道插件语义；只在 Box.set 内处理又缺少独立注册扩展点。
 
-`SetCommand.apply` → `EditContext.set` → `AttributeHandlers.set` 位于 `Editor.executeEdit` 的副本文档事务内；成功校验后才用一条 `EditRecord` 更新文档与历史。若 apply 在部分修改后抛错，代码路径会丢弃草稿，当前文档及历史没有提交。这是静态分析，仍需以部分修改抛错、随后 `undo/redo` 的测试证明。此项复用 Phase 1 的草稿事务，不另发明第二套历史。
+**决定。** `AttributeHandler` 位于 application，带稳定 name、纯 handles(shape, attr) 和 apply(shape, attr, value)。shape 是编辑草稿中的公开 Shape，不暴露实时 Editor 字段。处理器可通过公开 children 和 set 完成子部件操作。零命中回 Phase 1 Shape.set 白名单；一命中执行该处理器；多命中在任何 apply 前报 `ambiguous attribute handler`。handles 的无副作用是实现契约；传入的仍是隔离草稿。
 
-**备选及理由。** “第一个命中者获胜”容易静默遮蔽，组合多个处理器会增加失败回滚与顺序依赖；改内核白名单加入 `label` 破坏开闭原则。拒绝冲突使契约可测试且对第三方插件更安全。
+一次 SetCommand 只经一次 `Editor.executeEdit`：复制 → 应用 → 校验 → 一条 EditRecord 提交。即使修改多个部件，也只有一个 undo 单元；apply 部分修改后抛错时丢弃草稿，文档、undo/redo 和保存路径保持原状态，不能转入默认处理掩盖失败。成功后一次 undo/redo 整体恢复。
 
-**验证前提。** 最终版本重新核对接口、注册处与 `SetCommand.apply`；测试 0/1/2 个命中者、普通矩形 fill、未知 label、部分修改后异常及 redo 栈原样保留、成功后一次 undo/redo。已读到相关源码，**尚未运行或见到这些针对性用例通过**。
+**取舍。** 拒绝多命中比“第一个获胜”容易发现覆盖冲突，比组合处理器减少隐式顺序。复用既有草稿事务，无第二套历史栈。Box.set 保留历史直接注册 BoxProvider 的兼容行为，正式 BoxPlugin 先走独立 BoxAttributes；内核无 box/fill/label 名称分支。
+
+**验证。** 已运行普通矩形 fill、未知 label、box fill/label、0/1/多命中、部分修改抛错和 redo 分支保留等用例。独立 box 测试只装自己的贡献，并逐项检查注册名、内部传播与类型标签。具体运行次数以后续完整复测记录为准。
