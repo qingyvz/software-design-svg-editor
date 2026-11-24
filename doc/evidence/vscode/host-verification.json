@@ -1,0 +1,147 @@
+{
+  "status": "passed",
+  "version": "1.122.0",
+  "node": "v22.22.1",
+  "phase": "original",
+  "lastRequestId": "1795540598643-76wp38ezvn7",
+  "selectionLine": 4,
+  "selectionColumn": 8,
+  "selectedText": "",
+  "originalSha256": "d953c568c010f958512568dd4de99993d9ebfe391d29c9b4e9828376192146a7",
+  "diskSha256": "d953c568c010f958512568dd4de99993d9ebfe391d29c9b4e9828376192146a7",
+  "history": [
+    {
+      "action": "expand",
+      "symbols": [
+        "svg",
+        "g#scene",
+        "g#group",
+        "rect#start",
+        "text"
+      ],
+      "selectionLine": 1,
+      "selectedText": "",
+      "time": "2026-11-24T17:16:32.496Z"
+    },
+    {
+      "action": "status",
+      "symbols": [
+        "svg",
+        "g#scene",
+        "g#group",
+        "rect#start",
+        "text"
+      ],
+      "selectionLine": 4,
+      "selectedText": "",
+      "time": "2026-11-24T17:16:35.029Z"
+    },
+    {
+      "action": "change",
+      "symbols": [
+        "svg",
+        "g#scene",
+        "g#group",
+        "rect#updated-start",
+        "text"
+      ],
+      "selectionLine": 4,
+      "selectedText": "",
+      "time": "2026-11-24T17:16:35.818Z"
+    },
+    {
+      "action": "invalid",
+      "symbols": [],
+      "selectionLine": 1,
+      "selectedText": "",
+      "time": "2026-11-24T17:16:36.606Z"
+    },
+    {
+      "action": "restore",
+      "symbols": [
+        "svg",
+        "g#scene",
+        "g#group",
+        "rect#start",
+        "text"
+      ],
+      "selectionLine": 9,
+      "selectedText": "",
+      "time": "2026-11-24T17:16:37.399Z"
+    },
+    {
+      "action": "expand",
+      "symbols": [
+        "svg",
+        "g#scene",
+        "g#group",
+        "rect#start",
+        "text"
+      ],
+      "selectionLine": 9,
+      "selectedText": "",
+      "time": "2026-11-24T17:16:37.509Z"
+    },
+    {
+      "action": "status",
+      "symbols": [
+        "svg",
+        "g#scene",
+        "g#group",
+        "rect#start",
+        "text"
+      ],
+      "selectionLine": 4,
+      "selectedText": "",
+      "time": "2026-11-24T17:16:38.487Z"
+    },
+    {
+      "action": "finish",
+      "symbols": [
+        "svg",
+        "g#scene",
+        "g#group",
+        "rect#start",
+        "text"
+      ],
+      "selectionLine": 4,
+      "selectedText": "",
+      "time": "2026-11-24T17:16:38.713Z"
+    }
+  ],
+  "symbols": [
+    "svg",
+    "g#scene",
+    "g#group",
+    "rect#start",
+    "text"
+  ],
+  "extensionSourceSha256": "fa1e868936620416faa1194eec5022aedda48597bc27a07b291e9bd35eaa47ab",
+  "parserSourceSha256": "7d81f98e983a4fed10b6d6dd16e34850225664dc483e4ccd102a9aea93f2a9d1",
+  "screenshots": [
+    {
+      "file": "explorer-badge.png",
+      "sha256": "ba463b9687d5d41f4060e8d9aecd5cc908e8ce077b3dfdcaf8738577c43d5889",
+      "width": 1800,
+      "height": 1030
+    },
+    {
+      "file": "outline-location.png",
+      "sha256": "19383fd8783487335f03d2f39b23de0ece79c221553e5b7200786123aa9b701c",
+      "width": 1800,
+      "height": 1030
+    },
+    {
+      "file": "outline-updated.png",
+      "sha256": "b271eefe0f9eec8840feaf5bb5b703183c6d7ce3b3397038706b685c2a3f7e60",
+      "width": 1800,
+      "height": 1030
+    },
+    {
+      "file": "outline-incomplete.png",
+      "sha256": "449cadc43123d3cff3f6ada5107d6ee89c1857595de37cf304053107b2af9373",
+      "width": 1800,
+      "height": 1030
+    }
+  ]
+}
