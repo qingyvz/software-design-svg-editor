@@ -70,7 +70,7 @@ npm run cli -- --config plugins.config.json
 
 按数组顺序加载；enabled:false 完全跳过；相对模块路径基于配置文件目录，裸包名按配置目录的 ESM node/import 条件解析，支持 import-only／双 exports 包。options 原样传到 activate(context, options)。内置四插件目前不需业务选项。构建按目录通用复制包元数据，加载器没有插件名称映射。
 
-模块不存在、无默认导出、manifest 不符、activate 抛错分别输出题目规定的四种 error 文案；同类重名为 `error: duplicate registration: <category>/<name>`。非法配置输出 `error: invalid plugin config` 后用默认能力启动。顶层入口不存在（含 exports 指向缺失文件）报告 plugin not found；入口存在后的求值／依赖失败按加载失败报告。插件包清单不因配置文件同目录而跳过，只排除宿主自己的包元数据。测试逐项断言回滚和后续继续加载，见 `test/plugin-loader.test.ts`。
+模块不存在、无默认导出、manifest 不符、activate 抛错分别输出题目规定的四种 error 文案；同类重名为 `error: duplicate registration: <category>/<name>`。非法配置输出 `error: invalid plugin config` 后用默认能力启动。顶层入口不存在（含 exports 指向缺失文件）报告 plugin not found；入口存在后的求值／依赖失败按加载失败报告。插件包清单不因配置文件同目录而跳过，只排除宿主自己的包元数据。清单来源按字段是否提供选择，显式 null 不回落；类别 null 非法，缺省类别为空。已有包元数据损坏或读取失败时报告加载失败。测试逐项断言回滚和后续继续加载，见 `test/plugin-loader.test.ts`。
 
 dir 列进程 cwd 的直接子项，含隐藏项，目录／文件分组后按名称稳定排序；符号链接及其他非常规项显示 `[OTHER]  <name>`，不遍历目标。空目录输出 `(empty directory)`，失败输出 `error: cannot read directory: <path>`。查询不修改文档、dirty、cwd 或历史。
 
@@ -88,7 +88,7 @@ dir 列进程 cwd 的直接子项，含隐藏项，目录／文件分组后按�
 
 ## 测试与真实结果
 
-2026-11-25 本轮已运行：原 final 隔离检出 50/50；第三轮候选 CLI 90/90，无失败／跳过；扩展 Node 测试 7/7；真实 VSCode 1.122.0 视觉宿主验证 passed。后续审查修正后以最终复测记录为准。
+2026-11-25 本轮已运行：原 final 隔离检出 50/50；当前 CLI 102/102，无失败／跳过；扩展 Node 测试 7/7；真实 VSCode 1.122.0 视觉宿主验证 passed。后续审查修正后以最终复测记录为准。
 
 | 验证 | 代码与证据 |
 |---|---|

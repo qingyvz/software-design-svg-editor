@@ -59,3 +59,13 @@ Added four persistent cases first. The regression file ran 12 cases: 9 passed, 3
 The clean clone also exposed three CRLF working-tree files that Git had normalized to LF. Code was equivalent and screenshots identical, but the bytes in the host trace differed from published Git blobs. Normalize those working files under the existing .gitattributes rule and rerun the actual host; verify every source hash against Git's canonical file bytes. Do not call normalization equivalence byte identity.
 
 Full root regression after these fixes: 90/90, no failures/skips; extension 7/7. The fixed rubric is unchanged. The next independent review checks these boundaries and the complete rubric again before creating p2.
+
+## Independent review round 3 and explicit metadata presence
+
+The frozen d518c98 candidate received 97.75/100 confirmed and 2.00 pending release. The only independently confirmed deduction was the shared explicit-null/absence distinction in D3: 50 expanded probes produced 42 passes and 8 triggers of that one semantic defect. Other loader paths, rollback, continuation, canonical source hashes, extension tests and transcripts passed.
+
+Root additionally reproduced direct .mjs loading with a malformed nearby package.json: metadata parsing failure silently fell back to a valid instance declaration. This was an observed root probe, not attributed to the independent reviewer.
+
+While the main candidate remained frozen for the written report, the dedicated AI-owned clean clone received 12 persistent regressions. Its review file first produced 12 passes / 12 failures; the raw red log records that isolated path. The cases cover six package-null location/entry combinations, module-null versus absent source, four null-category/omission controls, and malformed/non-object JSON metadata. The loader now preserves field presence in a small value wrapper and never substitutes another manifest for an explicitly provided invalid one. The shared installer rejects null category lists; only absent/undefined category values mean empty. Package metadata errors propagate unless the file is absent (ENOENT), and an existing package file must parse to an object.
+
+After the report was saved, copy only those three reviewed source/test changes into the main candidate and rerun. Both isolated and main checks passed 102/102, no failures/skips; architecture 266 relative imports. Seven byte comparisons passed again. Extension production/test sources are unchanged from d518c98, whose 7 tests and real desktop evidence already passed; every production source hash still matches Git exactly. No extra GUI behavior was changed. The fixed rubric and all old review reports remain unchanged. Final tag/release is still withheld until the next independent review.

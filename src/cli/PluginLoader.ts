@@ -49,7 +49,9 @@ export class PluginLoader {
         if (!plugin || typeof plugin.activate !== 'function') throw new Error('invalid default plugin');
         // Package metadata is authoritative when provided by a package; a relative
         // module may export its manifest directly or on the plugin object.
-        const manifest = this.packageManifest(resolved) ?? module.contributes ?? plugin.contributes;
+        const packageDeclaration = this.packageManifest(resolved);
+        const manifest = packageDeclaration !== undefined ? packageDeclaration.value
+          : Object.prototype.hasOwnProperty.call(module, 'contributes') ? module.contributes : plugin.contributes;
         const candidate: Plugin = { name: typeof module.name === 'string' ? module.name : plugin.name,
           contributes: manifest as PluginManifest, activate: (context, options) => plugin.activate(context, options) };
         const failure = this.installer.install(candidate, entry.options);
@@ -58,7 +60,7 @@ export class PluginLoader {
     }
     return errors;
   }
-  private packageManifest(resolved: string): unknown {
+  private packageManifest(resolved: string): { readonly value: unknown } | undefined {
     // Only the nearest plugin package's own contributes is authoritative;
     // the application package.json is not a manifest for relative modules.
     let directory = dirname(resolved);
@@ -67,10 +69,12 @@ export class PluginLoader {
       const packagePath = resolve(directory, 'package.json');
       if (packagePath === appPackage) return undefined;
       try {
-        const p = JSON.parse(readFileSync(packagePath, 'utf8')) as { contributes?: unknown };
-        return p.contributes;
+        const p: unknown = JSON.parse(readFileSync(packagePath, 'utf8'));
+        if (!p || typeof p !== 'object' || Array.isArray(p)) throw new Error('invalid plugin package metadata');
+        return Object.prototype.hasOwnProperty.call(p, 'contributes')
+          ? { value: (p as { contributes: unknown }).contributes } : undefined;
       } catch (error) {
-        if (!(error instanceof Error && 'code' in error && error.code === 'ENOENT')) return undefined;
+        if (!(error instanceof Error && 'code' in error && error.code === 'ENOENT')) throw error;
       }
       const parent = dirname(directory);
       if (parent === directory) return undefined;

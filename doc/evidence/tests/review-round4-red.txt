@@ -1,0 +1,318 @@
+TAP version 13
+# Subtest: review: zero handlers use the original whitelist and preserve a redo branch
+ok 1 - review: zero handlers use the original whitelist and preserve a redo branch
+  ---
+  duration_ms: 10.6572
+  ...
+# Subtest: review: successful init isolates a throwing checkpoint and reports it
+ok 2 - review: successful init isolates a throwing checkpoint and reports it
+  ---
+  duration_ms: 1.301
+  ...
+# Subtest: review: successful read isolates a throwing checkpoint and reports it
+ok 3 - review: successful read isolates a throwing checkpoint and reports it
+  ---
+  duration_ms: 0.8477
+  ...
+# Subtest: review: successful save isolates a throwing checkpoint and reports it
+ok 4 - review: successful save isolates a throwing checkpoint and reports it
+  ---
+  duration_ms: 0.5679
+  ...
+# Subtest: review: same-parent order changes do not detach required composite children
+ok 5 - review: same-parent order changes do not detach required composite children
+  ---
+  duration_ms: 1.5165
+  ...
+# Subtest: review: one attribute operation affecting two parts is one undo unit
+ok 6 - review: one attribute operation affecting two parts is one undo unit
+  ---
+  duration_ms: 1.0025
+  ...
+# Subtest: review: ESM package resolution selects import conditions (import-only)
+ok 7 - review: ESM package resolution selects import conditions (import-only)
+  ---
+  duration_ms: 93.6593
+  ...
+# Subtest: review: ESM package resolution selects import conditions (dual)
+ok 8 - review: ESM package resolution selects import conditions (dual)
+  ---
+  duration_ms: 74.0598
+  ...
+# Subtest: review: missing exports target reports not found and continues (absent.mjs)
+ok 9 - review: missing exports target reports not found and continues (absent.mjs)
+  ---
+  duration_ms: 22.5056
+  ...
+# Subtest: review: missing exports target reports not found and continues (not-a-directory/entry.mjs)
+ok 10 - review: missing exports target reports not found and continues (not-a-directory/entry.mjs)
+  ---
+  duration_ms: 20.5403
+  ...
+# Subtest: review: package manifest is authoritative with configuration outside its package
+ok 11 - review: package manifest is authoritative with configuration outside its package
+  ---
+  duration_ms: 34.3164
+  ...
+# Subtest: review: package manifest is authoritative with configuration inside its package
+ok 12 - review: package manifest is authoritative with configuration inside its package
+  ---
+  duration_ms: 16.0536
+  ...
+# Subtest: review: explicit null package manifest is rejected (outside, bare)
+not ok 13 - review: explicit null package manifest is rejected (outside, bare)
+  ---
+  duration_ms: 20.3498
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\fresh-round2\\build\\test\\review-regressions.test.js:180:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/.runtime/fresh-round2/build/test/review-regressions.test.js:192:24)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: review: explicit null package manifest is rejected (outside, file)
+not ok 14 - review: explicit null package manifest is rejected (outside, file)
+  ---
+  duration_ms: 16.8835
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\fresh-round2\\build\\test\\review-regressions.test.js:180:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/.runtime/fresh-round2/build/test/review-regressions.test.js:192:24)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: review: explicit null package manifest is rejected (inside, bare)
+not ok 15 - review: explicit null package manifest is rejected (inside, bare)
+  ---
+  duration_ms: 12.3138
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\fresh-round2\\build\\test\\review-regressions.test.js:180:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/.runtime/fresh-round2/build/test/review-regressions.test.js:192:24)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: review: explicit null package manifest is rejected (inside, file)
+not ok 16 - review: explicit null package manifest is rejected (inside, file)
+  ---
+  duration_ms: 14.5726
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\fresh-round2\\build\\test\\review-regressions.test.js:180:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/.runtime/fresh-round2/build/test/review-regressions.test.js:192:24)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: review: explicit null package manifest is rejected (nested, bare)
+not ok 17 - review: explicit null package manifest is rejected (nested, bare)
+  ---
+  duration_ms: 9.141
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\fresh-round2\\build\\test\\review-regressions.test.js:180:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/.runtime/fresh-round2/build/test/review-regressions.test.js:192:24)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: review: explicit null package manifest is rejected (nested, file)
+not ok 18 - review: explicit null package manifest is rejected (nested, file)
+  ---
+  duration_ms: 15.7214
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\fresh-round2\\build\\test\\review-regressions.test.js:180:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/.runtime/fresh-round2/build/test/review-regressions.test.js:192:24)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: review: explicit null module manifest does not fall back to the instance
+not ok 19 - review: explicit null module manifest does not fall back to the instance
+  ---
+  duration_ms: 28.1245
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\fresh-round2\\build\\test\\review-regressions.test.js:203:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/.runtime/fresh-round2/build/test/review-regressions.test.js:213:24)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: review: null contribution category is invalid while omission stays empty (shapes)
+not ok 20 - review: null contribution category is invalid while omission stays empty (shapes)
+  ---
+  duration_ms: 2.8539
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\fresh-round2\\build\\test\\review-regressions.test.js:228:5'
+  failureType: 'testCodeFailure'
+  error: 'The "string" argument must be of type string. Received type undefined (undefined)'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/.runtime/fresh-round2/build/test/review-regressions.test.js:236:24)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:677:18)
+    Test.postRun (node:internal/test_runner/test:1090:19)
+    Test.run (node:internal/test_runner/test:1018:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: review: null contribution category is invalid while omission stays empty (commands)
+not ok 21 - review: null contribution category is invalid while omission stays empty (commands)
+  ---
+  duration_ms: 1.3105
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\fresh-round2\\build\\test\\review-regressions.test.js:228:5'
+  failureType: 'testCodeFailure'
+  error: 'The "string" argument must be of type string. Received type undefined (undefined)'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/.runtime/fresh-round2/build/test/review-regressions.test.js:236:24)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:677:18)
+    Test.postRun (node:internal/test_runner/test:1090:19)
+    Test.run (node:internal/test_runner/test:1018:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: review: null contribution category is invalid while omission stays empty (decorators)
+not ok 22 - review: null contribution category is invalid while omission stays empty (decorators)
+  ---
+  duration_ms: 0.4068
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\fresh-round2\\build\\test\\review-regressions.test.js:228:5'
+  failureType: 'testCodeFailure'
+  error: 'The "string" argument must be of type string. Received type undefined (undefined)'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/.runtime/fresh-round2/build/test/review-regressions.test.js:236:24)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:677:18)
+    Test.postRun (node:internal/test_runner/test:1090:19)
+    Test.run (node:internal/test_runner/test:1018:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: review: null contribution category is invalid while omission stays empty (attributes)
+not ok 23 - review: null contribution category is invalid while omission stays empty (attributes)
+  ---
+  duration_ms: 0.1932
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\fresh-round2\\build\\test\\review-regressions.test.js:228:5'
+  failureType: 'testCodeFailure'
+  error: 'The "string" argument must be of type string. Received type undefined (undefined)'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/.runtime/fresh-round2/build/test/review-regressions.test.js:236:24)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:677:18)
+    Test.postRun (node:internal/test_runner/test:1090:19)
+    Test.run (node:internal/test_runner/test:1018:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: review: malformed package metadata cannot fall back to an instance manifest
+not ok 24 - review: malformed package metadata cannot fall back to an instance manifest
+  ---
+  duration_ms: 16.7389
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\fresh-round2\\build\\test\\review-regressions.test.js:243:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/.runtime/fresh-round2/build/test/review-regressions.test.js:254:20)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+1..24
+# tests 24
+# suites 0
+# pass 12
+# fail 12
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 640.9497

@@ -113,7 +113,7 @@ export class PluginInstaller {
         Object.keys(value).some((key) => !categories.includes(key as Category))) return undefined;
     const result: Record<Category, string[]> = { shapes: [], commands: [], decorators: [], attributes: [] };
     for (const key of categories) {
-      const names = value[key] ?? [];
+      const names = value[key] === undefined ? [] : value[key];
       if (!Array.isArray(names) || names.some((s: unknown) => typeof s !== 'string' || !s)) return undefined;
       result[key] = names.slice();
     }

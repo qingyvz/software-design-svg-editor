@@ -169,3 +169,81 @@ for (const inside of [false, true]) {
     }
   });
 }
+
+for (const place of ['outside', 'inside', 'nested']) {
+  for (const direct of [false, true]) {
+    test('review: explicit null package manifest is rejected (' + place + ', ' + (direct ? 'file' : 'bare') + ')', async () => {
+      const directory = mkdtempSync(join(tmpdir(), 'svg-review-null-'));
+      try {
+        const packagePath = join(directory, 'node_modules', 'null-package');
+        mkdirSync(join(packagePath, 'config'), { recursive: true });
+        writeFileSync(join(packagePath, 'package.json'), JSON.stringify({ name: 'null-package', type: 'module', exports: './plugin.mjs', contributes: null }));
+        writeFileSync(join(packagePath, 'plugin.mjs'), 'export const contributes={commands:["probe"]}; export default class ProbePlugin { name="null-package"; contributes={commands:["probe"]}; activate(c){c.registerCommand({name:"probe",help:"probe",create(){return {execute(){return ["leaked"];}};}});} }');
+        const configRoot = place === 'outside' ? directory : place === 'inside' ? packagePath : join(packagePath, 'config');
+        const config = join(configRoot, 'plugins.config.json');
+        writeFileSync(config, JSON.stringify({ plugins: [{ module: direct ? join(packagePath, 'plugin.mjs') : 'null-package' }] }));
+        const h = harness();
+        const errors = await new PluginLoader(h.installer).load(config);
+        assert.equal(errors.length, 1);
+        assert.match(errors[0]!, /^error: plugin manifest mismatch: null-package /);
+        assert.deepEqual(h.cli.run('probe'), ['error: unknown command: probe']);
+        ok(h, 'init');
+      } finally { rmSync(directory, { recursive: true, force: true }); }
+    });
+  }
+}
+
+test('review: explicit null module manifest does not fall back to the instance', async () => {
+  for (const provided of [false, true]) {
+    const directory = mkdtempSync(join(tmpdir(), 'svg-review-null-module-'));
+    try {
+      const plugin = join(directory, 'plugin.mjs');
+      writeFileSync(plugin, (provided ? 'export const contributes=null; ' : '') + 'export default class ProbePlugin { name="null-module"; contributes={commands:["probe"]}; activate(c){c.registerCommand({name:"probe",help:"probe",create(){return {execute(){return ["probe works"];}};}});} }');
+      const config = join(directory, 'plugins.config.json');
+      writeFileSync(config, JSON.stringify({ plugins: [{ module: plugin }] }));
+      const h = harness(), errors = await new PluginLoader(h.installer).load(config);
+      if (provided) {
+        assert.equal(errors.length, 1);
+        assert.match(errors[0]!, /^error: plugin manifest mismatch: null-module /);
+        assert.deepEqual(h.cli.run('probe'), ['error: unknown command: probe']);
+      } else {
+        assert.deepEqual(errors, []);
+        assert.deepEqual(h.cli.run('probe'), ['probe works']);
+      }
+    } finally { rmSync(directory, { recursive: true, force: true }); }
+  }
+});
+
+for (const category of ['shapes','commands','decorators','attributes']) {
+  test('review: null contribution category is invalid while omission stays empty (' + category + ')', () => {
+    for (const invalid of [false, true]) {
+      const h = harness();
+      // Use the untyped external boundary to represent malformed plugin metadata.
+      const contributes = invalid ? { [category]: null } : {};
+      const plugin = { name: 'null-category', contributes, activate() {} } as unknown as import('../src/application/Plugin.js').Plugin;
+      const error = h.installer.install(plugin);
+      if (invalid) assert.match(error!, /^error: plugin manifest mismatch: null-category /);
+      else assert.equal(error, undefined);
+      ok(h, 'init');
+    }
+  });
+}
+
+test('review: malformed package metadata cannot fall back to an instance manifest', async () => {
+  for (const metadata of ['{broken','null','[]','"text"','123']) {
+    const directory = mkdtempSync(join(tmpdir(), 'svg-review-json-metadata-'));
+    try {
+      const packagePath = join(directory, 'plugin');
+      mkdirSync(packagePath);
+      writeFileSync(join(packagePath, 'package.json'), metadata);
+      writeFileSync(join(packagePath, 'index.mjs'), 'export default class ProbePlugin { name="invalid-json"; contributes={commands:["probe"]}; activate(c){c.registerCommand({name:"probe",help:"probe",create(){return {execute(){return ["leaked"];}};}});} }');
+      const config = join(directory, 'plugins.config.json');
+      writeFileSync(config, JSON.stringify({ plugins: [{ module: join(packagePath, 'index.mjs') }] }));
+      const h = harness(), errors = await new PluginLoader(h.installer).load(config);
+      assert.equal(errors.length, 1);
+      assert.match(errors[0]!, /^error: plugin failed to activate:/);
+      assert.deepEqual(h.cli.run('probe'), ['error: unknown command: probe']);
+      ok(h, 'init');
+    } finally { rmSync(directory, { recursive: true, force: true }); }
+  }
+});
