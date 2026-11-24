@@ -52,6 +52,7 @@ function commit(rev) {
   return git('rev-parse', '--verify', `${rev}^{commit}`).toString('utf8').trim();
 }
 function role(path) {
+  if (/(^|\/)(test|tests|node_modules|build|out|\.runtime)(\/|$)/.test(path) || /\.test\.[tj]sx?$/.test(path)) return null;
   if (!path.endsWith('.ts') && !path.endsWith('.tsx')) return null;
   if (path.startsWith('vscode-extension/') || path.startsWith('extensions/vscode/') || path.startsWith('vscode/')) return 'VSCode (separate)';
   if (path.startsWith('src/plugins/') || path.startsWith('plugins/')) return 'plugin';
@@ -131,6 +132,8 @@ try {
   const hasWorkingChanges = git('status', '--porcelain', '--untracked-files=normal').length !== 0;
   const before = new Map([...tree(bHash)].map(([path, file]) => [path, { ...file, ...syntaxMetric(path, file.text) }]));
   const after = new Map([...tree(tHash)].map(([path, file]) => [path, { ...file, ...syntaxMetric(path, file.text) }]));
+  const responsibilities = JSON.parse(git('show', `${tHash}:docs/metrics/responsibilities.json`).toString('utf8'));
+  for (const path of after.keys()) if (!responsibilities[path]) throw new Error(`missing responsibility: ${path}`);
   const base = summarize(before), current = summarize(after);
   const now = new Date().toISOString();
   const md = [
@@ -156,12 +159,12 @@ try {
   const sum = (entries, key) => cli.reduce((n, cat) => n + (entries.get(cat)?.[key] ?? 0), 0);
   md.push(`| **CLI total** | ${sum(base,'files')} → ${sum(current,'files')} | ${sum(base,'lines')} → ${sum(current,'lines')} (${sum(current,'lines')-sum(base,'lines')}) | ${sum(base,'nonblank')} → ${sum(current,'nonblank')} (${sum(current,'nonblank')-sum(base,'nonblank')}) | ${sum(base,'functions')} → ${sum(current,'functions')} | ${sum(base,'complexity')} → ${sum(current,'complexity')} (${sum(current,'complexity')-sum(base,'complexity')}) | ${sum(base,'topLevelDecisions')} → ${sum(current,'topLevelDecisions')} (${sum(current,'topLevelDecisions')-sum(base,'topLevelDecisions')}) |`);
   md.push('', '## File inventory and responsibilities', '',
-    'Responsibility clues below are top-level declarations extracted from the **target** syntax tree; verify their actual behavior against code. No role or purpose is guessed from a filename alone.', '',
-    '| File | Category | Top-level declarations (responsibility clue) | Physical LOC | Nonblank LOC | Complexity baseline → target (Δ) | Module-level decisions baseline → target (Δ) |',
+    'Responsibilities come from the reviewed responsibilities.json at the target Git revision; declarations and every number come from its committed source syntax tree. Missing responsibility entries fail generation.', '',
+    '| File | Category | Responsibility / declarations | Physical LOC | Nonblank LOC | Complexity baseline → target (Δ) | Module-level decisions baseline → target (Δ) |',
     '|---|---|---|---:|---:|---:|---:|');
   for (const path of [...new Set([...before.keys(), ...after.keys()])].sort()) {
     const b = before.get(path), t = after.get(path);
-    md.push(`| \`${markdownCell(path)}\` | ${t?.category ?? b.category} | ${markdownCell(t?.declarations ?? '(removed)')} | ${t?.lines ?? 0} | ${t?.nonblank ?? 0} | ${b?.complexity ?? 0} → ${t?.complexity ?? 0} (${delta(b,t,'complexity') >= 0 ? '+' : ''}${delta(b,t,'complexity')}) | ${b?.topLevelDecisions ?? 0} → ${t?.topLevelDecisions ?? 0} (${delta(b,t,'topLevelDecisions') >= 0 ? '+' : ''}${delta(b,t,'topLevelDecisions')}) |`);
+    md.push(`| \`${markdownCell(path)}\` | ${t?.category ?? b.category} | ${markdownCell(t ? responsibilities[path] + ' [' + t.declarations + ']' : '(removed from target)')} | ${t?.lines ?? 0} | ${t?.nonblank ?? 0} | ${b?.complexity ?? 0} → ${t?.complexity ?? 0} (${delta(b,t,'complexity') >= 0 ? '+' : ''}${delta(b,t,'complexity')}) | ${b?.topLevelDecisions ?? 0} → ${t?.topLevelDecisions ?? 0} (${delta(b,t,'topLevelDecisions') >= 0 ? '+' : ''}${delta(b,t,'topLevelDecisions')}) |`);
   }
   md.push('', '## Reproduce', '',
     '```sh', 'npm ci', 'node docs/metrics/generate.mjs --baseline final --target p2', '```', '',

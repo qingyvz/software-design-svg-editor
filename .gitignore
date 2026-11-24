@@ -4,3 +4,6 @@ coverage/
 .runtime/
 *.tsbuildinfo
 .DS_Store
+
+# Reproducible post-tag output is included in the submission archive.
+docs/metrics/report.md
