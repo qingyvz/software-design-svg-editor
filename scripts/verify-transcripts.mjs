@@ -74,8 +74,14 @@ try {
       assert.ok(!a.stdout.toString('utf8').split('\n').some(line => line.startsWith('error:')), name + ' must run completely');
     }
   }
-  const a = git('rev-parse','phase2/box-code-demo');
-  const b = git('rev-parse','phase2/box-config-demo');
+  const proofCommit = name => {
+    for (const ref of ['refs/heads/' + name, 'refs/remotes/origin/' + name]) {
+      try { return git('rev-parse', '--verify', ref + '^{commit}'); } catch { /* try the fetched remote ref */ }
+    }
+    throw new Error('Missing proof ref ' + name + '; fetch the demonstration branches from origin first');
+  };
+  const a = proofCommit('phase2/box-code-demo');
+  const b = proofCommit('phase2/box-config-demo');
   const parentA = git('rev-parse', a + '^');
   const parentB = git('rev-parse', b + '^');
   assert.equal(parentA, parentB, 'proof branches must share the box-free framework parent');

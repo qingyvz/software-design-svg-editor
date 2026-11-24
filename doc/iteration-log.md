@@ -33,3 +33,19 @@ Retain both immutable demonstration branches. The delivery branch keeps A's code
 Added one independently runnable test file per optional plugin. Each imports only its own optional package and public kernel/test assembly. A reordered Map with identical geometry/style reproduced a false star (expected empty suffix, actual ` *`); the failing run is preserved in doc/evidence/tests/star-before-fix.txt. Sort attributes by key inside the star signature; child ordering remains significant. This is a defect fix, not a claim that adding tests alone proves correctness.
 
 Actual VS Code 1.122.0 visual validation now records Explorer badge exclusions, native Outline clicks to source line 4, unsaved ID update, malformed XML empty Outline, recovery and unchanged disk hash. The first image-preview screenshot was rejected; text-editor selection, auxiliary-bar closure and native pane collapse corrected the evidence layout. The auxiliary script also had to normalize an undefined native-symbol response to an empty list; this was a test-hook failure, not an extension crash.
+
+## Independent review round 1 and corrections
+
+The independent reviewer graded the frozen candidate f2ebe24 with the unchanged assignment-level rubric: 96.25/100 confirmed, 1.75 deducted across six defects, and 2.00 explicitly pending the final p2 report and remote release. This is not a teacher grade. The full report and counterexamples are retained in assignment references/reviews/round1.md and draft/review-round1.
+
+Added eight persistent regression cases before the fixes: seven failed and one positive multi-part set case passed (review-regressions-red.txt). Causes and corrections:
+- Box.set's old compatibility override bypassed an absent AttributeHandler. Remove that override; only the handler propagates label/fill. The original whitelist and redo branch now remain intact when the handler is removed.
+- Runtime checkpoint exceptions occurred after successful IO/state changes, so a command misleadingly reported failure. Checkpoints now isolate, warn and remove the failing decorator while continuing healthy decorators; init/read/save keep their actual successful result and IO barrier. Registration-time failure still rolls back installation.
+- require.resolve selected require exports before dynamic import. Bare-package resolution now uses locked import-meta-resolve 4.2.0 from the configuration directory and selects import conditions; tests compare import-only and dual-condition packages with the same Node's ordinary import.
+- Same-parent front/back called remove and hit required-part protection. Generic optional container reorder adjusts order without detaching; undo/redo and deletion protection are both asserted.
+- VSCode providers shared one class file. Split the two classes, keep composition in extension.ts, and include extension source in the architecture check.
+- New clones have origin/* proof refs rather than local demonstration branches. The transcript verifier accepts both; the documented worktree command explicitly uses origin/phase2/box-config-demo.
+
+The user authorized this review/optimization loop. Causes were explained before fixing; the rubric was not weakened or rewritten. Full root check: 86/86, zero failures/skips; extension: 7/7. Logs are preserved under doc/evidence/tests. An isolated real desktop VSCode host was rerun after the split: four native screenshots, source-line navigation, live update, malformed input, recovery and unchanged disk hash passed. All four screenshots were visually inspected again: sidebar/editor proportions remain about 24%/76%, labels and source are readable, with no overlap or clipped acceptance information. Every extension source hash is now recorded in the host trace.
+
+No p2 tag is created until the revised code passes the next independent review. Formal Canvas submission remains a separate approval.

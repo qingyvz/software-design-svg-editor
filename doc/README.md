@@ -23,7 +23,7 @@ npm run cli -- --config plugins.config.json
 |---|---|---|
 | `domain/ShapeProvider`：创建与 SVG 恢复 | `domain/ShapeFactory.register/create/fromSvg/validate`；`EditContext.create`、`SvgCodec.importElement` 消费工厂 | 默认 `BuiltinShapeProvider` 适配六类型；可选 `box/BoxProvider`。无 box 时创建报未知类型、带标记的 g 以普通 g 恢复。重复 type 或 SVG key 拒绝；返回 id/tag 不符报错，命令失败不提交草稿。 |
 | `application/Command`／`CommandContribution`：可执行请求、名称／语法／help | `cli/CommandFactory.create` 查注册表，`CommandDispatcher.run` 调 execute；`HelpCommand.execute` 合并贡献文案 | StatsPlugin／DirPlugin 各注册一个命令。无贡献时保留原命令表，相应命令报 `error: unknown command: stats/dir`。参数规则由插件检查，重名被 installer 拒绝。Command 的接收者为泛型，公开 `CommandReceiver` 不泄露 Editor 字段；StatsCommand 只要 DocumentQuery，DirCommand 不接收文档服务。 |
-| `application/TreeDecorator`：每行有序后缀及保存点 | `Editor.tree` → `TreeFormatter.tree/suffix`；`Editor.init/read/save` → `TreeDecorators.checkpoint` | `star/ModifiedStar` 与 `box/BoxTypeLabel`。数组为空时后缀为空、原 tree 字节不变。按注册顺序拼接，重复名拒绝。label 抛错由 CLI 命令边界输出 error；label/handles 须遵守只读契约。 |
+| `application/TreeDecorator`：每行有序后缀及保存点 | `Editor.tree` → `TreeFormatter.tree/suffix`；`Editor.init/read/save` → `TreeDecorators.checkpoint` | `star/ModifiedStar` 与 `box/BoxTypeLabel`。数组为空时后缀为空、原 tree 字节不变。按注册顺序拼接，重复名拒绝。label 抛错由 CLI 命令边界输出 error；运行期 checkpoint 抛错则 warning 并禁用该标签，继续其他回调，已成功 IO 保持成功。注册期异常仍回滚安装；label/handles 须遵守只读契约。 |
 | `application/AttributeHandler`：图形＋属性的领域行为 | `SetCommand.apply` → `EditContext.set` → `AttributeHandlers.set`，始终在 `Editor.executeEdit` 草稿事务内 | `box/BoxAttributes` 处理 fill／label。零命中回原 Shape.set 白名单；多命中先报冲突；单命中执行失败不回落。一次 set 一个 EditRecord，部分失败丢弃草稿并保留 undo/redo。 |
 
 注册事务见 `cli/PluginInstaller.install`：暂存四类贡献，检查贡献格式、类别／名称集合、重名和 SVG key，再登记；提交阶段失败逆序撤销本插件已登记项。只保留已经成功的其他插件。接口不允许插件通过封装外的可变引用偷偷修改实时文档。
@@ -68,7 +68,7 @@ npm run cli -- --config plugins.config.json
 }
 ```
 
-按数组顺序加载；enabled:false 完全跳过；相对模块路径基于配置文件目录，包名使用 Node 解析。options 原样传到 activate(context, options)。内置四插件目前不需业务选项。构建按目录通用复制包元数据，加载器没有插件名称映射。
+按数组顺序加载；enabled:false 完全跳过；相对模块路径基于配置文件目录，裸包名按配置目录的 ESM node/import 条件解析，支持 import-only／双 exports 包。options 原样传到 activate(context, options)。内置四插件目前不需业务选项。构建按目录通用复制包元数据，加载器没有插件名称映射。
 
 模块不存在、无默认导出、manifest 不符、activate 抛错分别输出题目规定的四种 error 文案；同类重名为 `error: duplicate registration: <category>/<name>`。非法配置输出 `error: invalid plugin config` 后用默认能力启动。顶层模块能解析而求值／依赖失败时按加载失败报告。测试逐项断言回滚和后续继续加载，见 `test/plugin-loader.test.ts`。
 
@@ -88,7 +88,7 @@ dir 列进程 cwd 的直接子项，含隐藏项，目录／文件分组后按�
 
 ## 测试与真实结果
 
-2026-11-25 本轮已运行：原 final 隔离检出 50/50；当前 CLI 78/78，无失败／跳过；扩展 Node 测试 7/7；真实 VSCode 1.122.0 视觉宿主验证 passed。后续审查修正后以最终复测记录为准。
+2026-11-25 本轮已运行：原 final 隔离检出 50/50；第二轮修正后 CLI 86/86，无失败／跳过；扩展 Node 测试 7/7；真实 VSCode 1.122.0 视觉宿主验证 passed。后续审查修正后以最终复测记录为准。
 
 | 验证 | 代码与证据 |
 |---|---|
@@ -102,8 +102,9 @@ dir 列进程 cwd 的直接子项，含隐藏项，目录／文件分组后按�
 重新做完整会话检查的辅助步骤（在仓库根，先安装主工程依赖）：
 
 ```sh
+git fetch origin
 git worktree add --detach .runtime/phase1-baseline final
-git worktree add --detach .runtime/ocp-config phase2/box-config-demo
+git worktree add --detach .runtime/ocp-config origin/phase2/box-config-demo
 npm --prefix .runtime/phase1-baseline ci
 npm --prefix .runtime/phase1-baseline run build
 npm --prefix .runtime/ocp-config ci
@@ -112,7 +113,7 @@ npm run build
 node scripts/verify-transcripts.mjs --baseline .runtime/phase1-baseline --config-demo .runtime/ocp-config
 ```
 
-已有辅助工作树时复用对应版本，不重复创建。比较器每次恢复同一固定工作目录、相同原件及目录内容；输入不含提示符，stdout 原始字节保存在工作目录外。测试临时目录、依赖缓存与工作树属于辅助环境，提交时排除；不得把开发机现有依赖当新环境安装通过。
+脚本自动选择本地演示分支或 origin/phase2/* 远端跟踪分支；普通完整克隆不必另建本地 A/B 分支。不要使用省略历史或只取单分支的克隆；若缺 ref，先 fetch 对应演示分支。已有辅助工作树时复用对应版本，不重复创建。比较器每次恢复同一固定工作目录、相同原件及目录内容；输入不含提示符，stdout 原始字节保存在工作目录外。测试临时目录、依赖缓存与工作树属于辅助环境，提交时排除；不得把开发机现有依赖当新环境安装通过。
 
 ## VSCode 实际截图与分析
 

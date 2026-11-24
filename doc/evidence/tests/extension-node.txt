@@ -1,0 +1,53 @@
+
+> svg-explorer-outline@0.1.0 test
+> npm run build && node --test out/test/*.test.js
+
+
+> svg-explorer-outline@0.1.0 build
+> tsc -p tsconfig.json
+
+TAP version 13
+# Subtest: SVG-only Explorer badge, excludes directories with .svg name; no write or rename
+ok 1 - SVG-only Explorer badge, excludes directories with .svg name; no write or rename
+  ---
+  duration_ms: 1.5761
+  ...
+# Subtest: Outline provider maps live document to nested native symbols and exact selection ranges
+ok 2 - Outline provider maps live document to nested native symbols and exact selection ranges
+  ---
+  duration_ms: 7.808
+  ...
+# Subtest: activate registers both host providers and saves disposables
+ok 3 - activate registers both host providers and saves disposables
+  ---
+  duration_ms: 1.2751
+  ...
+# Subtest: nested elements, unnamed leaf, quoted >, comments and accurate UTF-16 ranges
+ok 4 - nested elements, unnamed leaf, quoted >, comments and accurate UTF-16 ranges
+  ---
+  duration_ms: 8.2037
+  ...
+# Subtest: a new parse reflects edit and changed source offsets, without caching the old text
+ok 5 - a new parse reflects edit and changed source offsets, without caching the old text
+  ---
+  duration_ms: 1.3471
+  ...
+# Subtest: incomplete or invalid input clears symbols without throwing
+ok 6 - incomplete or invalid input clears symbols without throwing
+  ---
+  duration_ms: 2.0541
+  ...
+# Subtest: self-closing root, a namespaced leaf and CDATA containing tag-like text
+ok 7 - self-closing root, a namespaced leaf and CDATA containing tag-like text
+  ---
+  duration_ms: 1.1585
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 157.1038

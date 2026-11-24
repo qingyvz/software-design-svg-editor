@@ -8,6 +8,6 @@
 
 一次 SetCommand 只经一次 `Editor.executeEdit`：复制 → 应用 → 校验 → 一条 EditRecord 提交。即使修改多个部件，也只有一个 undo 单元；apply 部分修改后抛错时丢弃草稿，文档、undo/redo 和保存路径保持原状态，不能转入默认处理掩盖失败。成功后一次 undo/redo 整体恢复。
 
-**取舍。** 拒绝多命中比“第一个获胜”容易发现覆盖冲突，比组合处理器减少隐式顺序。复用既有草稿事务，无第二套历史栈。Box.set 保留历史直接注册 BoxProvider 的兼容行为，正式 BoxPlugin 先走独立 BoxAttributes；内核无 box/fill/label 名称分支。
+**取舍。** 拒绝多命中比“第一个获胜”容易发现覆盖冲突，比组合处理器减少隐式顺序。复用既有草稿事务，无第二套历史栈。Box 不再覆盖 Shape.set；box 的 label 与内部 fill 传播只由独立 BoxAttributes 承担。移除处理器后，label 按原白名单拒绝，fill 仍是普通分组属性且不改内部矩形；内核无 box/fill/label 名称分支。
 
-**验证。** 已运行普通矩形 fill、未知 label、box fill/label、0/1/多命中、部分修改抛错和 redo 分支保留等用例。独立 box 测试只装自己的贡献，并逐项检查注册名、内部传播与类型标签。具体运行次数以后续完整复测记录为准。
+**验证。** 已运行普通矩形 fill、未知 label、box fill/label、0/1/多命中、部分修改抛错和 redo 分支保留等用例。独立 box 测试只装自己的贡献，并逐项检查注册名、内部传播与类型标签。`test/review-regressions.test.ts` 另验证卸载处理器后的白名单、redo 保留，以及一次 set 同时修改两部件的一次 undo/redo。完整复测记录见 doc/evidence/tests。

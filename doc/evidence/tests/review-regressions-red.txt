@@ -1,0 +1,182 @@
+TAP version 13
+# Subtest: review: zero handlers use the original whitelist and preserve a redo branch
+not ok 1 - review: zero handlers use the original whitelist and preserve a redo branch
+  ---
+  duration_ms: 15.3498
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\build\\test\\review-regressions.test.js:31:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    +   'g#b updated: label="bypass"'
+    -   'error: unknown attribute: label'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'error: unknown attribute: label'
+  actual:
+    0: 'g#b updated: label="bypass"'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/build/test/review-regressions.test.js:37:12)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.start (node:internal/test_runner/test:877:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: review: successful init isolates a throwing checkpoint and reports it
+not ok 2 - review: successful init isolates a throwing checkpoint and reports it
+  ---
+  duration_ms: 1.2216
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\build\\test\\review-regressions.test.js:46:5'
+  failureType: 'testCodeFailure'
+  error: 'error: boom checkpoint'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/build/test/review-regressions.test.js:59:16)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:677:18)
+    Test.postRun (node:internal/test_runner/test:1090:19)
+    Test.run (node:internal/test_runner/test:1018:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: review: successful read isolates a throwing checkpoint and reports it
+not ok 3 - review: successful read isolates a throwing checkpoint and reports it
+  ---
+  duration_ms: 0.702
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\build\\test\\review-regressions.test.js:46:5'
+  failureType: 'testCodeFailure'
+  error: 'error: boom checkpoint'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/build/test/review-regressions.test.js:59:16)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:677:18)
+    Test.postRun (node:internal/test_runner/test:1090:19)
+    Test.run (node:internal/test_runner/test:1018:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: review: successful save isolates a throwing checkpoint and reports it
+not ok 4 - review: successful save isolates a throwing checkpoint and reports it
+  ---
+  duration_ms: 0.6362
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\build\\test\\review-regressions.test.js:46:5'
+  failureType: 'testCodeFailure'
+  error: 'error: boom checkpoint'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/build/test/review-regressions.test.js:59:16)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:677:18)
+    Test.postRun (node:internal/test_runner/test:1090:19)
+    Test.run (node:internal/test_runner/test:1018:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: review: same-parent order changes do not detach required composite children
+not ok 5 - review: same-parent order changes do not detach required composite children
+  ---
+  duration_ms: 0.9128
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\build\\test\\review-regressions.test.js:73:1'
+  failureType: 'testCodeFailure'
+  error: 'front b-rect'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    ok (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/build/test/review-regressions.test.js:29:16)
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/build/test/review-regressions.test.js:77:5)
+    Test.runInAsyncScope (node:async_hooks:211:14)
+    Test.run (node:internal/test_runner/test:979:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:677:18)
+    Test.postRun (node:internal/test_runner/test:1090:19)
+    Test.run (node:internal/test_runner/test:1018:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: review: one attribute operation affecting two parts is one undo unit
+ok 6 - review: one attribute operation affecting two parts is one undo unit
+  ---
+  duration_ms: 1.1506
+  ...
+# Subtest: review: ESM package resolution selects import conditions (import-only)
+not ok 7 - review: ESM package resolution selects import conditions (import-only)
+  ---
+  duration_ms: 72.1104
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\build\\test\\review-regressions.test.js:104:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + [
+    +   'error: plugin failed to activate: import-only-probe (No "exports" main defined in D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\test-temp\\svg-review-esm-s7ln62\\node_modules\\import-only-probe\\package.json)'
+    + ]
+    - []
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0: 'error: plugin failed to activate: import-only-probe (No "exports" main defined in D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\test-temp\\svg-review-esm-s7ln62\\node_modules\\import-only-probe\\package.json)'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/build/test/review-regressions.test.js:120:20)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: review: ESM package resolution selects import conditions (dual)
+not ok 8 - review: ESM package resolution selects import conditions (dual)
+  ---
+  duration_ms: 74.2978
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\build\\test\\review-regressions.test.js:104:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    +   'wrong require'
+    -   'import works'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'import works'
+  actual:
+    0: 'wrong require'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/build/test/review-regressions.test.js:121:20)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 1
+# fail 7
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 372.2089
