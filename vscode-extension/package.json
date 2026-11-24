@@ -1,0 +1,30 @@
+{
+  "name": "svg-explorer-outline",
+  "displayName": "SVG Explorer Badge and Outline",
+  "description": "Adds an SVG badge to Explorer and document symbols to the native Outline.",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "main": "./out/src/extension.js",
+  "activationEvents": [
+    "onLanguage:xml",
+    "onLanguage:svg",
+    "onStartupFinished"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test out/test/*.test.js",
+    "test:host": "npm run build && node scripts/run-extension-tests.cjs"
+  },
+  "dependencies": {
+    "@xmldom/xmldom": "0.9.12"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.15",
+    "@types/vscode": "1.120.0",
+    "typescript": "5.9.3"
+  }
+}

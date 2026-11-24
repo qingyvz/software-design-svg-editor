@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="220" viewBox="0 0 400 220">
+  <g id="scene">
+    <g id="group">
+      <rect id="start" x="20" y="30" width="120" height="60" fill="#7db7e8"/>
+      <text x="30" y="66">SVG Outline</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run SVG extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": ["--extensionDevelopmentPath=${workspaceFolder}", "${workspaceFolder}/examples"],
+      "preLaunchTask": "Build SVG extension",
+      "outFiles": ["${workspaceFolder}/out/**/*.js"]
+    }
+  ]
+}
