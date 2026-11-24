@@ -80,15 +80,18 @@ export class SvgDocument {
   }
   add(shape: Shape, containerId?: string): void {
     const existing = new Set(this.shapes.map((item) => item.id));
+    const incoming = new Set<string>();
     for (const item of shape.walk()) {
-      if (existing.has(item.id)) throw new Error(`id already exists: ${item.id}`);
-      existing.add(item.id);
+      if (existing.has(item.id) || incoming.has(item.id)) throw new Error(`id already exists: ${item.id}`);
+      incoming.add(item.id);
     }
     (containerId === undefined ? this.root : this.container(containerId)).add(shape);
   }
   delete(id: string): void {
     const shape = this.get(id);
-    this.parent(shape).remove(shape);
+    const parent = this.parent(shape);
+    parent.assertCanDetach?.(shape);
+    parent.remove(shape);
   }
   group(id: string, ids: readonly string[]): Group {
     if (this.shapes.some((shape) => shape.id === id)) throw new Error(`id already exists: ${id}`);
@@ -100,6 +103,7 @@ export class SvgDocument {
         throw new Error(`cannot group a container into its own descendant: ${shape.id}`);
     }
     const ordered = this.shapes.filter((shape) => selected.includes(shape));
+    for (const shape of ordered) this.parent(shape).assertCanDetach?.(shape);
     // 祖先路径从根开始，共同前缀的末端就是最低共同祖先。
     const paths = ordered.map((shape) => this.ancestors(shape));
     let parent: ShapeContainer = this.root;
@@ -144,6 +148,7 @@ export class SvgDocument {
     const shape = this.get(id);
     if ([...shape.walk()].includes(destination))
       throw new Error(`cannot move a container into its own descendant: ${id}`);
+    this.parent(shape).assertCanDetach?.(shape);
     this.parent(shape).remove(shape);
     destination.add(shape);
   }
@@ -161,6 +166,7 @@ export class SvgDocument {
       identities.add(shape);
       if (identifiers.has(shape.id)) throw new Error(`id already exists: ${shape.id}`);
       identifiers.add(shape.id);
+      shape.container?.assertStructure?.();
       for (const child of shape.children) visit(child);
     };
     for (const child of this.children) visit(child);

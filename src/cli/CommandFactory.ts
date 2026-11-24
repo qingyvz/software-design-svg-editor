@@ -23,11 +23,12 @@ import { LayerCommand } from '../application/commands/LayerCommand.js';
 import type { Command } from '../application/Command.js';
 import { Editor } from '../application/Editor.js';
 import { Arguments } from './Arguments.js';
+import { CommandRegistry } from '../application/CommandRegistry.js';
 
 export class CommandFactory {
   private readonly commands = new Map<string, (arguments_: Arguments) => Command>();
 
-  constructor(private readonly editor: Editor) {
+  constructor(private readonly editor: Editor, private readonly registry = new CommandRegistry()) {
     this.register('init', (args) => {
       args.count(0, 2);
       return new InitCommand(
@@ -96,7 +97,7 @@ export class CommandFactory {
     });
     this.register('help', (args) => {
       args.count(0);
-      return new HelpCommand(editor);
+      return new HelpCommand(editor, this.registry.all().map((command) => command.help));
     });
     this.register('undo', (args) => {
       args.count(0);
@@ -140,16 +141,22 @@ export class CommandFactory {
 
   register(name: string, construct: (arguments_: Arguments) => Command): this {
     if (!name || /\s/.test(name)) throw new Error('invalid command name');
-    if (this.commands.has(name)) throw new Error(`command already registered: ${name}`);
+    if (this.has(name)) throw new Error(`command already registered: ${name}`);
     this.commands.set(name, construct);
     return this;
   }
 
   create(name: string, values: readonly string[]): Command {
     const construct = this.commands.get(name);
-    if (!construct) throw new Error(`unknown command: ${name}`);
+    if (!construct) {
+      const extension = this.registry.all().find((command) => command.name === name);
+      if (extension) return extension.create(this.editor, values);
+      throw new Error(`unknown command: ${name}`);
+    }
     return construct(new Arguments(values, name + ' (see help for syntax)'));
   }
+
+  has(name: string): boolean { return this.commands.has(name) || this.registry.has(name); }
 
   private createShape(args: Arguments): Command {
     args.count(2, Number.MAX_SAFE_INTEGER);

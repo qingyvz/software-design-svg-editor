@@ -30,8 +30,8 @@ export class BoxProvider implements ShapeProvider {
     children: readonly Shape[],
   ): Box {
     if (
-      !children.some((child) => child.id === id + '-rect' && child instanceof Rect) ||
-      !children.some((child) => child.id === id + '-label' && child instanceof Text)
+      children.filter((child) => child.id === id + '-rect' && child instanceof Rect).length !== 1 ||
+      children.filter((child) => child.id === id + '-label' && child instanceof Text).length !== 1
     )
       throw new Error(`invalid box structure: ${id}`);
     const box = new Box(id);

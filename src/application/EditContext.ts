@@ -5,6 +5,7 @@ import type { EditScope } from './EditScope.js';
 import { ShapeFormatter } from './ShapeFormatter.js';
 import type { Bounds } from '../domain/Bounds.js';
 import type { BoundsContext } from '../domain/BoundsContext.js';
+import { AttributeHandlers } from './AttributeHandlers.js';
 
 export class EditContext {
   private readonly formatter = new ShapeFormatter();
@@ -12,12 +13,18 @@ export class EditContext {
     private readonly document: SvgDocument,
     private readonly factory: ShapeFactory,
     private readonly scope: EditScope,
+    private readonly handlers: AttributeHandlers = new AttributeHandlers(),
   ) {
     if (!scope.available(document)) throw new Error('active layer no longer exists');
   }
   get(id: string): Shape {
     this.scope.assertEditable(this.document, id);
     return this.document.get(id);
+  }
+  set(id: string, attribute: string, value: string): Shape {
+    const shape = this.get(id);
+    this.handlers.set(shape, attribute, value);
+    return shape;
   }
   bounds(id: string, context: BoundsContext = {}): Bounds | undefined {
     this.get(id);

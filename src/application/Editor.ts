@@ -8,6 +8,9 @@ import { EditContext } from './EditContext.js';
 import type { EditScope } from './EditScope.js';
 import { CanvasScope } from './CanvasScope.js';
 import { LayerScope } from './LayerScope.js';
+import { AttributeHandlers } from './AttributeHandlers.js';
+import { TreeDecorators } from './TreeDecorators.js';
+import { TreeFormatter } from './TreeFormatter.js';
 
 export class Editor {
   private current: SvgDocument | undefined;
@@ -18,6 +21,8 @@ export class Editor {
   constructor(
     private readonly documents: DocumentPort,
     private readonly shapes = new ShapeFactory(),
+    readonly attributes = new AttributeHandlers(),
+    readonly decorators = new TreeDecorators(),
   ) {}
   private requireDocument(): SvgDocument {
     if (!this.current) throw new Error("no document. use 'init' or 'read' first");
@@ -25,6 +30,9 @@ export class Editor {
   }
   inspect(): SvgDocument {
     return this.requireDocument().clone();
+  }
+  tree(id?: string): readonly string[] {
+    return new TreeFormatter(this.decorators.all()).tree(this.inspect(), id);
   }
   get exiting(): boolean {
     return this.exitRequested;
@@ -38,6 +46,7 @@ export class Editor {
     this.path = undefined;
     this.history.barrier();
     this.scope = new CanvasScope();
+    this.decorators.checkpoint(document);
     return [`canvas ${width}x${height} created`];
   }
   read(path: string): readonly string[] {
@@ -47,6 +56,7 @@ export class Editor {
     this.path = path;
     this.history.barrier();
     this.scope = new CanvasScope();
+    this.decorators.checkpoint(this.current);
     return [...loaded.warnings, `read ${path} (${this.current.count} elements)`];
   }
   save(path?: string): readonly string[] {
@@ -56,6 +66,7 @@ export class Editor {
     this.documents.write(destination, document.clone());
     this.path = destination;
     this.history.barrier();
+    this.decorators.checkpoint(document);
     return [`saved to ${destination} (${document.count} elements)`];
   }
   canvas(width?: number, height?: number): readonly string[] {
@@ -73,7 +84,7 @@ export class Editor {
     const before = this.requireDocument(),
       draft = before.clone();
     // 草稿校验通过后再提交，失败时保留原文档和历史。
-    const message = command.apply(new EditContext(draft, this.shapes, this.scope));
+    const message = command.apply(new EditContext(draft, this.shapes, this.scope, this.attributes));
     draft.assertValid();
     const record = new EditRecord(command.description, before, draft);
     this.current = draft;

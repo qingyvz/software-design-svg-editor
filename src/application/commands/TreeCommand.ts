@@ -1,6 +1,5 @@
 import { Command } from '../Command.js';
 import type { Editor } from '../Editor.js';
-import { TreeFormatter } from '../TreeFormatter.js';
 export class TreeCommand extends Command {
   constructor(
     receiver: Editor,
@@ -9,6 +8,6 @@ export class TreeCommand extends Command {
     super(receiver);
   }
   override execute(): readonly string[] {
-    return new TreeFormatter().tree(this.receiver.inspect(), this.id);
+    return this.receiver.tree(this.id);
   }
 }

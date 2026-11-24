@@ -1,0 +1,63 @@
+@startuml
+!pragma layout smetana
+skinparam componentStyle rectangle
+skinparam shadowing false
+left to right direction
+title Phase 2 local working tree (uncommitted): CLI plugins + separate VS Code extension
+component "Main.ts\n--plugins / --box / --config" as Host
+component "PluginLoader + PluginInstaller\nresolve, stage, validate, rollback" as Loader
+component "application ports\nCommand, CommandContribution,\nTreeDecorator, AttributeHandler, PluginContext" as AppPorts
+component "domain port\nShapeProvider" as ShapePort
+component "Editor + TreeFormatter\ntransaction, history, tree rows" as App
+component "domain\nShapeFactory, SvgDocument, Shape" as Domain
+component "CLI\nCommandFactory / Dispatcher / ConsoleApp" as CLI
+component "infrastructure\nSvgCodec, NodeDocumentStore" as Infra
+component "optional plugins\nStats, Dir, Box, Star" as Opt
+component "dir's DirectoryAccess\n(plugin-local port)" as DirPort
+component "NodeDirectoryAccess\n(plugin-local adapter)" as DirAdapter
+component "node:fs / Dirent" as NodeFS
+component "VS Code extension\nactivation + provider registration" as VS
+component "SvgFileDecorations\nFileDecorationProvider" as Badge
+component "SvgOutline\nDocumentSymbolProvider" as Outline
+component "parseSvgSymbols\nDOM validation + source offsets" as SymbolParser
+component "VS Code host\nExplorer, native Outline, buffer" as VSHost
+component "@xmldom/xmldom\nXML parser (shared dependency)" as XML
+Host --> CLI
+Host --> Loader
+Host --> App
+Host --> Domain
+Host --> Infra
+Host --> Opt : code assembly only
+Loader --> AppPorts : inspect manifest; register
+Loader --> Domain : register shape
+CLI --> App
+CLI --> AppPorts : command registry
+App --> AppPorts : call handlers/decorators/commands
+App --> Domain
+Domain --> ShapePort : create/fromSvg
+Infra --> Domain
+Infra --> AppPorts : DocumentPort
+Opt ..> AppPorts : implements
+Opt ..> ShapePort : implements
+Opt --> DirPort : DirCommand (client)
+DirAdapter ..> DirPort : implements
+DirAdapter --> NodeFS : readdirSync, cwd
+VSHost --> VS : activate
+VS --> Badge : register
+VS --> Outline : register
+VSHost --> Badge : URI + fs.stat
+VSHost --> Outline : current TextDocument
+Outline --> SymbolParser : parse text / ranges
+SymbolParser --> XML : validate XML, get id/structure
+Infra --> XML : CLI SVG parsing (separate use)
+note bottom of Host
+  ShapeFactory and CommandFactory still register baseline implementations
+  in their constructors. Separate A/B plugin commits and p2 tag pending.
+end note
+note bottom of VS
+  vscode-extension/src/extension.ts and svgSymbols.ts exist.
+  Node tests 7/7; host-result.json says passed (API behavior only).
+  No actual Explorer/Outline screenshot captured; not delivered.
+  CLI does not depend on the VS Code extension.
+end note
+@enduml

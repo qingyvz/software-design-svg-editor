@@ -1,0 +1,27 @@
+@startuml
+!pragma layout smetana
+skinparam componentStyle rectangle
+skinparam shadowing false
+left to right direction
+title Phase 1 final - observed dependency direction (not Phase 2)
+component "Main\n--box opt-in" as Main
+component "CLI\nCommandFactory/Dispatcher" as CLI
+component "application\nEditor, command objects, history" as App
+component "domain\nShapeFactory, ShapeProvider, model" as Domain
+component "infrastructure\nSvgCodec, NodeDocumentStore" as Infra
+component "optional plugin\nBoxProvider, Box" as Box
+Main --> CLI
+Main --> App
+Main --> Domain
+Main --> Infra
+Main --> Box : if --box
+CLI --> App
+App --> Domain
+Infra --> Domain
+Infra --> App : DocumentPort
+Box --> Domain
+note bottom of CLI
+  Built-in command registrations live in CommandFactory's constructor.
+  No separately verified AttributeHandler / TreeDecorator or config loader.
+end note
+@enduml

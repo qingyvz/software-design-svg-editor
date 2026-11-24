@@ -73,6 +73,15 @@ export class ShapeFactory {
     return this.validate(provider, provider.create(id, parameters), id);
   }
 
+  has(type: string): boolean { return this.providers.has(type); }
+  hasSvg(tag: string, kind?: string): boolean { return this.svgProviders.has(this.svgKey(tag, kind)); }
+  remove(type: string): void {
+    const provider = this.providers.get(type);
+    if (!provider) return;
+    this.providers.delete(type);
+    this.svgProviders.delete(this.svgKey(provider.svgTag, provider.kind));
+  }
+
   fromSvg(
     tag: string,
     id: string,

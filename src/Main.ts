@@ -5,24 +5,53 @@ import { ShapeFactory } from './domain/ShapeFactory.js';
 import { NodeDocumentStore } from './infrastructure/NodeDocumentStore.js';
 import { SvgCodec } from './infrastructure/SvgCodec.js';
 import { ConsoleApp } from './cli/ConsoleApp.js';
-import { BoxProvider } from './plugins/BoxProvider.js';
+import { BoxPlugin } from './plugins/BoxPlugin.js';
+import { StatsPlugin } from './plugins/StatsPlugin.js';
+import { DirPlugin } from './plugins/DirPlugin.js';
+import { StarPlugin } from './plugins/StarPlugin.js';
+import { AttributeHandlers } from './application/AttributeHandlers.js';
+import { TreeDecorators } from './application/TreeDecorators.js';
+import { CommandRegistry } from './application/CommandRegistry.js';
+import { CommandFactory } from './cli/CommandFactory.js';
+import { CommandDispatcher } from './cli/CommandDispatcher.js';
+import { PluginInstaller } from './cli/PluginInstaller.js';
+import { PluginLoader } from './cli/PluginLoader.js';
 
 try {
   const args = process.argv.slice(2);
   let script: string | undefined;
   let withBox = false;
+  let config: string | undefined;
+  let withPlugins = false;
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--box' && !withBox) withBox = true;
+    else if (args[i] === '--plugins' && !withPlugins) withPlugins = true;
+    else if (args[i] === '--config' && config === undefined && args[i + 1] !== undefined)
+      config = args[++i]!;
     else if (args[i] === '--script' && script === undefined && args[i + 1] !== undefined)
       script = args[++i]!;
-    else throw new Error('usage: npm run cli -- [--box] [--script file.txt]');
+    else throw new Error('usage: npm run cli -- [--box] [--plugins] [--config plugins.config.json] [--script file.txt]');
   }
   const shapes = new ShapeFactory();
-  if (withBox) shapes.register(new BoxProvider());
+  const commands = new CommandRegistry();
+  const attributes = new AttributeHandlers();
+  const decorators = new TreeDecorators();
+  const editor = new Editor(new NodeDocumentStore(new SvgCodec(shapes)), shapes, attributes, decorators);
+  const factory = new CommandFactory(editor, commands);
+  const installer = new PluginInstaller(shapes, commands, decorators, attributes, (name) => factory.has(name));
+  const failures: string[] = [];
+  if (withPlugins || withBox) {
+    for (const plugin of withPlugins
+      ? [new StatsPlugin(), new DirPlugin(), new BoxPlugin(), new StarPlugin()]
+      : [new BoxPlugin()]) {
+      const failure = installer.install(plugin);
+      if (failure) failures.push(failure);
+    }
+  }
+  if (config) failures.push(...await new PluginLoader(installer).load(config));
   const input =
     script === undefined ? process.stdin : Readable.from([readFileSync(script, 'utf8')]);
-  const editor = new Editor(new NodeDocumentStore(new SvgCodec(shapes)), shapes);
-  await new ConsoleApp(editor).run(
+  await new ConsoleApp(editor, new CommandDispatcher(editor, factory), failures).run(
     input,
     process.stdout,
     script === undefined && !!process.stdin.isTTY,

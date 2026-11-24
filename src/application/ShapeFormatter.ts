@@ -27,10 +27,8 @@ export class ShapeFormatter {
       const endpoints = `(${take('x1')},${take('y1')}) -> (${take('x2')},${take('y2')})`;
       return `${label}  ${endpoints} ${this.properties(attributes)}`.trimEnd();
     }
-    const kind = shape.container ? attributes.get('data-kind') : undefined;
-    const prefix = kind ? `${label} (${kind})` : label;
     const text = shape.text === null ? '' : ` text=${JSON.stringify(shape.text)}`;
-    return `${prefix}${shape.container ? ' ' : '  '}${this.properties(attributes)}${text}`.trimEnd();
+    return `${label}${shape.container ? ' ' : '  '}${this.properties(attributes)}${text}`.trimEnd();
   }
 
   private properties(attributes: ReadonlyMap<string, string>): string {

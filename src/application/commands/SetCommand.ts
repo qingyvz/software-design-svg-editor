@@ -14,8 +14,7 @@ export class SetCommand extends EditingCommand {
     return `set ${this.id} ${this.attribute}`;
   }
   override apply(document: EditContext): string {
-    const shape = document.get(this.id);
-    shape.set(this.attribute, this.value);
+    const shape = document.set(this.id, this.attribute, this.value);
     return `${document.label(shape)} updated: ${this.attribute}=${JSON.stringify(this.value)}`;
   }
 }

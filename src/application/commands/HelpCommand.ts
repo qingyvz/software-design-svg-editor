@@ -1,7 +1,7 @@
 import { Command } from '../Command.js';
 import type { Editor } from '../Editor.js';
 export class HelpCommand extends Command {
-  constructor(receiver: Editor) {
+  constructor(receiver: Editor, private readonly additions: readonly string[] = []) {
     super(receiver);
   }
   override execute(): readonly string[] {
@@ -21,6 +21,7 @@ export class HelpCommand extends Command {
       'Optional --box plugin: create box <id> <x> <y> <w> <h> "label" [in <gid>]',
       'Common set attributes: fill, stroke, stroke-width; geometry attributes depend on shape.',
       'Text additionally supports: set <id> text "content".',
+      ...this.additions,
     ];
   }
 }

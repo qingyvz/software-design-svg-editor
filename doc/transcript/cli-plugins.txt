@@ -1,0 +1,17 @@
+# Phase 2 stats/dir/tree fixture. Before running, use identical plugin order/options and a fixed temp cwd.
+# Capture logs OUTSIDE cwd so dir does not list its own output log. No svg> prompts are input.
+dir
+init 800 600
+stats
+create g scene
+create box n1 120 100 160 60 "开始" in scene
+create rect r1 10 20 30 40 red in scene
+stats
+tree
+save flowchart-box.svg
+tree
+set n1 label "开始 v2"
+tree
+undo
+tree
+exit

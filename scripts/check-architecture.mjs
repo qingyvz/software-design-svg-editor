@@ -5,7 +5,9 @@ const allowed = {
   application: ['application', 'domain'],
   cli: ['cli', 'application', 'domain'],
   infrastructure: ['infrastructure', 'application', 'domain'],
-  plugins: ['plugins', 'domain'],
+  // Plugins consume the public extension ports owned by application as well as domain abstractions.
+  // They must never depend on the CLI host, infrastructure, or the composition root.
+  plugins: ['plugins', 'application', 'domain'],
 };
 let checked = 0;
 function walk(dir) {

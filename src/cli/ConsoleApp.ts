@@ -6,10 +6,12 @@ export class ConsoleApp {
   constructor(
     private readonly editor: Editor,
     private readonly dispatcher = new CommandDispatcher(editor),
+    private readonly startupErrors: readonly string[] = [],
   ) {}
   async run(input: Readable, output: Writable, interactive: boolean): Promise<void> {
     const reader = createInterface({ input, output, terminal: interactive, crlfDelay: Infinity });
     output.write("svg-editor 0.1 — type 'help' for commands\n");
+    for (const error of this.startupErrors) output.write(error + '\n');
     if (interactive) {
       reader.setPrompt('svg> ');
       reader.prompt();
