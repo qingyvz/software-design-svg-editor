@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { dirname, resolve, isAbsolute, join } from 'node:path';
 import { createRequire } from 'node:module';
+import { resolve as resolveImport } from 'import-meta-resolve';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import type { Plugin, PluginManifest } from '../application/Plugin.js';
 import { PluginInstaller } from './PluginInstaller.js';
@@ -24,7 +25,9 @@ export class PluginLoader {
       try {
         const base = dirname(resolve(configPath));
         const require = createRequire(join(base, 'plugins.config.json'));
-        resolved = require.resolve(specifier.startsWith('.') || isAbsolute(specifier) ? resolve(base, specifier) : specifier);
+        resolved = specifier.startsWith('.') || isAbsolute(specifier)
+          ? require.resolve(resolve(base, specifier))
+          : fileURLToPath(resolveImport(specifier, pathToFileURL(join(base, 'plugins.config.json')).href));
       } catch (error) {
         if (this.isNotFound(error)) { errors.push(`error: plugin not found: ${specifier}`); continue; }
         errors.push(`error: plugin failed to activate: ${specifier} (${this.reason(error)})`);
@@ -73,7 +76,8 @@ export class PluginLoader {
     }
   }
   private isNotFound(error: unknown): boolean {
-    return error instanceof Error && 'code' in error && error.code === 'MODULE_NOT_FOUND';
+    return error instanceof Error && 'code' in error &&
+      ['MODULE_NOT_FOUND', 'ERR_MODULE_NOT_FOUND'].includes(String(error.code));
   }
   private reason(error: unknown): string {
     return (error instanceof Error ? error.message : String(error)).replace(/[\r\n]+/g, ' ');

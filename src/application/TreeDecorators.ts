@@ -13,8 +13,17 @@ export class TreeDecorators {
   }
   remove(name: string): void { this.entries.delete(name); }
   all(): readonly TreeDecorator[] { return [...this.entries.values()]; }
-  checkpoint(document: SvgDocument): void {
+  checkpoint(document: SvgDocument): readonly string[] {
     this.latest = document.clone();
-    for (const decorator of this.entries.values()) decorator.checkpoint?.(document.clone());
+    const warnings: string[] = [];
+    for (const [name, decorator] of this.entries) {
+      try { decorator.checkpoint?.(this.latest.clone()); }
+      catch (error) {
+        this.entries.delete(name);
+        const reason = (error instanceof Error ? error.message : String(error)).replace(/[\r\n]+/g, ' ');
+        warnings.push('warning: tree decorator disabled: ' + name + ' (checkpoint failed: ' + reason + ')');
+      }
+    }
+    return warnings;
   }
 }

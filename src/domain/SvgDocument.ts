@@ -155,8 +155,11 @@ export class SvgDocument {
   reorder(id: string, front: boolean): void {
     const shape = this.get(id),
       parent = this.parent(shape);
-    parent.remove(shape);
-    parent.add(shape, front ? parent.children.length : 0);
+    if (parent.reorder) parent.reorder(shape, front ? parent.children.length - 1 : 0);
+    else {
+      parent.remove(shape);
+      parent.add(shape, front ? parent.children.length : 0);
+    }
   }
   assertValid(): void {
     const identifiers = new Set<string>(),

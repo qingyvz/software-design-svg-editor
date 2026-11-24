@@ -1,3 +1,5 @@
+import { AttributeHandlers } from '../src/application/AttributeHandlers.js';
+import { BoxAttributes } from '../src/plugins/box/BoxAttributes.js';
 import { existsSync } from 'node:fs';
 import { Fixtures } from './Fixtures.js';
 import { test } from 'node:test';
@@ -176,9 +178,11 @@ test('layer transitions keep history, reject missing layers and recover after un
   assert.equal(editor.activeLayer, undefined);
 });
 
-test('injected box provider supports commands, clone history and SVG restoration', () => {
+test('injected box provider and handler support commands, clone history and SVG restoration', () => {
   const factory = Fixtures.shapes().register(new BoxProvider());
-  const editor = Fixtures.editor(new MemoryDocumentStore(), factory);
+  const attributes = new AttributeHandlers();
+  attributes.register(new BoxAttributes());
+  const editor = Fixtures.editor(new MemoryDocumentStore(), factory, attributes);
   const cli = new CommandDispatcher(editor);
   const codec = Fixtures.codec(factory);
   execute(

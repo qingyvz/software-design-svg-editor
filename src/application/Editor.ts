@@ -46,8 +46,8 @@ export class Editor {
     this.path = undefined;
     this.history.barrier();
     this.scope = new CanvasScope();
-    this.decorators.checkpoint(document);
-    return [`canvas ${width}x${height} created`];
+    const warnings = this.decorators.checkpoint(document);
+    return [`canvas ${width}x${height} created`, ...warnings];
   }
   read(path: string): readonly string[] {
     const loaded = this.documents.read(path);
@@ -56,8 +56,8 @@ export class Editor {
     this.path = path;
     this.history.barrier();
     this.scope = new CanvasScope();
-    this.decorators.checkpoint(this.current);
-    return [...loaded.warnings, `read ${path} (${this.current.count} elements)`];
+    const warnings = this.decorators.checkpoint(this.current);
+    return [...loaded.warnings, `read ${path} (${this.current.count} elements)`, ...warnings];
   }
   save(path?: string): readonly string[] {
     const document = this.requireDocument();
@@ -66,8 +66,8 @@ export class Editor {
     this.documents.write(destination, document.clone());
     this.path = destination;
     this.history.barrier();
-    this.decorators.checkpoint(document);
-    return [`saved to ${destination} (${document.count} elements)`];
+    const warnings = this.decorators.checkpoint(document);
+    return [`saved to ${destination} (${document.count} elements)`, ...warnings];
   }
   canvas(width?: number, height?: number): readonly string[] {
     const document = this.requireDocument();

@@ -37,6 +37,14 @@ export class Group extends Shape {
     this.members.splice(index, 1);
     return index;
   }
+  reorder(shape: Shape, index: number): void {
+    const current = this.members.indexOf(shape);
+    if (current < 0) throw new Error('shape is not a child: ' + shape.id);
+    if (!Number.isInteger(index) || index < 0 || index >= this.members.length)
+      throw new Error('invalid child position');
+    this.members.splice(current, 1);
+    this.members.splice(index, 0, shape);
+  }
   override move(dx: number, dy: number): void {
     Numbers.finite(dx, 'dx');
     Numbers.finite(dy, 'dy');
