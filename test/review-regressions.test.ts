@@ -124,3 +124,48 @@ for (const dual of [false, true]) {
     } finally { rmSync(directory, { recursive: true, force: true }); }
   });
 }
+
+for (const target of ['absent.mjs', 'not-a-directory/entry.mjs']) {
+  test('review: missing exports target reports not found and continues (' + target + ')', async () => {
+    const directory = mkdtempSync(join(tmpdir(), 'svg-review-absent-'));
+    try {
+      const packagePath = join(directory, 'node_modules', 'missing-entry');
+      mkdirSync(packagePath, { recursive: true });
+      writeFileSync(join(packagePath, 'package.json'), JSON.stringify({ name: 'missing-entry', type: 'module', exports: { import: './' + target }, contributes: { commands: [] } }));
+      writeFileSync(join(packagePath, 'not-a-directory'), 'a regular file, not a directory');
+      const safe = join(directory, 'safe.mjs');
+      writeFileSync(safe, 'export default class SafePlugin { name = "safe"; contributes = { commands: ["safe"] }; activate(c) { c.registerCommand({name:"safe",help:"safe",create(){return {execute(){return ["safe works"];}};}}); } }');
+      const config = join(directory, 'plugins.config.json');
+      writeFileSync(config, JSON.stringify({ plugins: [{ module: 'missing-entry' }, { module: safe }] }));
+      const h = harness();
+      assert.deepEqual(await new PluginLoader(h.installer).load(config), ['error: plugin not found: missing-entry']);
+      assert.deepEqual(h.cli.run('safe'), ['safe works']);
+    } finally { rmSync(directory, { recursive: true, force: true }); }
+  });
+}
+
+for (const inside of [false, true]) {
+  test('review: package manifest is authoritative with configuration ' + (inside ? 'inside' : 'outside') + ' its package', async () => {
+    for (const correct of [false, true]) {
+      const directory = mkdtempSync(join(tmpdir(), 'svg-review-manifest-'));
+      try {
+        const packagePath = join(directory, 'node_modules', 'manifest-location');
+        mkdirSync(packagePath, { recursive: true });
+        writeFileSync(join(packagePath, 'package.json'), JSON.stringify({ name: 'manifest-location', type: 'module', exports: { import: './plugin.mjs' }, contributes: { commands: [correct ? 'probe' : 'declared'] } }));
+        writeFileSync(join(packagePath, 'plugin.mjs'), 'export default class ProbePlugin { name="manifest-location"; contributes={commands:["probe"]}; activate(c){c.registerCommand({name:"probe",help:"probe",create(){return {execute(){return ["probe works"];}};}});} }');
+        const config = join(inside ? packagePath : directory, 'plugins.config.json');
+        writeFileSync(config, JSON.stringify({ plugins: [{ module: 'manifest-location' }] }));
+        const h = harness();
+        const errors = await new PluginLoader(h.installer).load(config);
+        if (correct) {
+          assert.deepEqual(errors, []);
+          assert.deepEqual(h.cli.run('probe'), ['probe works']);
+        } else {
+          assert.equal(errors.length, 1);
+          assert.match(errors[0]!, /^error: plugin manifest mismatch: manifest-location /);
+          assert.deepEqual(h.cli.run('probe'), ['error: unknown command: probe']);
+        }
+      } finally { rmSync(directory, { recursive: true, force: true }); }
+    }
+  });
+}

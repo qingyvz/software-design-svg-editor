@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, statSync } from 'node:fs';
 import { dirname, resolve, isAbsolute, join } from 'node:path';
 import { createRequire } from 'node:module';
 import { resolve as resolveImport } from 'import-meta-resolve';
@@ -28,6 +28,9 @@ export class PluginLoader {
         resolved = specifier.startsWith('.') || isAbsolute(specifier)
           ? require.resolve(resolve(base, specifier))
           : fileURLToPath(resolveImport(specifier, pathToFileURL(join(base, 'plugins.config.json')).href));
+        // ESM resolution can return a URL for an exports target that does not exist.
+        // Check only this top-level entry here; dependency/evaluation errors belong below.
+        statSync(resolved);
       } catch (error) {
         if (this.isNotFound(error)) { errors.push(`error: plugin not found: ${specifier}`); continue; }
         errors.push(`error: plugin failed to activate: ${specifier} (${this.reason(error)})`);
@@ -46,7 +49,7 @@ export class PluginLoader {
         if (!plugin || typeof plugin.activate !== 'function') throw new Error('invalid default plugin');
         // Package metadata is authoritative when provided by a package; a relative
         // module may export its manifest directly or on the plugin object.
-        const manifest = this.packageManifest(resolved, dirname(resolve(configPath))) ?? module.contributes ?? plugin.contributes;
+        const manifest = this.packageManifest(resolved) ?? module.contributes ?? plugin.contributes;
         const candidate: Plugin = { name: typeof module.name === 'string' ? module.name : plugin.name,
           contributes: manifest as PluginManifest, activate: (context, options) => plugin.activate(context, options) };
         const failure = this.installer.install(candidate, entry.options);
@@ -55,15 +58,14 @@ export class PluginLoader {
     }
     return errors;
   }
-  private packageManifest(resolved: string, configDirectory: string): unknown {
+  private packageManifest(resolved: string): unknown {
     // Only the nearest plugin package's own contributes is authoritative;
     // the application package.json is not a manifest for relative modules.
     let directory = dirname(resolved);
-    const configPackage = join(configDirectory, 'package.json');
     const appPackage = fileURLToPath(new URL('../../../package.json', import.meta.url));
     for (;;) {
       const packagePath = resolve(directory, 'package.json');
-      if (packagePath === configPackage || packagePath === appPackage) return undefined;
+      if (packagePath === appPackage) return undefined;
       try {
         const p = JSON.parse(readFileSync(packagePath, 'utf8')) as { contributes?: unknown };
         return p.contributes;
@@ -77,7 +79,7 @@ export class PluginLoader {
   }
   private isNotFound(error: unknown): boolean {
     return error instanceof Error && 'code' in error &&
-      ['MODULE_NOT_FOUND', 'ERR_MODULE_NOT_FOUND'].includes(String(error.code));
+      ['MODULE_NOT_FOUND', 'ERR_MODULE_NOT_FOUND', 'ENOENT', 'ENOTDIR'].includes(String(error.code));
   }
   private reason(error: unknown): string {
     return (error instanceof Error ? error.message : String(error)).replace(/[\r\n]+/g, ' ');
