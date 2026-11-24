@@ -1,7 +1,8 @@
 import { readFileSync, statSync } from 'node:fs';
 import { dirname, resolve, isAbsolute, join } from 'node:path';
 import { createRequire } from 'node:module';
-import { resolve as resolveImport } from 'import-meta-resolve';
+import type { ModuleResolver } from './ModuleResolver.js';
+import { NodeModuleResolver } from './NodeModuleResolver.js';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import type { Plugin, PluginManifest } from '../application/Plugin.js';
 import { PluginInstaller } from './PluginInstaller.js';
@@ -9,7 +10,8 @@ import { PluginInstaller } from './PluginInstaller.js';
 interface ConfigEntry { module: string; enabled?: boolean; options?: unknown }
 
 export class PluginLoader {
-  constructor(private readonly installer: PluginInstaller) {}
+  constructor(private readonly installer: PluginInstaller,
+    private readonly modules: ModuleResolver = new NodeModuleResolver()) {}
   async load(configPath: string): Promise<readonly string[]> {
     let entries: ConfigEntry[];
     try {
@@ -27,7 +29,7 @@ export class PluginLoader {
         const require = createRequire(join(base, 'plugins.config.json'));
         resolved = specifier.startsWith('.') || isAbsolute(specifier)
           ? require.resolve(resolve(base, specifier))
-          : fileURLToPath(resolveImport(specifier, pathToFileURL(join(base, 'plugins.config.json')).href));
+          : fileURLToPath(this.modules.resolve(specifier, pathToFileURL(join(base, 'plugins.config.json')).href));
         // ESM resolution can return a URL for an exports target that does not exist.
         // Check only this top-level entry here; dependency/evaluation errors belong below.
         statSync(resolved);

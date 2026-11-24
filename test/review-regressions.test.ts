@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { Fixtures } from './Fixtures.js';
 import { MemoryDocumentStore } from './MemoryDocumentStore.js';
@@ -247,3 +248,44 @@ test('review: malformed package metadata cannot fall back to an instance manifes
     } finally { rmSync(directory, { recursive: true, force: true }); }
   }
 });
+
+for (const variant of [
+  { name: 'default module-sync', condition: 'module-sync', args: [] },
+  { name: 'default node-addons', condition: 'node-addons', args: [] },
+  { name: 'conditions equals', condition: 'course-test', args: ['--conditions=course-test'] },
+  { name: 'conditions pair', condition: 'course-test', args: ['--conditions', 'course-test'] },
+  { name: 'short condition', condition: 'course-test', args: ['-C', 'course-test'] },
+  { name: 'NODE_OPTIONS condition', condition: 'course-test', args: [], nodeOptions: '--conditions=course-test' },
+  { name: 'disabled addons', condition: 'node-addons', args: ['--no-addons'] },
+  { name: 'disabled module-sync', condition: 'module-sync', args: ['--no-experimental-require-module'] },
+]) {
+  test('review: loader matches native Node resolution for ' + variant.name, () => {
+    const directory = mkdtempSync(join(tmpdir(), 'svg-review-native-'));
+    try {
+      const packagePath = join(directory, 'node_modules', 'native-condition');
+      mkdirSync(packagePath, { recursive: true });
+      writeFileSync(join(packagePath, 'package.json'), JSON.stringify({ name: 'native-condition', type: 'module',
+        exports: { [variant.condition]: './preferred.mjs', import: './fallback.mjs' }, contributes: { commands: ['probe'] } }));
+      for (const marker of ['preferred', 'fallback']) {
+        writeFileSync(join(packagePath, marker + '.mjs'), 'export const selected=' + JSON.stringify(marker) + '; export default class P { name="native-condition"; contributes={commands:["probe"]}; activate(c){c.registerCommand({name:"probe",help:"probe",create(){return {execute(){return [' + JSON.stringify(marker) + '];}};}});} }');
+      }
+      const config = join(directory, 'plugins.config.json');
+      writeFileSync(config, JSON.stringify({ plugins: [{ module: 'native-condition' }] }));
+      const imports = [
+        ['Fixtures','test/Fixtures.js'], ['AttributeHandlers','src/application/AttributeHandlers.js'],
+        ['TreeDecorators','src/application/TreeDecorators.js'], ['CommandRegistry','src/application/CommandRegistry.js'],
+        ['CommandFactory','src/cli/CommandFactory.js'], ['CommandDispatcher','src/cli/CommandDispatcher.js'],
+        ['PluginInstaller','src/cli/PluginInstaller.js'], ['PluginLoader','src/cli/PluginLoader.js'],
+      ].map(([name, file]) => 'import {' + name + '} from ' + JSON.stringify(pathToFileURL(resolve('build', file!)).href) + ';').join('\n');
+      const driver = join(directory, 'driver.mjs');
+      writeFileSync(driver, imports + '\nconst shapes=Fixtures.shapes(),attributes=new AttributeHandlers(),decorators=new TreeDecorators(),commands=new CommandRegistry(); const editor=Fixtures.editor(undefined,shapes,attributes,decorators),factory=new CommandFactory(editor,commands); const installer=new PluginInstaller(shapes,commands,decorators,attributes,n=>factory.has(n)); const expected=(await import("native-condition")).selected; const errors=await new PluginLoader(installer).load(' + JSON.stringify(config) + '); const actual=new CommandDispatcher(editor,factory).run("probe")[0]; console.log(JSON.stringify({expected,actual,errors}));');
+      const env = { ...process.env };
+      if (variant.nodeOptions) env.NODE_OPTIONS = [env.NODE_OPTIONS, variant.nodeOptions].filter(Boolean).join(' ');
+      const child = spawnSync(process.execPath, [...variant.args, driver], { cwd: directory, encoding: 'utf8', env, timeout: 60000 });
+      assert.equal(child.status, 0, child.stderr);
+      const result = JSON.parse(child.stdout.trim()) as { expected: string; actual: string; errors: string[] };
+      assert.deepEqual(result.errors, []);
+      assert.equal(result.actual, result.expected);
+    } finally { rmSync(directory, { recursive: true, force: true }); }
+  });
+}

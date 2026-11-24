@@ -1,13 +1,15 @@
 # ADR 004：清单、双装配与原子注册
 
-状态：已实现，独立 A/B 提交与会话检查已生成。来源：Phase 2 §6。
+状态：已实现。来源：Phase 2 §6。
 
-**决定。** PluginContext 只允许提交四类贡献。激活时先暂存，不直接写正式表。随后核对对象格式、稳定注册名、同类重名、声明／实际类别与名称集合，以及 ShapeProvider 的 SVG key。所有检查通过才逐表登记，登记阶段异常则逆序撤销本插件已登记项。已成功插件保留，宿主继续加载后面的插件。
+**装配与事务。** 代码和配置装配共用 PluginInstaller.install。激活只向 PluginContext 暂存四类贡献；随后检查格式、稳定名称、同类重名、声明／实际类别与名称集合及 SVG key，再登记。登记异常逆序撤销本插件已登记项；保留先前成功插件并继续后续插件。默认提供器由宿主选择，内核不因新增可选插件而修改。
 
-代码装配和配置装配共用 PluginInstaller.install。前者在组合根实例化类，后者按配置数组解析／加载类或实例，options 原样传入 activate。enabled:false 完全跳过。相对路径基于配置文件所在目录，保留原文件／目录路径简写；裸包名以该目录为 parent，按 ESM 的 node/import 条件选择 exports，支持仅 import 和双条件包；每个独立包在 package.json/contributes 声明贡献，构建通用复制元数据。读取最近插件包清单时只跳过真实宿主自己的 package.json；配置目录不能作为宿主身份，配置放包内或包外时包清单都具有相同权威。清单来源优先级为：最近包中显式 contributes 字段 → 模块显式导出 → 插件实例字段。只有来源未提供时才选择下一项；显式 null 等无效值交统一 Installer 校验，不能回落到另一份合法声明。四类列表缺省／undefined 为空，显式 null 不是列表，应报清单不符。已有 package.json 必须是 JSON 对象；仅文件不存在时继续向父目录查找，解析、权限等错误交加载失败边界，不能伪装成没有元数据。加载器不枚举插件名。
+**模块解析。** 按配置数组顺序处理，enabled:false 完全跳过，options 原样传入 activate。相对文件／目录简写保留原行为，基于配置目录；裸包名经宿主 ModuleResolver 解析。NodeModuleResolver 使用 process.execPath 启动 NodeResolveWorker，worker 的 import.meta.resolve 指定配置目录为 parent。只在该短时子进程开启 parent 参数所需的实验开关，用户不用设置全局选项；继承 NODE_OPTIONS，并转发 conditions／-C、addons、require-module、symlink 相关运行参数。解析不执行插件；真正 import 和 activate 均在宿主内完成。
 
-加载器分别报告模块不存在、无默认导出、清单不一致、激活失败；同类重名使用题目规定的类别／名称消息。解析后先检查顶层目标：缺失入口（包括 exports 指向缺失文件或路径中间项不是目录）归为 plugin not found；权限等其他检查异常归为加载失败。入口存在后的模块求值或依赖失败归为加载失败，不重新套用顶层缺失分类。配置语法／结构非法输出 invalid plugin config，并继续默认能力。
+**清单权威。** 独立包各有 package.json/contributes，构建通用复制，不按插件名映射。仅跳过真实宿主自己的包元数据，配置放包内或包外不改变校验。清单来源依次为最近包的显式 contributes 字段、模块显式导出、实例字段；仅未提供来源时才回落。显式 null 等无效声明交统一校验。四类列表缺省／undefined 为空，null 不是列表。已有 package.json 必须是 JSON 对象；仅 ENOENT 继续向父查找，格式／权限错误报告加载失败。
 
-**取舍。** 只预先建立临时列表仍不足以保证登记原子性，提交阶段同样要跟踪并撤销。只比较数量会放过错名／错类，故按类别和名称集合核验。默认提供器由宿主装配，内核不因可选插件新增而更改。不能先以 require 条件选文件再 dynamic import，否则会拒绝合法的 import-only 包或选错双条件入口。Node 22.14 内置 import.meta.resolve 的自定义 parent 需要实验参数，因此锁定 import-meta-resolve 4.2.0 解析裸包，避免要求用户启用全局实验选项；使用默认 node/import 条件，不声称处理任意自定义 CLI conditions。依据：[Node 22.14 ESM 文档](https://github.com/nodejs/node/blob/v22.14.0/doc/api/esm.md)、[解析器说明](https://github.com/wooorm/import-meta-resolve/blob/main/readme.md)。
+**失败边界。** 解析后检查顶层目标；缺失入口（含 exports 缺失文件和 ENOTDIR）报告 plugin not found。入口存在后的依赖、求值、元数据或激活错误报告 failed to activate。无默认导出、清单不符、同类重名使用题目规定格式。配置非法报告 invalid plugin config 后以默认能力启动。worker 启动失败提示重新构建／检查 Node，按加载失败处理；超时为 10 秒，不误报插件不存在。
 
-**验证。** `test/plugin-loader.test.ts` 覆盖四失败、options、路径／包解析、禁用、重名、SVG key 冲突、getter 读取异常、提交异常回滚和后续继续加载。A/B 共有框架父提交 de82fe9；A=fafb2ba 只额外改 Main，B=06900b9 只改配置；scripts/verify-transcripts.mjs 校验路径存在、空 diff、新包一致及三类会话逐字节相同。测试原始结果而非静态搜索是结论依据。`review-regressions.test.ts` 建立 import-only 与双 exports 包，先用同一 Node 的普通 import 作阳性对照，再断言加载器选择 import 入口。后续用缺失 exports 目标／ENOTDIR、后续健康插件、正确／冲突清单及包内／包外配置验证错误分类、继续加载与清单权威不变。另有六组 null 包清单入口／位置、模块 null、四类别 null／缺省对照及损坏 JSON／非对象元数据测试；红日志和完整回归保留在 doc/evidence/tests。
+**取舍。** 预检和提交阶段都要保证原子性；仅比贡献数量会漏过错名／错类。包解析也不能把 require 规则或一份手写条件表当作实际 ESM 环境。原生 Node 的默认条件包含运行参数相关的 module-sync、node-addons 等；隔离 worker 直接复用当前引擎，代价是每次裸包解析有一次进程启动。worker 是独立 TypeScript 源码，所有分支均参与源码指标，不在字符串里隐藏执行逻辑。依据：[Node 22.14 ESM 文档](https://github.com/nodejs/node/blob/v22.14.0/doc/api/esm.md)、[原生条件初始化源码](https://github.com/nodejs/node/blob/v22.14.0/lib/internal/modules/esm/utils.js)。
+
+**验证。** plugin-loader 与 review-regressions 测试覆盖四失败、禁用/options、路径／包、全部类别的重名／回滚／继续加载、空值与缺省、损坏 JSON、包内／包外清单权威、缺入口与依赖失败分类。八组公开 Loader 与原生 import 对照涵盖默认 module-sync／node-addons、conditions 三种写法、NODE_OPTIONS 及禁用控制。旧解析器先失败六组，新实现全部通过；红日志在 doc/evidence/tests。A=fafb2ba、B=06900b9 有同一无 box 框架父提交 de82fe9；verify-transcripts 校验真实路径、既有运行代码差异、新包一致及三类会话字节相同。

@@ -6,6 +6,9 @@ left to right direction
 title Phase 2 - explicit host composition and abstract extension contracts
 component "Main + DefaultShapes\ncomposition root" as Host
 component "PluginLoader / PluginInstaller\nresolve, stage, validate, rollback" as Loader
+component "ModuleResolver\nhost port" as ModulePort
+component "NodeModuleResolver\nnative runtime adapter" as ModuleAdapter
+component "NodeResolveWorker\nresolve-only Node process" as ModuleWorker
 component "application public contracts\nCommand / CommandReceiver / DocumentQuery\nTreeDecorator / AttributeHandler / PluginContext" as Ports
 component "domain contracts\nShapeProvider / Shape / ShapeContainer" as ShapePorts
 component "application\nEditor / history / draft transaction\nTreeFormatter" as App
@@ -27,6 +30,10 @@ Host --> Plugins : code assembly
 Host --> Loader : config assembly
 Loader --> Ports
 Loader --> ShapePorts
+Loader --> ModulePort
+Loader --> ModuleAdapter : default host adapter
+ModuleAdapter ..> ModulePort : implements
+ModuleAdapter --> ModuleWorker : JSON request / URL or error
 CLI --> Ports
 App --> Ports
 App --> Domain
