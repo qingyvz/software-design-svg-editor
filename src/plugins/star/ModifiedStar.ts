@@ -23,6 +23,6 @@ export class ModifiedStar implements TreeDecorator {
       return JSON.stringify([document.width, document.height, document.viewBox, document.children.map((s) => this.signature(s))]);
     }
     const shape = target as Shape;
-    return JSON.stringify([shape.id, shape.tag, [...shape.attributes], shape.text, shape.children.map((s) => this.signature(s))]);
+    return JSON.stringify([shape.id, shape.tag, [...shape.attributes].sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0), shape.text, shape.children.map((s) => this.signature(s))]);
   }
 }

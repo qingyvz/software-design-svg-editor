@@ -26,3 +26,10 @@ From the box-free independent-package milestone, add src/plugins/box (provider, 
 ## Combine both composition modes for delivery
 
 Retain both immutable demonstration branches. The delivery branch keeps A's code assembly and adds the configuration from B, so both supported entry points activate the same four packages. A and B remain separate historical experiments; their per-commit source diffs are not replaced by this combined delivery state.
+
+
+## Semantic dirty regression and standalone plugin tests
+
+Added one independently runnable test file per optional plugin. Each imports only its own optional package and public kernel/test assembly. A reordered Map with identical geometry/style reproduced a false star (expected empty suffix, actual ` *`); the failing run is preserved in doc/evidence/tests/star-before-fix.txt. Sort attributes by key inside the star signature; child ordering remains significant. This is a defect fix, not a claim that adding tests alone proves correctness.
+
+Actual VS Code 1.122.0 visual validation now records Explorer badge exclusions, native Outline clicks to source line 4, unsaved ID update, malformed XML empty Outline, recovery and unchanged disk hash. The first image-preview screenshot was rejected; text-editor selection, auxiliary-bar closure and native pane collapse corrected the evidence layout. The auxiliary script also had to normalize an undefined native-symbol response to an empty list; this was a test-hook failure, not an extension crash.
