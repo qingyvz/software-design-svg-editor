@@ -68,7 +68,7 @@ npm run cli -- --config plugins.config.json
 }
 ```
 
-按数组顺序加载；enabled:false 完全跳过；相对模块路径基于配置文件目录，裸包名由同版本 Node 的原生 ESM 解析器按配置目录处理，覆盖 import-only／双 exports、module-sync／node-addons 及运行条件；宿主的 NodeModuleResolver 调用独立编译的 NodeResolveWorker，用户无需全局实验配置。options 原样传到 activate(context, options)。内置四插件目前不需业务选项。构建按目录通用复制包元数据，加载器没有插件名称映射。
+按数组顺序加载；enabled:false 完全跳过；相对模块路径基于配置文件目录，裸包名由同版本 Node 的原生 ESM 解析器按配置目录处理，覆盖 import-only／双 exports、module-sync／node-addons 及运行条件；宿主的 NodeModuleResolver 调用独立编译的 NodeResolveWorker，用户无需全局实验配置。完整解析 URL 保留查询／片段与模块缓存身份，本地路径只用于文件检查及元数据读取。options 原样传到 activate(context, options)。内置四插件目前不需业务选项。构建按目录通用复制包元数据，加载器没有插件名称映射。
 
 模块不存在、无默认导出、manifest 不符、activate 抛错分别输出题目规定的四种 error 文案；同类重名为 `error: duplicate registration: <category>/<name>`。非法配置输出 `error: invalid plugin config` 后用默认能力启动。顶层入口不存在（含 exports 指向缺失文件）报告 plugin not found；入口存在后的求值／依赖失败按加载失败报告。插件包清单不因配置文件同目录而跳过，只排除宿主自己的包元数据。清单来源按字段是否提供选择，显式 null 不回落；类别 null 非法，缺省类别为空。已有包元数据损坏或读取失败时报告加载失败。测试逐项断言回滚和后续继续加载，见 `test/plugin-loader.test.ts`。
 
@@ -88,7 +88,7 @@ dir 列进程 cwd 的直接子项，含隐藏项，目录／文件分组后按�
 
 ## 测试与真实结果
 
-2026-11-25 本轮已运行：原 final 隔离检出 50/50；当前 CLI 110/110，无失败／跳过；扩展 Node 测试 7/7；真实 VSCode 1.122.0 视觉宿主验证 passed。后续审查修正后以最终复测记录为准。
+2026-11-25 本轮已运行：原 final 隔离检出 50/50；当前 CLI 114/114，无失败／跳过；扩展 Node 测试 7/7；真实 VSCode 1.122.0 视觉宿主验证 passed。后续审查修正后以最终复测记录为准。
 
 | 验证 | 代码与证据 |
 |---|---|

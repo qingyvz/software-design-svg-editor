@@ -289,3 +289,43 @@ for (const variant of [
     } finally { rmSync(directory, { recursive: true, force: true }); }
   });
 }
+
+for (const suffix of ['?via=exports', '#detail', '?via=exports#detail']) {
+  test('review: resolved module URL retains query and fragment (' + suffix + ')', async () => {
+    const directory = mkdtempSync(join(tmpdir(), 'svg-review-url-'));
+    try {
+      const packagePath = join(directory, 'node_modules', 'url-identity');
+      mkdirSync(packagePath, { recursive: true });
+      writeFileSync(join(packagePath, 'package.json'), JSON.stringify({ name: 'url-identity', type: 'module', exports: './plugin.mjs' + suffix, contributes: { commands: ['probe'] } }));
+      writeFileSync(join(packagePath, 'plugin.mjs'), 'export const marker=new URL(import.meta.url).search+new URL(import.meta.url).hash; export default class P {name="url-identity";contributes={commands:["probe"]};activate(c){c.registerCommand({name:"probe",help:"probe",create(){return {execute(){return [marker];}};}});}}');
+      const config = join(directory, 'plugins.config.json');
+      writeFileSync(config, JSON.stringify({ plugins: [{ module: 'url-identity' }] }));
+      const native = spawnSync(process.execPath, ['--input-type=module','-e','import("url-identity").then(p=>process.stdout.write(p.marker))'], { cwd: directory, encoding: 'utf8' });
+      assert.equal(native.status, 0, native.stderr);
+      assert.equal(native.stdout, suffix);
+      const h = harness();
+      assert.deepEqual(await new PluginLoader(h.installer).load(config), []);
+      assert.deepEqual(h.cli.run('probe'), [native.stdout]);
+    } finally { rmSync(directory, { recursive: true, force: true }); }
+  });
+}
+
+test('review: different URLs for one file keep separate native module identities', async () => {
+  const directory = mkdtempSync(join(tmpdir(), 'svg-review-url-cache-'));
+  try {
+    const packagePath = join(directory, 'node_modules', 'url-cache');
+    mkdirSync(packagePath, { recursive: true });
+    writeFileSync(join(packagePath, 'package.json'), JSON.stringify({ name: 'url-cache', type: 'module',
+      exports: { './one': './plugin.mjs?id=one', './two': './plugin.mjs?id=two' } }));
+    writeFileSync(join(packagePath, 'plugin.mjs'), 'export const mode=new URL(import.meta.url).searchParams.get("id")??"lost"; export const name="url-"+mode; export const contributes={commands:[mode]}; export default class P {name=name;contributes=contributes;activate(c){c.registerCommand({name:mode,help:mode,create(){return {execute(){return [mode];}};}});}}');
+    const config = join(directory, 'plugins.config.json');
+    writeFileSync(config, JSON.stringify({ plugins: [{ module: 'url-cache/one' }, { module: 'url-cache/two' }] }));
+    const native = spawnSync(process.execPath, ['--input-type=module','-e','Promise.all([import("url-cache/one"),import("url-cache/two")]).then(p=>process.stdout.write(p.map(x=>x.mode).join(",")))'], { cwd: directory, encoding: 'utf8' });
+    assert.equal(native.status, 0, native.stderr);
+    assert.equal(native.stdout, 'one,two');
+    const h = harness();
+    assert.deepEqual(await new PluginLoader(h.installer).load(config), []);
+    assert.deepEqual(h.cli.run('one'), ['one']);
+    assert.deepEqual(h.cli.run('two'), ['two']);
+  } finally { rmSync(directory, { recursive: true, force: true }); }
+});

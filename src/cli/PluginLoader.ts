@@ -24,12 +24,17 @@ export class PluginLoader {
       if (entry.enabled === false) continue;
       const specifier = entry.module;
       let resolved: string;
+      let moduleUrl: string;
       try {
         const base = dirname(resolve(configPath));
         const require = createRequire(join(base, 'plugins.config.json'));
-        resolved = specifier.startsWith('.') || isAbsolute(specifier)
-          ? require.resolve(resolve(base, specifier))
-          : fileURLToPath(this.modules.resolve(specifier, pathToFileURL(join(base, 'plugins.config.json')).href));
+        if (specifier.startsWith('.') || isAbsolute(specifier)) {
+          resolved = require.resolve(resolve(base, specifier));
+          moduleUrl = pathToFileURL(resolved).href;
+        } else {
+          moduleUrl = this.modules.resolve(specifier, pathToFileURL(join(base, 'plugins.config.json')).href);
+          resolved = fileURLToPath(moduleUrl);
+        }
         // ESM resolution can return a URL for an exports target that does not exist.
         // Check only this top-level entry here; dependency/evaluation errors belong below.
         statSync(resolved);
@@ -39,7 +44,7 @@ export class PluginLoader {
         continue;
       }
       try {
-        const loaded: unknown = await import(pathToFileURL(resolved).href);
+        const loaded: unknown = await import(moduleUrl);
         if (!loaded || typeof loaded !== 'object' || !('default' in loaded)) {
           errors.push(`error: plugin has no default export: ${specifier}`);
           continue;

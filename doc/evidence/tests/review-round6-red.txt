@@ -1,0 +1,277 @@
+TAP version 13
+# Subtest: review: zero handlers use the original whitelist and preserve a redo branch
+ok 1 - review: zero handlers use the original whitelist and preserve a redo branch
+  ---
+  duration_ms: 12.788
+  ...
+# Subtest: review: successful init isolates a throwing checkpoint and reports it
+ok 2 - review: successful init isolates a throwing checkpoint and reports it
+  ---
+  duration_ms: 1.6929
+  ...
+# Subtest: review: successful read isolates a throwing checkpoint and reports it
+ok 3 - review: successful read isolates a throwing checkpoint and reports it
+  ---
+  duration_ms: 1.1563
+  ...
+# Subtest: review: successful save isolates a throwing checkpoint and reports it
+ok 4 - review: successful save isolates a throwing checkpoint and reports it
+  ---
+  duration_ms: 0.7854
+  ...
+# Subtest: review: same-parent order changes do not detach required composite children
+ok 5 - review: same-parent order changes do not detach required composite children
+  ---
+  duration_ms: 1.9836
+  ...
+# Subtest: review: one attribute operation affecting two parts is one undo unit
+ok 6 - review: one attribute operation affecting two parts is one undo unit
+  ---
+  duration_ms: 1.3596
+  ...
+# Subtest: review: ESM package resolution selects import conditions (import-only)
+ok 7 - review: ESM package resolution selects import conditions (import-only)
+  ---
+  duration_ms: 172.646
+  ...
+# Subtest: review: ESM package resolution selects import conditions (dual)
+ok 8 - review: ESM package resolution selects import conditions (dual)
+  ---
+  duration_ms: 153.6187
+  ...
+# Subtest: review: missing exports target reports not found and continues (absent.mjs)
+ok 9 - review: missing exports target reports not found and continues (absent.mjs)
+  ---
+  duration_ms: 97.2525
+  ...
+# Subtest: review: missing exports target reports not found and continues (not-a-directory/entry.mjs)
+ok 10 - review: missing exports target reports not found and continues (not-a-directory/entry.mjs)
+  ---
+  duration_ms: 100.3246
+  ...
+# Subtest: review: package manifest is authoritative with configuration outside its package
+ok 11 - review: package manifest is authoritative with configuration outside its package
+  ---
+  duration_ms: 187.8845
+  ...
+# Subtest: review: package manifest is authoritative with configuration inside its package
+ok 12 - review: package manifest is authoritative with configuration inside its package
+  ---
+  duration_ms: 177.5321
+  ...
+# Subtest: review: explicit null package manifest is rejected (outside, bare)
+ok 13 - review: explicit null package manifest is rejected (outside, bare)
+  ---
+  duration_ms: 90.7958
+  ...
+# Subtest: review: explicit null package manifest is rejected (outside, file)
+ok 14 - review: explicit null package manifest is rejected (outside, file)
+  ---
+  duration_ms: 19.466
+  ...
+# Subtest: review: explicit null package manifest is rejected (inside, bare)
+ok 15 - review: explicit null package manifest is rejected (inside, bare)
+  ---
+  duration_ms: 97.8619
+  ...
+# Subtest: review: explicit null package manifest is rejected (inside, file)
+ok 16 - review: explicit null package manifest is rejected (inside, file)
+  ---
+  duration_ms: 15.2863
+  ...
+# Subtest: review: explicit null package manifest is rejected (nested, bare)
+ok 17 - review: explicit null package manifest is rejected (nested, bare)
+  ---
+  duration_ms: 87.1012
+  ...
+# Subtest: review: explicit null package manifest is rejected (nested, file)
+ok 18 - review: explicit null package manifest is rejected (nested, file)
+  ---
+  duration_ms: 17.5398
+  ...
+# Subtest: review: explicit null module manifest does not fall back to the instance
+ok 19 - review: explicit null module manifest does not fall back to the instance
+  ---
+  duration_ms: 26.0869
+  ...
+# Subtest: review: null contribution category is invalid while omission stays empty (shapes)
+ok 20 - review: null contribution category is invalid while omission stays empty (shapes)
+  ---
+  duration_ms: 0.4999
+  ...
+# Subtest: review: null contribution category is invalid while omission stays empty (commands)
+ok 21 - review: null contribution category is invalid while omission stays empty (commands)
+  ---
+  duration_ms: 0.1947
+  ...
+# Subtest: review: null contribution category is invalid while omission stays empty (decorators)
+ok 22 - review: null contribution category is invalid while omission stays empty (decorators)
+  ---
+  duration_ms: 0.1294
+  ...
+# Subtest: review: null contribution category is invalid while omission stays empty (attributes)
+ok 23 - review: null contribution category is invalid while omission stays empty (attributes)
+  ---
+  duration_ms: 0.4648
+  ...
+# Subtest: review: malformed package metadata cannot fall back to an instance manifest
+ok 24 - review: malformed package metadata cannot fall back to an instance manifest
+  ---
+  duration_ms: 70.2899
+  ...
+# Subtest: review: loader matches native Node resolution for default module-sync
+ok 25 - review: loader matches native Node resolution for default module-sync
+  ---
+  duration_ms: 254.74
+  ...
+# Subtest: review: loader matches native Node resolution for default node-addons
+ok 26 - review: loader matches native Node resolution for default node-addons
+  ---
+  duration_ms: 259.8013
+  ...
+# Subtest: review: loader matches native Node resolution for conditions equals
+ok 27 - review: loader matches native Node resolution for conditions equals
+  ---
+  duration_ms: 249.8221
+  ...
+# Subtest: review: loader matches native Node resolution for conditions pair
+ok 28 - review: loader matches native Node resolution for conditions pair
+  ---
+  duration_ms: 256.7921
+  ...
+# Subtest: review: loader matches native Node resolution for short condition
+ok 29 - review: loader matches native Node resolution for short condition
+  ---
+  duration_ms: 260.1238
+  ...
+# Subtest: review: loader matches native Node resolution for NODE_OPTIONS condition
+ok 30 - review: loader matches native Node resolution for NODE_OPTIONS condition
+  ---
+  duration_ms: 246.3267
+  ...
+# Subtest: review: loader matches native Node resolution for disabled addons
+ok 31 - review: loader matches native Node resolution for disabled addons
+  ---
+  duration_ms: 245.0188
+  ...
+# Subtest: review: loader matches native Node resolution for disabled module-sync
+ok 32 - review: loader matches native Node resolution for disabled module-sync
+  ---
+  duration_ms: 246.3875
+  ...
+# Subtest: review: resolved module URL retains query and fragment (?via=exports)
+not ok 33 - review: resolved module URL retains query and fragment (?via=exports)
+  ---
+  duration_ms: 151.135
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\fresh-round2\\build\\test\\review-regressions.test.js:310:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    +   ''
+    -   '?via=exports'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: '?via=exports'
+  actual:
+    0: ''
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/.runtime/fresh-round2/build/test/review-regressions.test.js:324:20)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: review: resolved module URL retains query and fragment (\#detail)
+not ok 34 - review: resolved module URL retains query and fragment (\#detail)
+  ---
+  duration_ms: 150.3151
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\fresh-round2\\build\\test\\review-regressions.test.js:310:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    +   ''
+    -   '#detail'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: '#detail'
+  actual:
+    0: ''
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/.runtime/fresh-round2/build/test/review-regressions.test.js:324:20)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: review: resolved module URL retains query and fragment (?via=exports\#detail)
+not ok 35 - review: resolved module URL retains query and fragment (?via=exports\#detail)
+  ---
+  duration_ms: 145.7551
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\fresh-round2\\build\\test\\review-regressions.test.js:310:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    +   ''
+    -   '?via=exports#detail'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: '?via=exports#detail'
+  actual:
+    0: ''
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/.runtime/fresh-round2/build/test/review-regressions.test.js:324:20)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: review: different URLs for one file keep separate native module identities
+not ok 36 - review: different URLs for one file keep separate native module identities
+  ---
+  duration_ms: 242.6011
+  location: 'D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\fresh-round2\\build\\test\\review-regressions.test.js:331:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + [
+    +   'error: duplicate registration: commands/lost'
+    + ]
+    - []
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0: 'error: duplicate registration: commands/lost'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/fudan/Assistant/workspace/courses/canvas/CS30075.01%20%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1__114512-49cb8aa0/submission/pj1-phase2__141516/svg-editor/.runtime/fresh-round2/build/test/review-regressions.test.js:345:16)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+1..36
+# tests 36
+# suites 0
+# pass 32
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4246.4999
