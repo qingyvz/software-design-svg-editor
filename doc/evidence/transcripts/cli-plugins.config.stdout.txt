@@ -1,0 +1,39 @@
+svg-editor 0.1 — type 'help' for commands
+[DIR]  docs
+[FILE]  .hidden.txt
+[FILE]  a.txt
+[FILE]  other.svg
+canvas 800x600 created
+(total 0, containers 0)
+g#scene created
+g#n1 created in g#scene
+rect#r1 created in g#scene
+rect: 2  text: 1  (total 3, containers 2)
+svg (800x600) *
+└── g#scene *
+    ├── g#n1 data-kind=box (box) *
+    │   ├── rect#n1-rect  x=120 y=100 w=160 h=60 fill=#4a90d9 *
+    │   └── text#n1-label  (140,135) "开始" *
+    └── rect#r1  x=10 y=20 w=30 h=40 fill=red *
+saved to flowchart-box.svg (5 elements)
+svg (800x600)
+└── g#scene
+    ├── g#n1 data-kind=box (box)
+    │   ├── rect#n1-rect  x=120 y=100 w=160 h=60 fill=#4a90d9
+    │   └── text#n1-label  (140,135) "开始"
+    └── rect#r1  x=10 y=20 w=30 h=40 fill=red
+g#n1 updated: label="开始 v2"
+svg (800x600) *
+└── g#scene *
+    ├── g#n1 data-kind=box (box) *
+    │   ├── rect#n1-rect  x=120 y=100 w=160 h=60 fill=#4a90d9
+    │   └── text#n1-label  (140,135) "开始 v2" *
+    └── rect#r1  x=10 y=20 w=30 h=40 fill=red
+undone: set n1 label
+svg (800x600)
+└── g#scene
+    ├── g#n1 data-kind=box (box)
+    │   ├── rect#n1-rect  x=120 y=100 w=160 h=60 fill=#4a90d9
+    │   └── text#n1-label  (140,135) "开始"
+    └── rect#r1  x=10 y=20 w=30 h=40 fill=red
+bye

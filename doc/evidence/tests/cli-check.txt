@@ -1,0 +1,409 @@
+
+> svg-editor@0.1.0 check
+> npm test && node scripts/check-architecture.mjs
+
+
+> svg-editor@0.1.0 test
+> npm run build --silent && node --test build/test/*.test.js
+
+TAP version 13
+# Subtest: bounds follow transformed geometry and exact ellipse extrema
+ok 1 - bounds follow transformed geometry and exact ellipse extrema
+  ---
+  duration_ms: 24.3667
+  ...
+# Subtest: text bounds resolve ancestor styles, baseline, anchor and rotation
+ok 2 - text bounds resolve ancestor styles, baseline, anchor and rotation
+  ---
+  duration_ms: 5.2507
+  ...
+# Subtest: canvas adapter uses ink metrics and restores caller state even on failure
+ok 3 - canvas adapter uses ink metrics and restores caller state even on failure
+  ---
+  duration_ms: 2.4847
+  ...
+# Subtest: a layout command aligns rotated leaves and composite plugins in one undo unit
+ok 4 - a layout command aligns rotated leaves and composite plugins in one undo unit
+  ---
+  duration_ms: 19.2454
+  ...
+# Subtest: box alone supplies shape, attributes and label through the public context
+ok 5 - box alone supplies shape, attributes and label through the public context
+  ---
+  duration_ms: 6.559
+  ...
+# Subtest: kernel registry has no hidden concrete providers; host chooses six defaults
+ok 6 - kernel registry has no hidden concrete providers; host chooses six defaults
+  ---
+  duration_ms: 3.3139
+  ...
+# Subtest: query-only and filesystem-only commands need no concrete Editor
+ok 7 - query-only and filesystem-only commands need no concrete Editor
+  ---
+  duration_ms: 2.8494
+  ...
+# Subtest: dir alone registers a filesystem command without requiring a document
+ok 8 - dir alone registers a filesystem command without requiring a document
+  ---
+  duration_ms: 5.6714
+  ...
+# Subtest: six types implement polymorphic geometry and copy their private state
+ok 9 - six types implement polymorphic geometry and copy their private state
+  ---
+  duration_ms: 10.977
+  ...
+# Subtest: nested composite moves and scales descendants exactly once
+ok 10 - nested composite moves and scales descendants exactly once
+  ---
+  duration_ms: 2.8731
+  ...
+# Subtest: group preserves document order, ancestry and insertion position
+ok 11 - group preserves document order, ancestry and insertion position
+  ---
+  duration_ms: 5.257
+  ...
+# Subtest: cross-parent grouping uses the lowest common ancestor
+ok 12 - cross-parent grouping uses the lowest common ancestor
+  ---
+  duration_ms: 2.1903
+  ...
+# Subtest: numeric validation rejects negative sizes, NaN and non-positive scale
+ok 13 - numeric validation rejects negative sizes, NaN and non-positive scale
+  ---
+  duration_ms: 2.5057
+  ...
+# Subtest: history treats a multi-shape edit as one unit and supports branching
+ok 14 - history treats a multi-shape edit as one unit and supports branching
+  ---
+  duration_ms: 13.8837
+  ...
+# Subtest: failed edits preserve geometry and the redo branch
+ok 15 - failed edits preserve geometry and the redo branch
+  ---
+  duration_ms: 2.8907
+  ...
+# Subtest: successful IO creates a barrier; display commands and failed IO do not
+ok 16 - successful IO creates a barrier; display commands and failed IO do not
+  ---
+  duration_ms: 5.6119
+  ...
+# Subtest: all editing commands round-trip using undo/redo
+ok 17 - all editing commands round-trip using undo/redo
+  ---
+  duration_ms: 13.1701
+  ...
+# Subtest: parser preserves quoted text, hex colors and Windows paths
+ok 18 - parser preserves quoted text, hex colors and Windows paths
+  ---
+  duration_ms: 1.9625
+  ...
+# Subtest: overflow midway through a composite operation rolls back every child
+ok 19 - overflow midway through a composite operation rolls back every child
+  ---
+  duration_ms: 1.1465
+  ...
+# Subtest: affine operations follow SVG multiplication order and keep immutable finite state
+ok 20 - affine operations follow SVG multiplication order and keep immutable finite state
+  ---
+  duration_ms: 6.3766
+  ...
+# Subtest: rotated, skewed and nonuniform SVG shapes survive import and save
+ok 21 - rotated, skewed and nonuniform SVG shapes survive import and save
+  ---
+  duration_ms: 19.834
+  ...
+# Subtest: batch rotation handles overlapping selection roots and uses one undo unit
+ok 22 - batch rotation handles overlapping selection roots and uses one undo unit
+  ---
+  duration_ms: 9.0214
+  ...
+# Subtest: move and CLI scale keep canvas coordinates and stroke width after rotation
+ok 23 - move and CLI scale keep canvas coordinates and stroke width after rotation
+  ---
+  duration_ms: 3.1606
+  ...
+# Subtest: batch failures leave all targets and redo history unchanged
+ok 24 - batch failures leave all targets and redo history unchanged
+  ---
+  duration_ms: 3.2125
+  ...
+# Subtest: layer scope applies to creation and every editing target
+ok 25 - layer scope applies to creation and every editing target
+  ---
+  duration_ms: 10.6021
+  ...
+# Subtest: layer transitions keep history, reject missing layers and recover after undo or read
+ok 26 - layer transitions keep history, reject missing layers and recover after undo or read
+  ---
+  duration_ms: 1.4283
+  ...
+# Subtest: injected box provider supports commands, clone history and SVG restoration
+ok 27 - injected box provider supports commands, clone history and SVG restoration
+  ---
+  duration_ms: 5.2966
+  ...
+# Subtest: container capability supports a container that does not inherit Group
+ok 28 - container capability supports a container that does not inherit Group
+  ---
+  duration_ms: 3.0693
+  ...
+# Subtest: new commands can be registered without changing the dispatcher
+ok 29 - new commands can be registered without changing the dispatcher
+  ---
+  duration_ms: 1.2735
+  ...
+# Subtest: CLI loads box only when explicitly enabled
+ok 30 - CLI loads box only when explicitly enabled
+  ---
+  duration_ms: 467.8884
+  ...
+# Subtest: ungroup resolves explicit inherit against the removed parent and supports undo
+ok 31 - ungroup resolves explicit inherit against the removed parent and supports undo
+  ---
+  duration_ms: 14.2771
+  ...
+# Subtest: ungroup materializes inherited paint and font properties without replacing explicit values
+ok 32 - ungroup materializes inherited paint and font properties without replacing explicit values
+  ---
+  duration_ms: 10.2238
+  ...
+# Subtest: inherit still follows the remaining ancestor when the removed parent also inherits
+ok 33 - inherit still follows the remaining ancestor when the removed parent also inherits
+  ---
+  duration_ms: 1.9723
+  ...
+# Subtest: ungroup multiplies object opacity but only inherits paint opacity
+ok 34 - ungroup multiplies object opacity but only inherits paint opacity
+  ---
+  duration_ms: 19.7566
+  ...
+# Subtest: ungroup preserves a nested child group as one compositing unit
+ok 35 - ungroup preserves a nested child group as one compositing unit
+  ---
+  duration_ms: 2.2073
+  ...
+# Subtest: ungroup refuses to distribute group opacity across overlapping children
+ok 36 - ungroup refuses to distribute group opacity across overlapping children
+  ---
+  duration_ms: 8.6475
+  ...
+# Subtest: import validates and normalizes opacity values
+ok 37 - import validates and normalizes opacity values
+  ---
+  duration_ms: 2.1507
+  ...
+# Subtest: independent stats plugin walks containers and leaves depth-first, preserves state and history
+ok 38 - independent stats plugin walks containers and leaves depth-first, preserves state and history
+  ---
+  duration_ms: 11.1401
+  ...
+# Subtest: dir plugin adapter sorts directories/files/other, hides dot entries only, works before init and preserves redo
+ok 39 - dir plugin adapter sorts directories/files/other, hides dot entries only, works before init and preserves redo
+  ---
+  duration_ms: 5.4988
+  ...
+# Subtest: real Node directory adapter combines with command; optional symlink is reported as OTHER
+ok 40 - real Node directory adapter combines with command; optional symlink is reported as OTHER
+  ---
+  duration_ms: 7.5987
+  ...
+# Subtest: box child ids are atomic; ordinary detaching commands fail while box remains valid
+ok 41 - box child ids are atomic; ordinary detaching commands fail while box remains valid
+  ---
+  duration_ms: 7.2295
+  ...
+# Subtest: box import refuses missing/wrong children and duplicate ids, preserving document and redo history
+ok 42 - box import refuses missing/wrong children and duplicate ids, preserving document and redo history
+  ---
+  duration_ms: 12.0648
+  ...
+# Subtest: failed read of malformed box keeps current document, dirty label and redo branch
+ok 43 - failed read of malformed box keeps current document, dirty label and redo branch
+  ---
+  duration_ms: 18.538
+  ...
+# Subtest: saved nested box round-trips through real files with plugin and degrades to a group without it
+ok 44 - saved nested box round-trips through real files with plugin and degrades to a group without it
+  ---
+  duration_ms: 22.5146
+  ...
+# Subtest: attribute handler handles box fill/label with one undo each and default white-list
+ok 45 - attribute handler handles box fill/label with one undo each and default white-list
+  ---
+  duration_ms: 1.6597
+  ...
+# Subtest: ambiguous handlers and partially failing handlers roll back the draft without changing redo history
+ok 46 - ambiguous handlers and partially failing handlers roll back the draft without changing redo history
+  ---
+  duration_ms: 2.1165
+  ...
+# Subtest: two independent tree labels compose in registration order; dirty compares to save point incl. ancestors
+ok 47 - two independent tree labels compose in registration order; dirty compares to save point incl. ancestors
+  ---
+  duration_ms: 4.1041
+  ...
+# Subtest: modified-star keeps its checkpoint per instance across failed save, read, and undo
+ok 48 - modified-star keeps its checkpoint per instance across failed save, read, and undo
+  ---
+  duration_ms: 3.8434
+  ...
+# Subtest: dir uses process cwd rather than read/save document directory
+ok 49 - dir uses process cwd rather than read/save document directory
+  ---
+  duration_ms: 242.6975
+  ...
+# Subtest: code and config composition produce byte-identical CLI output for same session and fixed directory
+ok 50 - code and config composition produce byte-identical CLI output for same session and fixed directory
+  ---
+  duration_ms: 418.3828
+  ...
+# Subtest: installer rejects manifest mismatch and activation failures without leaking registrations
+ok 51 - installer rejects manifest mismatch and activation failures without leaking registrations
+  ---
+  duration_ms: 4.7582
+  ...
+# Subtest: throwing contribution accessors yield standardized errors and cannot leak partial registrations
+ok 52 - throwing contribution accessors yield standardized errors and cannot leak partial registrations
+  ---
+  duration_ms: 0.9194
+  ...
+# Subtest: duplicate names in one plugin, earlier plugin and builtins reject only the current plugin
+ok 53 - duplicate names in one plugin, earlier plugin and builtins reject only the current plugin
+  ---
+  duration_ms: 0.7584
+  ...
+# Subtest: shape type and SVG tag collisions reject only the attempted plugin across categories
+ok 54 - shape type and SVG tag collisions reject only the attempted plugin across categories
+  ---
+  duration_ms: 4.2049
+  ...
+# Subtest: commit-time registration failure rolls back previous categories and leaves earlier plugins
+ok 55 - commit-time registration failure rolls back previous categories and leaves earlier plugins
+  ---
+  duration_ms: 0.5857
+  ...
+# Subtest: config loader reports four failures, skips disabled entries and continues in order with options
+ok 56 - config loader reports four failures, skips disabled entries and continues in order with options
+  ---
+  duration_ms: 34.8161
+  ...
+# Subtest: invalid config leaves builtins, package contributes overrides module, import dependency error is not missing top-level module
+ok 57 - invalid config leaves builtins, package contributes overrides module, import dependency error is not missing top-level module
+  ---
+  duration_ms: 37.93
+  ...
+# Subtest: CLI prints invalid-config error and continues using only builtin commands
+ok 58 - CLI prints invalid-config error and continues using only builtin commands
+  ---
+  duration_ms: 448.7926
+  ...
+# Subtest: config paths resolve relative to config file rather than current process
+ok 59 - config paths resolve relative to config file rather than current process
+  ---
+  duration_ms: 19.1706
+  ...
+# Subtest: required errors are exact and never change document or undo history
+ok 60 - required errors are exact and never change document or undo history
+  ---
+  duration_ms: 11.4476
+  ...
+# Subtest: scale multiplies all geometry, not style or text, and ids are case-sensitive
+ok 61 - scale multiplies all geometry, not style or text, and ids are case-sensitive
+  ---
+  duration_ms: 2.2016
+  ...
+# Subtest: z-order stays within siblings and undo restores exact insertion positions
+ok 62 - z-order stays within siblings and undo restores exact insertion positions
+  ---
+  duration_ms: 2.0563
+  ...
+# Subtest: reusing a typed command does not overwrite earlier undo records
+ok 63 - reusing a typed command does not overwrite earlier undo records
+  ---
+  duration_ms: 1.1355
+  ...
+# Subtest: default filename follows successful read/save and is reset on init
+ok 64 - default filename follows successful read/save and is reset on init
+  ---
+  duration_ms: 1.0365
+  ...
+# Subtest: invalid syntax is rejected before mutation and empty undo stacks are clear
+ok 65 - invalid syntax is rejected before mutation and empty undo stacks are clear
+  ---
+  duration_ms: 1.2824
+  ...
+# Subtest: full course transcript preserves the expected scene and history boundary
+ok 66 - full course transcript preserves the expected scene and history boundary
+  ---
+  duration_ms: 3.8069
+  ...
+# Subtest: CLI accepts EOF and exit, rejects unsupported startup arguments
+ok 67 - CLI accepts EOF and exit, rejects unsupported startup arguments
+  ---
+  duration_ms: 469.233
+  ...
+# Subtest: star alone has per-instance saved state and ignores attribute insertion order
+ok 68 - star alone has per-instance saved state and ignores attribute insertion order
+  ---
+  duration_ms: 6.3693
+  ...
+# Subtest: stats alone registers a command and can run through a query-only substitute
+ok 69 - stats alone registers a command and can run through a query-only substitute
+  ---
+  duration_ms: 7.3022
+  ...
+# Subtest: provided external SVG imports every node and assigns a missing id
+ok 70 - provided external SVG imports every node and assigns a missing id
+  ---
+  duration_ms: 18.8341
+  ...
+# Subtest: automatic ids reserve later explicit ids, are unique per type and warn in order
+ok 71 - automatic ids reserve later explicit ids, are unique per type and warn in order
+  ---
+  duration_ms: 1.816
+  ...
+# Subtest: XML entities, Chinese and empty text survive save/read
+ok 72 - XML entities, Chinese and empty text survive save/read
+  ---
+  duration_ms: 2.9191
+  ...
+# Subtest: nested background-example transforms preserve geometry and text size
+ok 73 - nested background-example transforms preserve geometry and text size
+  ---
+  duration_ms: 1.8742
+  ...
+# Subtest: invalid XML and unsupported content fail explicitly
+ok 74 - invalid XML and unsupported content fail explicitly
+  ---
+  duration_ms: 7.7813
+  ...
+# Subtest: real file port replaces valid files atomically and leaves no temp files on failure
+ok 75 - real file port replaces valid files atomically and leaves no temp files on failure
+  ---
+  duration_ms: 24.0421
+  ...
+# Subtest: failed real read and write preserve document, history, and saved path
+ok 76 - failed real read and write preserve document, history, and saved path
+  ---
+  duration_ms: 27.1433
+  ...
+# Subtest: CLI subprocess runs the course flowchart and read/write round-trip
+ok 77 - CLI subprocess runs the course flowchart and read/write round-trip
+  ---
+  duration_ms: 246.7322
+  ...
+# Subtest: default paths reset on init; viewBox and data-kind survive compatible import
+ok 78 - default paths reset on init; viewBox and data-kind survive compatible import
+  ---
+  duration_ms: 2.0367
+  ...
+1..78
+# tests 78
+# suites 0
+# pass 78
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1269.9255
+Architecture checks passed (266 relative imports).

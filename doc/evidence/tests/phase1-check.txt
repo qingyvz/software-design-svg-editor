@@ -1,0 +1,269 @@
+
+> svg-editor@0.1.0 check
+> npm test && node scripts/check-architecture.mjs
+
+
+> svg-editor@0.1.0 test
+> npm run build --silent && node --test build/test/*.test.js
+
+TAP version 13
+# Subtest: bounds follow transformed geometry and exact ellipse extrema
+ok 1 - bounds follow transformed geometry and exact ellipse extrema
+  ---
+  duration_ms: 14.9462
+  ...
+# Subtest: text bounds resolve ancestor styles, baseline, anchor and rotation
+ok 2 - text bounds resolve ancestor styles, baseline, anchor and rotation
+  ---
+  duration_ms: 3.3656
+  ...
+# Subtest: canvas adapter uses ink metrics and restores caller state even on failure
+ok 3 - canvas adapter uses ink metrics and restores caller state even on failure
+  ---
+  duration_ms: 2.3175
+  ...
+# Subtest: a layout command aligns rotated leaves and composite plugins in one undo unit
+ok 4 - a layout command aligns rotated leaves and composite plugins in one undo unit
+  ---
+  duration_ms: 15.5276
+  ...
+# Subtest: six types implement polymorphic geometry and copy their private state
+ok 5 - six types implement polymorphic geometry and copy their private state
+  ---
+  duration_ms: 21.299
+  ...
+# Subtest: nested composite moves and scales descendants exactly once
+ok 6 - nested composite moves and scales descendants exactly once
+  ---
+  duration_ms: 3.3792
+  ...
+# Subtest: group preserves document order, ancestry and insertion position
+ok 7 - group preserves document order, ancestry and insertion position
+  ---
+  duration_ms: 3.1398
+  ...
+# Subtest: cross-parent grouping uses the lowest common ancestor
+ok 8 - cross-parent grouping uses the lowest common ancestor
+  ---
+  duration_ms: 2.9826
+  ...
+# Subtest: numeric validation rejects negative sizes, NaN and non-positive scale
+ok 9 - numeric validation rejects negative sizes, NaN and non-positive scale
+  ---
+  duration_ms: 1.695
+  ...
+# Subtest: history treats a multi-shape edit as one unit and supports branching
+ok 10 - history treats a multi-shape edit as one unit and supports branching
+  ---
+  duration_ms: 13.5204
+  ...
+# Subtest: failed edits preserve geometry and the redo branch
+ok 11 - failed edits preserve geometry and the redo branch
+  ---
+  duration_ms: 3.6025
+  ...
+# Subtest: successful IO creates a barrier; display commands and failed IO do not
+ok 12 - successful IO creates a barrier; display commands and failed IO do not
+  ---
+  duration_ms: 3.8753
+  ...
+# Subtest: all editing commands round-trip using undo/redo
+ok 13 - all editing commands round-trip using undo/redo
+  ---
+  duration_ms: 13.6873
+  ...
+# Subtest: parser preserves quoted text, hex colors and Windows paths
+ok 14 - parser preserves quoted text, hex colors and Windows paths
+  ---
+  duration_ms: 0.8974
+  ...
+# Subtest: overflow midway through a composite operation rolls back every child
+ok 15 - overflow midway through a composite operation rolls back every child
+  ---
+  duration_ms: 1.4442
+  ...
+# Subtest: affine operations follow SVG multiplication order and keep immutable finite state
+ok 16 - affine operations follow SVG multiplication order and keep immutable finite state
+  ---
+  duration_ms: 4.9143
+  ...
+# Subtest: rotated, skewed and nonuniform SVG shapes survive import and save
+ok 17 - rotated, skewed and nonuniform SVG shapes survive import and save
+  ---
+  duration_ms: 17.2939
+  ...
+# Subtest: batch rotation handles overlapping selection roots and uses one undo unit
+ok 18 - batch rotation handles overlapping selection roots and uses one undo unit
+  ---
+  duration_ms: 6.5883
+  ...
+# Subtest: move and CLI scale keep canvas coordinates and stroke width after rotation
+ok 19 - move and CLI scale keep canvas coordinates and stroke width after rotation
+  ---
+  duration_ms: 2.1575
+  ...
+# Subtest: batch failures leave all targets and redo history unchanged
+ok 20 - batch failures leave all targets and redo history unchanged
+  ---
+  duration_ms: 1.8048
+  ...
+# Subtest: layer scope applies to creation and every editing target
+ok 21 - layer scope applies to creation and every editing target
+  ---
+  duration_ms: 10.6448
+  ...
+# Subtest: layer transitions keep history, reject missing layers and recover after undo or read
+ok 22 - layer transitions keep history, reject missing layers and recover after undo or read
+  ---
+  duration_ms: 1.5526
+  ...
+# Subtest: injected box provider supports commands, clone history and SVG restoration
+ok 23 - injected box provider supports commands, clone history and SVG restoration
+  ---
+  duration_ms: 5.099
+  ...
+# Subtest: container capability supports a container that does not inherit Group
+ok 24 - container capability supports a container that does not inherit Group
+  ---
+  duration_ms: 2.9216
+  ...
+# Subtest: new commands can be registered without changing the dispatcher
+ok 25 - new commands can be registered without changing the dispatcher
+  ---
+  duration_ms: 1.6832
+  ...
+# Subtest: CLI loads box only when explicitly enabled
+ok 26 - CLI loads box only when explicitly enabled
+  ---
+  duration_ms: 362.7422
+  ...
+# Subtest: ungroup resolves explicit inherit against the removed parent and supports undo
+ok 27 - ungroup resolves explicit inherit against the removed parent and supports undo
+  ---
+  duration_ms: 12.3497
+  ...
+# Subtest: ungroup materializes inherited paint and font properties without replacing explicit values
+ok 28 - ungroup materializes inherited paint and font properties without replacing explicit values
+  ---
+  duration_ms: 9.115
+  ...
+# Subtest: inherit still follows the remaining ancestor when the removed parent also inherits
+ok 29 - inherit still follows the remaining ancestor when the removed parent also inherits
+  ---
+  duration_ms: 1.9166
+  ...
+# Subtest: ungroup multiplies object opacity but only inherits paint opacity
+ok 30 - ungroup multiplies object opacity but only inherits paint opacity
+  ---
+  duration_ms: 13.8639
+  ...
+# Subtest: ungroup preserves a nested child group as one compositing unit
+ok 31 - ungroup preserves a nested child group as one compositing unit
+  ---
+  duration_ms: 1.4079
+  ...
+# Subtest: ungroup refuses to distribute group opacity across overlapping children
+ok 32 - ungroup refuses to distribute group opacity across overlapping children
+  ---
+  duration_ms: 4.9446
+  ...
+# Subtest: import validates and normalizes opacity values
+ok 33 - import validates and normalizes opacity values
+  ---
+  duration_ms: 1.5925
+  ...
+# Subtest: required errors are exact and never change document or undo history
+ok 34 - required errors are exact and never change document or undo history
+  ---
+  duration_ms: 14.151
+  ...
+# Subtest: scale multiplies all geometry, not style or text, and ids are case-sensitive
+ok 35 - scale multiplies all geometry, not style or text, and ids are case-sensitive
+  ---
+  duration_ms: 2.878
+  ...
+# Subtest: z-order stays within siblings and undo restores exact insertion positions
+ok 36 - z-order stays within siblings and undo restores exact insertion positions
+  ---
+  duration_ms: 4.158
+  ...
+# Subtest: reusing a typed command does not overwrite earlier undo records
+ok 37 - reusing a typed command does not overwrite earlier undo records
+  ---
+  duration_ms: 1.1453
+  ...
+# Subtest: default filename follows successful read/save and is reset on init
+ok 38 - default filename follows successful read/save and is reset on init
+  ---
+  duration_ms: 1.1379
+  ...
+# Subtest: invalid syntax is rejected before mutation and empty undo stacks are clear
+ok 39 - invalid syntax is rejected before mutation and empty undo stacks are clear
+  ---
+  duration_ms: 1.573
+  ...
+# Subtest: full course transcript preserves the expected scene and history boundary
+ok 40 - full course transcript preserves the expected scene and history boundary
+  ---
+  duration_ms: 3.5219
+  ...
+# Subtest: CLI accepts EOF and exit, rejects unsupported startup arguments
+ok 41 - CLI accepts EOF and exit, rejects unsupported startup arguments
+  ---
+  duration_ms: 373.7254
+  ...
+# Subtest: provided external SVG imports every node and assigns a missing id
+ok 42 - provided external SVG imports every node and assigns a missing id
+  ---
+  duration_ms: 26.6745
+  ...
+# Subtest: automatic ids reserve later explicit ids, are unique per type and warn in order
+ok 43 - automatic ids reserve later explicit ids, are unique per type and warn in order
+  ---
+  duration_ms: 1.5945
+  ...
+# Subtest: XML entities, Chinese and empty text survive save/read
+ok 44 - XML entities, Chinese and empty text survive save/read
+  ---
+  duration_ms: 2.049
+  ...
+# Subtest: nested background-example transforms preserve geometry and text size
+ok 45 - nested background-example transforms preserve geometry and text size
+  ---
+  duration_ms: 1.4719
+  ...
+# Subtest: invalid XML and unsupported content fail explicitly
+ok 46 - invalid XML and unsupported content fail explicitly
+  ---
+  duration_ms: 7.6604
+  ...
+# Subtest: real file port replaces valid files atomically and leaves no temp files on failure
+ok 47 - real file port replaces valid files atomically and leaves no temp files on failure
+  ---
+  duration_ms: 13.7204
+  ...
+# Subtest: failed real read and write preserve document, history, and saved path
+ok 48 - failed real read and write preserve document, history, and saved path
+  ---
+  duration_ms: 23.4283
+  ...
+# Subtest: CLI subprocess runs the course flowchart and read/write round-trip
+ok 49 - CLI subprocess runs the course flowchart and read/write round-trip
+  ---
+  duration_ms: 209.5395
+  ...
+# Subtest: default paths reset on init; viewBox and data-kind survive compatible import
+ok 50 - default paths reset on init; viewBox and data-kind survive compatible import
+  ---
+  duration_ms: 1.2257
+  ...
+1..50
+# tests 50
+# suites 0
+# pass 50
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 791.2896
+Architecture checks passed (194 relative imports).

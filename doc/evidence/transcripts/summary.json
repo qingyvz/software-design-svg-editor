@@ -1,0 +1,240 @@
+{
+  "utc": "2026-11-24T17:32:59.904Z",
+  "node": "v22.14.0",
+  "platform": "win32",
+  "revision": "5fb1e609a11903fb1fab0a88195d673797374f1f",
+  "workingChanges": true,
+  "cwd": "D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\transcript-session\\work",
+  "runs": [
+    {
+      "id": "cli-1.code",
+      "checkout": "D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor",
+      "flags": [
+        "--plugins"
+      ],
+      "status": 0,
+      "inputSha256": "931a8e1ef7ae270db6100e06bd73ad5df967d037a60702856e5ff1189c13ca00",
+      "stdoutSha256": "b6bab0e56a211e65027b52dbbf9565a0c0f599c52f39a2cb258b78fad1c5bae5",
+      "bytes": 1092,
+      "generated": {
+        "demo.svg": "df7e4d87a2683b33d15ed4f6a22ffc13e7255545729e22125179c34d8e935d40"
+      },
+      "errors": [
+        "error: cannot group a container into its own descendant: markers",
+        "error: undo not allowed after io command"
+      ]
+    },
+    {
+      "id": "cli-1.config",
+      "checkout": "D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor",
+      "flags": [
+        "--config",
+        "D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\plugins.config.json"
+      ],
+      "status": 0,
+      "inputSha256": "931a8e1ef7ae270db6100e06bd73ad5df967d037a60702856e5ff1189c13ca00",
+      "stdoutSha256": "b6bab0e56a211e65027b52dbbf9565a0c0f599c52f39a2cb258b78fad1c5bae5",
+      "bytes": 1092,
+      "generated": {
+        "demo.svg": "df7e4d87a2683b33d15ed4f6a22ffc13e7255545729e22125179c34d8e935d40"
+      },
+      "errors": [
+        "error: cannot group a container into its own descendant: markers",
+        "error: undo not allowed after io command"
+      ]
+    },
+    {
+      "id": "cli-1.B-config",
+      "checkout": "D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\ocp-config",
+      "flags": [
+        "--config",
+        "D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\ocp-config\\plugins.config.json"
+      ],
+      "status": 0,
+      "inputSha256": "931a8e1ef7ae270db6100e06bd73ad5df967d037a60702856e5ff1189c13ca00",
+      "stdoutSha256": "b6bab0e56a211e65027b52dbbf9565a0c0f599c52f39a2cb258b78fad1c5bae5",
+      "bytes": 1092,
+      "generated": {
+        "demo.svg": "df7e4d87a2683b33d15ed4f6a22ffc13e7255545729e22125179c34d8e935d40"
+      },
+      "errors": [
+        "error: cannot group a container into its own descendant: markers",
+        "error: undo not allowed after io command"
+      ]
+    },
+    {
+      "id": "cli-1.final",
+      "checkout": "D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\phase1-baseline",
+      "flags": [],
+      "status": 0,
+      "inputSha256": "931a8e1ef7ae270db6100e06bd73ad5df967d037a60702856e5ff1189c13ca00",
+      "stdoutSha256": "a5d67dcb081c694a05168cdc02910d5563779526eb749a740c8b386406d8d9f9",
+      "bytes": 1080,
+      "generated": {
+        "demo.svg": "df7e4d87a2683b33d15ed4f6a22ffc13e7255545729e22125179c34d8e935d40"
+      },
+      "errors": [
+        "error: cannot group a container into its own descendant: markers",
+        "error: undo not allowed after io command"
+      ]
+    },
+    {
+      "id": "cli-1.default",
+      "checkout": "D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor",
+      "flags": [],
+      "status": 0,
+      "inputSha256": "931a8e1ef7ae270db6100e06bd73ad5df967d037a60702856e5ff1189c13ca00",
+      "stdoutSha256": "a5d67dcb081c694a05168cdc02910d5563779526eb749a740c8b386406d8d9f9",
+      "bytes": 1080,
+      "generated": {
+        "demo.svg": "df7e4d87a2683b33d15ed4f6a22ffc13e7255545729e22125179c34d8e935d40"
+      },
+      "errors": [
+        "error: cannot group a container into its own descendant: markers",
+        "error: undo not allowed after io command"
+      ]
+    },
+    {
+      "id": "cli-box.code",
+      "checkout": "D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor",
+      "flags": [
+        "--plugins"
+      ],
+      "status": 0,
+      "inputSha256": "074df2e82d75309501f0d40c14e82dfd5607b319e0257626706c6df26342e7d7",
+      "stdoutSha256": "62f23736d380bd89e20b8341eb078918599d284ed68b2df58c0b94930d3eaac1",
+      "bytes": 774,
+      "generated": {
+        "flowchart-box.svg": "acdf40985fc85733a652be7dde5d3060b3d8ff300b235ddd61a78f09791ef03a"
+      },
+      "errors": []
+    },
+    {
+      "id": "cli-box.config",
+      "checkout": "D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor",
+      "flags": [
+        "--config",
+        "D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\plugins.config.json"
+      ],
+      "status": 0,
+      "inputSha256": "074df2e82d75309501f0d40c14e82dfd5607b319e0257626706c6df26342e7d7",
+      "stdoutSha256": "62f23736d380bd89e20b8341eb078918599d284ed68b2df58c0b94930d3eaac1",
+      "bytes": 774,
+      "generated": {
+        "flowchart-box.svg": "acdf40985fc85733a652be7dde5d3060b3d8ff300b235ddd61a78f09791ef03a"
+      },
+      "errors": []
+    },
+    {
+      "id": "cli-box.B-config",
+      "checkout": "D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\ocp-config",
+      "flags": [
+        "--config",
+        "D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\ocp-config\\plugins.config.json"
+      ],
+      "status": 0,
+      "inputSha256": "074df2e82d75309501f0d40c14e82dfd5607b319e0257626706c6df26342e7d7",
+      "stdoutSha256": "62f23736d380bd89e20b8341eb078918599d284ed68b2df58c0b94930d3eaac1",
+      "bytes": 774,
+      "generated": {
+        "flowchart-box.svg": "acdf40985fc85733a652be7dde5d3060b3d8ff300b235ddd61a78f09791ef03a"
+      },
+      "errors": []
+    },
+    {
+      "id": "cli-plugins.code",
+      "checkout": "D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor",
+      "flags": [
+        "--plugins"
+      ],
+      "status": 0,
+      "inputSha256": "472c89e060454892eb1776d0dba9a9005d9296f306bf75c24fae3e58caf78873",
+      "stdoutSha256": "1c57a94c4fcde51f13bd1218b130e808f003baab5e9f0e0fd0898e580463e9c7",
+      "bytes": 1372,
+      "generated": {
+        "flowchart-box.svg": "16b9746020ae971404284817daca98a546974383d3095ad98fe0c4475dc090ee"
+      },
+      "errors": []
+    },
+    {
+      "id": "cli-plugins.config",
+      "checkout": "D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor",
+      "flags": [
+        "--config",
+        "D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\plugins.config.json"
+      ],
+      "status": 0,
+      "inputSha256": "472c89e060454892eb1776d0dba9a9005d9296f306bf75c24fae3e58caf78873",
+      "stdoutSha256": "1c57a94c4fcde51f13bd1218b130e808f003baab5e9f0e0fd0898e580463e9c7",
+      "bytes": 1372,
+      "generated": {
+        "flowchart-box.svg": "16b9746020ae971404284817daca98a546974383d3095ad98fe0c4475dc090ee"
+      },
+      "errors": []
+    },
+    {
+      "id": "cli-plugins.B-config",
+      "checkout": "D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\ocp-config",
+      "flags": [
+        "--config",
+        "D:\\fudan\\Assistant\\workspace\\courses\\canvas\\CS30075.01 软件设计__114512-49cb8aa0\\submission\\pj1-phase2__141516\\svg-editor\\.runtime\\ocp-config\\plugins.config.json"
+      ],
+      "status": 0,
+      "inputSha256": "472c89e060454892eb1776d0dba9a9005d9296f306bf75c24fae3e58caf78873",
+      "stdoutSha256": "1c57a94c4fcde51f13bd1218b130e808f003baab5e9f0e0fd0898e580463e9c7",
+      "bytes": 1372,
+      "generated": {
+        "flowchart-box.svg": "16b9746020ae971404284817daca98a546974383d3095ad98fe0c4475dc090ee"
+      },
+      "errors": []
+    }
+  ],
+  "comparisons": [
+    {
+      "id": "cli-1: delivery A vs delivery B",
+      "byteIdentical": true,
+      "generatedSvgIdentical": true
+    },
+    {
+      "id": "cli-1: A vs independent B branch",
+      "byteIdentical": true,
+      "generatedSvgIdentical": true
+    },
+    {
+      "id": "cli-1: final vs default",
+      "byteIdentical": true,
+      "generatedSvgIdentical": true
+    },
+    {
+      "id": "cli-box: delivery A vs delivery B",
+      "byteIdentical": true,
+      "generatedSvgIdentical": true
+    },
+    {
+      "id": "cli-box: A vs independent B branch",
+      "byteIdentical": true,
+      "generatedSvgIdentical": true
+    },
+    {
+      "id": "cli-plugins: delivery A vs delivery B",
+      "byteIdentical": true,
+      "generatedSvgIdentical": true
+    },
+    {
+      "id": "cli-plugins: A vs independent B branch",
+      "byteIdentical": true,
+      "generatedSvgIdentical": true
+    }
+  ],
+  "ocp": {
+    "a": "fafb2ba98ad8f5d52fe831f39d57714fd54fc0b6",
+    "b": "06900b90889859716c10cee109d355947c823bb9",
+    "parent": "de82fe9a309575730172795e76983cb7f199a5d9",
+    "aExistingRuntimeChanges": [
+      "src/Main.ts"
+    ],
+    "bExistingRuntimeChanges": [],
+    "identicalNewPackage": true,
+    "pathsVerified": true
+  }
+}
