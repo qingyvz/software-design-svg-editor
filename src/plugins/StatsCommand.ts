@@ -1,9 +1,9 @@
 import { Command } from '../application/Command.js';
-import type { Editor } from '../application/Editor.js';
+import type { DocumentQuery } from '../application/DocumentQuery.js';
 import type { Shape } from '../domain/Shape.js';
 
-export class StatsCommand extends Command {
-  constructor(receiver: Editor) { super(receiver); }
+export class StatsCommand extends Command<DocumentQuery> {
+  constructor(receiver: DocumentQuery) { super(receiver); }
   override execute(): readonly string[] {
     const counts = new Map<string, number>();
     let containers = 0;

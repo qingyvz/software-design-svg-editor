@@ -1,10 +1,10 @@
 import { EditingCommand } from '../EditingCommand.js';
-import type { Editor } from '../Editor.js';
+import type { CommandReceiver } from '../CommandReceiver.js';
 import type { EditContext } from '../EditContext.js';
 
 export class CreateCommand extends EditingCommand {
   constructor(
-    receiver: Editor,
+    receiver: CommandReceiver,
     private readonly type: string,
     private readonly id: string,
     private readonly params: readonly string[],

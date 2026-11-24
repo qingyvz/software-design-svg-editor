@@ -1,13 +1,12 @@
+import { Fixtures } from './Fixtures.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { Bounds } from '../src/domain/Bounds.js';
-import { SvgCodec } from '../src/infrastructure/SvgCodec.js';
 import { CanvasTextMeasurer } from '../src/infrastructure/CanvasTextMeasurer.js';
 import { Editor } from '../src/application/Editor.js';
 import { EditingCommand } from '../src/application/EditingCommand.js';
 import type { EditContext } from '../src/application/EditContext.js';
 import { CommandDispatcher } from '../src/cli/CommandDispatcher.js';
-import { ShapeFactory } from '../src/domain/ShapeFactory.js';
 import { BoxProvider } from '../src/plugins/BoxProvider.js';
 import { MemoryDocumentStore } from './MemoryDocumentStore.js';
 
@@ -19,7 +18,7 @@ function near(actual: Bounds | undefined, expected: readonly number[]): void {
   );
 }
 test('bounds follow transformed geometry and exact ellipse extrema', () => {
-  const doc = new SvgCodec().decode(
+  const doc = Fixtures.codec().decode(
     '<svg><rect id="r" x="10" y="20" width="30" height="40" transform="rotate(90)"/><ellipse id="e" cx="0" cy="0" rx="10" ry="5" transform="rotate(45)"/><line id="l" x1="-2" y1="3" x2="7" y2="-8"/><circle id="c" r="4" transform="matrix(1 0 2 1 3 5)"/><g id="empty"/></svg>',
   ).document;
   near(doc.bounds('r'), [-60, 10, -20, 40]);
@@ -31,7 +30,7 @@ test('bounds follow transformed geometry and exact ellipse extrema', () => {
   assert.throws(() => new Bounds(1, 0, 0, 1));
 });
 test('text bounds resolve ancestor styles, baseline, anchor and rotation', () => {
-  const doc = new SvgCodec().decode(
+  const doc = Fixtures.codec().decode(
     '<svg><g id="g" font-size="24" text-anchor="middle"><text id="t" x="50" y="40" font-size="inherit" transform="rotate(90)">Test</text></g></svg>',
   ).document;
   const context = {
@@ -101,9 +100,9 @@ class AlignLeftCommand extends EditingCommand {
   }
 }
 test('a layout command aligns rotated leaves and composite plugins in one undo unit', () => {
-  const factory = new ShapeFactory();
+  const factory = Fixtures.shapes();
   factory.register(new BoxProvider());
-  const editor = new Editor(new MemoryDocumentStore(), factory);
+  const editor = Fixtures.editor(new MemoryDocumentStore(), factory);
   const cli = new CommandDispatcher(editor);
   for (const command of [
     'init',
@@ -114,7 +113,7 @@ test('a layout command aligns rotated leaves and composite plugins in one undo u
   ]) {
     assert.ok(!cli.run(command).some((line) => line.startsWith('error:')), command);
   }
-  const codec = new SvgCodec(factory),
+  const codec = Fixtures.codec(factory),
     before = codec.encode(editor.inspect());
   new AlignLeftCommand(editor, ['r', 'e', 'b', 'b-label']).execute();
   const aligned = editor.inspect();

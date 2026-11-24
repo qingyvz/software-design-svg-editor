@@ -1,60 +1,9 @@
 import { Shape } from './Shape.js';
-import { Rect } from './Rect.js';
-import { Circle } from './Circle.js';
-import { Ellipse } from './Ellipse.js';
-import { Line } from './Line.js';
-import { Text } from './Text.js';
-import { Group } from './Group.js';
-import { BuiltinShapeProvider } from './BuiltinShapeProvider.js';
 import type { ShapeProvider } from './ShapeProvider.js';
 
 export class ShapeFactory {
   private readonly providers = new Map<string, ShapeProvider>();
   private readonly svgProviders = new Map<string, ShapeProvider>();
-
-  constructor() {
-    this.register(
-      new BuiltinShapeProvider(
-        'rect',
-        ['x', 'y', 'width', 'height'],
-        (id, n) => new Rect(id, n[0]!, n[1]!, n[2]!, n[3]!),
-        { paint: 'fill' },
-      ),
-    );
-    this.register(
-      new BuiltinShapeProvider(
-        'circle',
-        ['cx', 'cy', 'r'],
-        (id, n) => new Circle(id, n[0]!, n[1]!, n[2]!),
-        { paint: 'fill' },
-      ),
-    );
-    this.register(
-      new BuiltinShapeProvider(
-        'ellipse',
-        ['cx', 'cy', 'rx', 'ry'],
-        (id, n) => new Ellipse(id, n[0]!, n[1]!, n[2]!, n[3]!),
-        { paint: 'fill' },
-      ),
-    );
-    this.register(
-      new BuiltinShapeProvider(
-        'line',
-        ['x1', 'y1', 'x2', 'y2'],
-        (id, n) => new Line(id, n[0]!, n[1]!, n[2]!, n[3]!),
-        { paint: 'stroke' },
-      ),
-    );
-    this.register(
-      new BuiltinShapeProvider(
-        'text',
-        ['x', 'y'],
-        (id, n, text) => new Text(id, n[0]!, n[1]!, text),
-        { text: true },
-      ),
-    );
-    this.register(new BuiltinShapeProvider('g', [], (id) => new Group(id)));
-  }
 
   register(provider: ShapeProvider): this {
     const key = this.svgKey(provider.svgTag, provider.kind);

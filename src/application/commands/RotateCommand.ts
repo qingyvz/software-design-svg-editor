@@ -1,11 +1,11 @@
 import { EditingCommand } from '../EditingCommand.js';
-import type { Editor } from '../Editor.js';
+import type { CommandReceiver } from '../CommandReceiver.js';
 import type { EditContext } from '../EditContext.js';
 import { AffineTransform } from '../../domain/AffineTransform.js';
 
 export class RotateCommand extends EditingCommand {
   constructor(
-    receiver: Editor,
+    receiver: CommandReceiver,
     private readonly ids: readonly string[],
     private readonly degrees: number,
     private readonly cx = 0,

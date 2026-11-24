@@ -1,7 +1,7 @@
 import { Command } from '../Command.js';
-import type { Editor } from '../Editor.js';
-export class HelpCommand extends Command {
-  constructor(receiver: Editor, private readonly additions: readonly string[] = []) {
+import type { CommandReceiver } from '../CommandReceiver.js';
+export class HelpCommand extends Command<CommandReceiver> {
+  constructor(receiver: CommandReceiver, private readonly additions: readonly string[] = []) {
     super(receiver);
   }
   override execute(): readonly string[] {

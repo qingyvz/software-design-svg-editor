@@ -11,9 +11,9 @@ export class DirPlugin implements Plugin {
     const directory = this.directory;
     context.registerCommand({
       name: 'dir', help: 'dir',
-      create(editor, args) {
+      create(_editor, args) {
         if (args.length) throw new Error('usage: dir');
-        return new DirCommand(editor, directory);
+        return new DirCommand(directory);
       },
     });
   }

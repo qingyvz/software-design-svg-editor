@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { Readable } from 'node:stream';
 import { Editor } from './application/Editor.js';
-import { ShapeFactory } from './domain/ShapeFactory.js';
+import { DefaultShapes } from './host/DefaultShapes.js';
 import { NodeDocumentStore } from './infrastructure/NodeDocumentStore.js';
 import { SvgCodec } from './infrastructure/SvgCodec.js';
 import { ConsoleApp } from './cli/ConsoleApp.js';
@@ -32,7 +32,7 @@ try {
       script = args[++i]!;
     else throw new Error('usage: npm run cli -- [--box] [--plugins] [--config plugins.config.json] [--script file.txt]');
   }
-  const shapes = new ShapeFactory();
+  const shapes = DefaultShapes.create();
   const commands = new CommandRegistry();
   const attributes = new AttributeHandlers();
   const decorators = new TreeDecorators();

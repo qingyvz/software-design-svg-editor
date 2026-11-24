@@ -1,11 +1,11 @@
+import { Fixtures } from './Fixtures.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { SvgDocument } from '../src/domain/SvgDocument.js';
-import { ShapeFactory } from '../src/domain/ShapeFactory.js';
 import { Group } from '../src/domain/Group.js';
 
 test('six types implement polymorphic geometry and copy their private state', () => {
-  const f = new ShapeFactory();
+  const f = Fixtures.shapes();
   const data = [
     ['rect', ['1', '2', '3', '4']],
     ['circle', ['1', '2', '3']],
@@ -26,7 +26,7 @@ test('six types implement polymorphic geometry and copy their private state', ()
 });
 
 test('nested composite moves and scales descendants exactly once', () => {
-  const f = new ShapeFactory(),
+  const f = Fixtures.shapes(),
     d = new SvgDocument();
   d.add(new Group('a'));
   d.add(new Group('b'), 'a');
@@ -49,7 +49,7 @@ test('nested composite moves and scales descendants exactly once', () => {
 });
 
 test('group preserves document order, ancestry and insertion position', () => {
-  const f = new ShapeFactory(),
+  const f = Fixtures.shapes(),
     d = new SvgDocument();
   for (const id of ['a', 'b', 'c']) d.add(f.create('circle', id, ['1', '2', '3']));
   d.group('g', ['c', 'a']);
@@ -70,7 +70,7 @@ test('group preserves document order, ancestry and insertion position', () => {
 
 test('cross-parent grouping uses the lowest common ancestor', () => {
   const d = new SvgDocument(),
-    f = new ShapeFactory();
+    f = Fixtures.shapes();
   d.add(new Group('outer'));
   d.add(new Group('left'), 'outer');
   d.add(new Group('right'), 'outer');
@@ -92,7 +92,7 @@ test('cross-parent grouping uses the lowest common ancestor', () => {
 });
 
 test('numeric validation rejects negative sizes, NaN and non-positive scale', () => {
-  const f = new ShapeFactory();
+  const f = Fixtures.shapes();
   assert.throws(() => f.create('rect', 'r', ['0', '0', '-1', '2']), /non-negative/);
   assert.throws(() => f.create('circle', 'c', ['NaN', '0', '1']), /invalid number/);
   const shape = f.create('line', 'l', ['-1', '2.5', '3e2', '0']);

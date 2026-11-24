@@ -1,9 +1,8 @@
 import { Command } from '../application/Command.js';
-import type { Editor } from '../application/Editor.js';
 import type { DirectoryAccess } from './DirectoryAccess.js';
 
-export class DirCommand extends Command {
-  constructor(receiver: Editor, private readonly directory: DirectoryAccess) { super(receiver); }
+export class DirCommand extends Command<undefined> {
+  constructor(private readonly directory: DirectoryAccess) { super(undefined); }
   override execute(): readonly string[] {
     let path = '';
     try {

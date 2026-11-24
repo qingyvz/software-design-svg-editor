@@ -16,7 +16,7 @@ interface ImportState {
 
 export class SvgCodec {
   private readonly namespace = 'http://www.w3.org/2000/svg';
-  constructor(private readonly factory = new ShapeFactory()) {}
+  constructor(private readonly factory: ShapeFactory) {}
 
   decode(source: string): LoadedDocument {
     if (/<!DOCTYPE|<!ENTITY/i.test(source))

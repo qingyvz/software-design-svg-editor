@@ -1,8 +1,8 @@
-import type { Editor } from './Editor.js';
+import type { CommandReceiver } from './CommandReceiver.js';
 import type { Command } from './Command.js';
 
 export interface CommandContribution {
   readonly name: string;
   readonly help: string;
-  create(editor: Editor, arguments_: readonly string[]): Command;
+  create(editor: CommandReceiver, arguments_: readonly string[]): Command;
 }

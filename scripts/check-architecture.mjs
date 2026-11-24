@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 const allowed = {
+  host: ['host', 'cli', 'application', 'domain', 'infrastructure', 'plugins'],
   domain: ['domain'],
   application: ['application', 'domain'],
   cli: ['cli', 'application', 'domain'],

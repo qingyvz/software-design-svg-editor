@@ -15,7 +15,7 @@ import type { DocumentPort, LoadedDocument } from '../application/DocumentPort.j
 import type { SvgDocument } from '../domain/SvgDocument.js';
 import { SvgCodec } from './SvgCodec.js';
 export class NodeDocumentStore implements DocumentPort {
-  constructor(private readonly codec = new SvgCodec()) {}
+  constructor(private readonly codec: SvgCodec) {}
   read(path: string): LoadedDocument {
     let source: string;
     try {

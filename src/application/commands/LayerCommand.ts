@@ -1,9 +1,9 @@
 import { Command } from '../Command.js';
-import type { Editor } from '../Editor.js';
+import type { CommandReceiver } from '../CommandReceiver.js';
 
-export class LayerCommand extends Command {
+export class LayerCommand extends Command<CommandReceiver> {
   constructor(
-    receiver: Editor,
+    receiver: CommandReceiver,
     private readonly id?: string | null,
   ) {
     super(receiver);

@@ -1,8 +1,8 @@
 import { Command } from '../Command.js';
-import type { Editor } from '../Editor.js';
-export class InitCommand extends Command {
+import type { CommandReceiver } from '../CommandReceiver.js';
+export class InitCommand extends Command<CommandReceiver> {
   constructor(
-    receiver: Editor,
+    receiver: CommandReceiver,
     private readonly width = 800,
     private readonly height = 600,
   ) {

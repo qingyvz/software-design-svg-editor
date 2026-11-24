@@ -1,12 +1,11 @@
+import { Fixtures } from './Fixtures.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { SvgCodec } from '../src/infrastructure/SvgCodec.js';
-import { Editor } from '../src/application/Editor.js';
 import { CommandDispatcher } from '../src/cli/CommandDispatcher.js';
 import { MemoryDocumentStore } from './MemoryDocumentStore.js';
 
 test('ungroup multiplies object opacity but only inherits paint opacity', () => {
-  const codec = new SvgCodec();
+  const codec = Fixtures.codec();
   const document = codec.decode(
     '<svg><g id="outer"><g id="inner" opacity="0.5" fill-opacity="0.4"><rect id="r" width="50" height="50" opacity="0.5" fill-opacity="0.8"/></g></g></svg>',
   ).document;
@@ -18,7 +17,7 @@ test('ungroup multiplies object opacity but only inherits paint opacity', () => 
 });
 
 test('ungroup preserves a nested child group as one compositing unit', () => {
-  const document = new SvgCodec().decode(
+  const document = Fixtures.codec().decode(
     '<svg><g id="outer"><g id="inner" opacity="0.5"><g id="child" opacity="0.5"><rect id="a" width="50" height="50"/><rect id="b" x="10" width="50" height="50"/></g></g></g></svg>',
   ).document;
   document.ungroup('inner');
@@ -28,13 +27,13 @@ test('ungroup preserves a nested child group as one compositing unit', () => {
 });
 
 test('ungroup refuses to distribute group opacity across overlapping children', () => {
-  const codec = new SvgCodec();
+  const codec = Fixtures.codec();
   const document = codec.decode(
     '<svg><g id="outer"><g id="inner" opacity="0.5"><rect id="a" width="50" height="50"/><rect id="b" x="10" width="50" height="50"/></g></g></svg>',
   ).document;
   const store = new MemoryDocumentStore();
   store.write('scene.svg', document);
-  const editor = new Editor(store);
+  const editor = Fixtures.editor(store);
   const cli = new CommandDispatcher(editor);
   cli.run('read scene.svg');
   cli.run('move a 1 0');
@@ -47,7 +46,7 @@ test('ungroup refuses to distribute group opacity across overlapping children', 
 });
 
 test('import validates and normalizes opacity values', () => {
-  const codec = new SvgCodec();
+  const codec = Fixtures.codec();
   const document = codec.decode(
     '<svg><g id="outer"><g id="inner" opacity="50%"><rect id="r" opacity="50%"/></g></g></svg>',
   ).document;

@@ -21,14 +21,14 @@ import { RotateCommand } from '../application/commands/RotateCommand.js';
 import { MoveManyCommand } from '../application/commands/MoveManyCommand.js';
 import { LayerCommand } from '../application/commands/LayerCommand.js';
 import type { Command } from '../application/Command.js';
-import { Editor } from '../application/Editor.js';
+import type { CommandReceiver } from '../application/CommandReceiver.js';
 import { Arguments } from './Arguments.js';
 import { CommandRegistry } from '../application/CommandRegistry.js';
 
 export class CommandFactory {
   private readonly commands = new Map<string, (arguments_: Arguments) => Command>();
 
-  constructor(private readonly editor: Editor, private readonly registry = new CommandRegistry()) {
+  constructor(private readonly editor: CommandReceiver, private readonly registry = new CommandRegistry()) {
     this.register('init', (args) => {
       args.count(0, 2);
       return new InitCommand(

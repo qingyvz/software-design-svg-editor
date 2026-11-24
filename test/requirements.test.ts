@@ -1,13 +1,13 @@
+import { Fixtures } from './Fixtures.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { Editor } from '../src/application/Editor.js';
 import { CommandDispatcher } from '../src/cli/CommandDispatcher.js';
 import { MoveCommand } from '../src/application/commands/MoveCommand.js';
 import { MemoryDocumentStore } from './MemoryDocumentStore.js';
 import { spawnSync } from 'node:child_process';
 
 test('required errors are exact and never change document or undo history', () => {
-  const editor = new Editor(new MemoryDocumentStore()),
+  const editor = Fixtures.editor(new MemoryDocumentStore()),
     cli = new CommandDispatcher(editor);
   for (const line of [
     'init',
@@ -41,7 +41,7 @@ test('required errors are exact and never change document or undo history', () =
 });
 
 test('scale multiplies all geometry, not style or text, and ids are case-sensitive', () => {
-  const editor = new Editor(new MemoryDocumentStore()),
+  const editor = Fixtures.editor(new MemoryDocumentStore()),
     cli = new CommandDispatcher(editor);
   for (const line of [
     'init',
@@ -68,7 +68,7 @@ test('scale multiplies all geometry, not style or text, and ids are case-sensiti
 });
 
 test('z-order stays within siblings and undo restores exact insertion positions', () => {
-  const editor = new Editor(new MemoryDocumentStore()),
+  const editor = Fixtures.editor(new MemoryDocumentStore()),
     cli = new CommandDispatcher(editor);
   for (const line of [
     'init',
@@ -127,7 +127,7 @@ test('z-order stays within siblings and undo restores exact insertion positions'
 });
 
 test('reusing a typed command does not overwrite earlier undo records', () => {
-  const editor = new Editor(new MemoryDocumentStore()),
+  const editor = Fixtures.editor(new MemoryDocumentStore()),
     cli = new CommandDispatcher(editor);
   cli.run('init');
   cli.run('create rect r 0 0 1 1');
@@ -145,7 +145,7 @@ test('reusing a typed command does not overwrite earlier undo records', () => {
 
 test('default filename follows successful read/save and is reset on init', () => {
   const store = new MemoryDocumentStore(),
-    editor = new Editor(store),
+    editor = Fixtures.editor(store),
     cli = new CommandDispatcher(editor);
   cli.run('init');
   assert.deepEqual(cli.run('save'), ['error: no file path. use save <file.svg>']);
@@ -159,7 +159,7 @@ test('default filename follows successful read/save and is reset on init', () =>
 });
 
 test('invalid syntax is rejected before mutation and empty undo stacks are clear', () => {
-  const editor = new Editor(new MemoryDocumentStore()),
+  const editor = Fixtures.editor(new MemoryDocumentStore()),
     cli = new CommandDispatcher(editor);
   assert.match(cli.run('help')[0]!, /init/);
   cli.run('init');
@@ -183,7 +183,7 @@ test('invalid syntax is rejected before mutation and empty undo stacks are clear
 });
 
 test('full course transcript preserves the expected scene and history boundary', () => {
-  const editor = new Editor(new MemoryDocumentStore()),
+  const editor = Fixtures.editor(new MemoryDocumentStore()),
     cli = new CommandDispatcher(editor);
   for (const line of [
     'init 800 600',

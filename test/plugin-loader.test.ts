@@ -1,3 +1,4 @@
+import { Fixtures } from './Fixtures.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtempSync, writeFileSync, mkdirSync, rmSync } from 'node:fs';
@@ -6,13 +7,12 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { PluginInstaller } from '../src/cli/PluginInstaller.js';
 import { PluginLoader } from '../src/cli/PluginLoader.js';
-import { ShapeFactory } from '../src/domain/ShapeFactory.js';
 import { CommandRegistry } from '../src/application/CommandRegistry.js';
 import { CommandFactory } from '../src/cli/CommandFactory.js';
 import { CommandDispatcher } from '../src/cli/CommandDispatcher.js';
 import { AttributeHandlers } from '../src/application/AttributeHandlers.js';
 import { TreeDecorators } from '../src/application/TreeDecorators.js';
-import { Editor } from '../src/application/Editor.js';
+import type { CommandReceiver } from '../src/application/CommandReceiver.js';
 import { Command } from '../src/application/Command.js';
 import { Rect } from '../src/domain/Rect.js';
 import { BoxPlugin } from '../src/plugins/BoxPlugin.js';
@@ -20,11 +20,11 @@ import type { Plugin } from '../src/application/Plugin.js';
 import { MemoryDocumentStore } from './MemoryDocumentStore.js';
 
 function harness() {
-  const shapes = new ShapeFactory();
+  const shapes = Fixtures.shapes();
   const commands = new CommandRegistry();
   const decorators = new TreeDecorators();
   const attributes = new AttributeHandlers();
-  const editor = new Editor(new MemoryDocumentStore(), shapes, attributes, decorators);
+  const editor = Fixtures.editor(new MemoryDocumentStore(), shapes, attributes, decorators);
   const factory = new CommandFactory(editor, commands);
   const cli = new CommandDispatcher(editor, factory);
   const installer = new PluginInstaller(shapes, commands, decorators, attributes, (name) => factory.has(name));
@@ -39,12 +39,12 @@ function fixture(run: (directory: string) => Promise<void>): Promise<void> {
 function command(name: string) {
   return {
     name, help: name,
-    create: (editor: Editor) => new TestCommand(editor, name),
+    create: (editor: CommandReceiver) => new TestCommand(editor, name),
   };
 }
 
 class TestCommand extends Command {
-  constructor(receiver: Editor, private readonly message: string) { super(receiver); }
+  constructor(receiver: CommandReceiver, private readonly message: string) { super(receiver); }
   override execute(): readonly string[] { return [this.message + ' called']; }
 }
 
@@ -89,7 +89,7 @@ test('throwing contribution accessors yield standardized errors and cannot leak 
     activate(ctx) {
       ctx.registerCommand(command('safe'));
       ctx.registerCommand({ name: 'bad', help: 'bad',
-        get create(): (editor: Editor) => Command { throw new Error('bad factory getter'); } });
+        get create(): (editor: CommandReceiver) => Command { throw new Error('bad factory getter'); } });
     },
   };
   assert.equal(h.installer.install(invalidFactory),

@@ -1,13 +1,11 @@
+import { Fixtures } from './Fixtures.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { Editor } from '../src/application/Editor.js';
 import { MoveManyCommand } from '../src/application/commands/MoveManyCommand.js';
 import { CommandDispatcher } from '../src/cli/CommandDispatcher.js';
 import { CommandFactory } from '../src/cli/CommandFactory.js';
-import { ShapeFactory } from '../src/domain/ShapeFactory.js';
 import { AffineTransform } from '../src/domain/AffineTransform.js';
-import { SvgCodec } from '../src/infrastructure/SvgCodec.js';
 import { SvgTransform } from '../src/infrastructure/SvgTransform.js';
 import { Box } from '../src/plugins/Box.js';
 import { BoxProvider } from '../src/plugins/BoxProvider.js';
@@ -44,7 +42,7 @@ test('affine operations follow SVG multiplication order and keep immutable finit
 });
 
 test('rotated, skewed and nonuniform SVG shapes survive import and save', () => {
-  const codec = new SvgCodec();
+  const codec = Fixtures.codec();
   const xml =
     '<svg width="300" height="200"><g id="g" transform="translate(50 60) rotate(90)"><rect id="r" x="1" y="2" width="10" height="20"/><ellipse id="e" cx="3" cy="4" rx="5" ry="6" transform="scale(2 3)"/><text id="t" x="7" y="8" transform="skewX(20)">中文</text></g></svg>';
   const document = codec.decode(xml).document;
@@ -57,9 +55,9 @@ test('rotated, skewed and nonuniform SVG shapes survive import and save', () => 
 });
 
 test('batch rotation handles overlapping selection roots and uses one undo unit', () => {
-  const editor = new Editor(new MemoryDocumentStore());
+  const editor = Fixtures.editor(new MemoryDocumentStore());
   const cli = new CommandDispatcher(editor);
-  const codec = new SvgCodec();
+  const codec = Fixtures.codec();
   execute(
     cli,
     'init',
@@ -83,7 +81,7 @@ test('batch rotation handles overlapping selection roots and uses one undo unit'
 });
 
 test('move and CLI scale keep canvas coordinates and stroke width after rotation', () => {
-  const editor = new Editor(new MemoryDocumentStore());
+  const editor = Fixtures.editor(new MemoryDocumentStore());
   const cli = new CommandDispatcher(editor);
   execute(
     cli,
@@ -104,9 +102,9 @@ test('move and CLI scale keep canvas coordinates and stroke width after rotation
 });
 
 test('batch failures leave all targets and redo history unchanged', () => {
-  const editor = new Editor(new MemoryDocumentStore());
+  const editor = Fixtures.editor(new MemoryDocumentStore());
   const cli = new CommandDispatcher(editor);
-  const codec = new SvgCodec();
+  const codec = Fixtures.codec();
   execute(cli, 'init', 'create rect a 1 2 3 4', 'create rect b 1e308 0 1 1', 'move a 1 0', 'undo');
   const before = codec.encode(editor.inspect());
   assert.match(cli.run('move-many 1e308 0 a b')[0]!, /finite/);
@@ -118,9 +116,9 @@ test('batch failures leave all targets and redo history unchanged', () => {
 });
 
 test('layer scope applies to creation and every editing target', () => {
-  const editor = new Editor(new MemoryDocumentStore());
+  const editor = Fixtures.editor(new MemoryDocumentStore());
   const cli = new CommandDispatcher(editor);
-  const codec = new SvgCodec();
+  const codec = Fixtures.codec();
   execute(
     cli,
     'init',
@@ -160,7 +158,7 @@ test('layer scope applies to creation and every editing target', () => {
 
 test('layer transitions keep history, reject missing layers and recover after undo or read', () => {
   const store = new MemoryDocumentStore();
-  const editor = new Editor(store);
+  const editor = Fixtures.editor(store);
   const cli = new CommandDispatcher(editor);
   execute(cli, 'init', 'create g layer', 'layer enter layer');
   assert.match(cli.run('layer enter missing')[0]!, /no such container/);
@@ -178,10 +176,10 @@ test('layer transitions keep history, reject missing layers and recover after un
 });
 
 test('injected box provider supports commands, clone history and SVG restoration', () => {
-  const factory = new ShapeFactory().register(new BoxProvider());
-  const editor = new Editor(new MemoryDocumentStore(), factory);
+  const factory = Fixtures.shapes().register(new BoxProvider());
+  const editor = Fixtures.editor(new MemoryDocumentStore(), factory);
   const cli = new CommandDispatcher(editor);
-  const codec = new SvgCodec(factory);
+  const codec = Fixtures.codec(factory);
   execute(
     cli,
     'init',
@@ -202,15 +200,15 @@ test('injected box provider supports commands, clone history and SVG restoration
   const restored = codec.decode(before).document;
   assert.ok(restored.get('b') instanceof Box);
   assert.equal(codec.encode(restored), before);
-  const fallback = new SvgCodec().decode(before).document;
+  const fallback = Fixtures.codec().decode(before).document;
   assert.equal(fallback.get('b') instanceof Box, false);
   assert.equal(fallback.get('b').attributes.get('data-kind'), 'box');
   assert.throws(() => factory.register(new BoxProvider()), /already registered/);
-  assert.throws(() => new ShapeFactory().create('box', 'b', []), /unknown shape type/);
+  assert.throws(() => Fixtures.shapes().create('box', 'b', []), /unknown shape type/);
 });
 
 test('container capability supports a container that does not inherit Group', () => {
-  const factory = new ShapeFactory();
+  const factory = Fixtures.shapes();
   factory.register({
     type: 'alternate',
     svgTag: 'g',
@@ -225,7 +223,7 @@ test('container capability supports a container that does not inherit Group', ()
       return result;
     },
   });
-  const editor = new Editor(new MemoryDocumentStore(), factory);
+  const editor = Fixtures.editor(new MemoryDocumentStore(), factory);
   const cli = new CommandDispatcher(editor);
   execute(
     cli,
@@ -239,14 +237,14 @@ test('container capability supports a container that does not inherit Group', ()
   );
   const document = editor.inspect();
   assert.equal(document.parentOf(document.get('r'))?.id, 'custom');
-  const codec = new SvgCodec(factory);
+  const codec = Fixtures.codec(factory);
   const restored = codec.decode(codec.encode(document)).document;
   assert.ok(restored.get('custom') instanceof AlternateContainer);
   assert.equal(restored.get('r').attributes.get('x'), '3');
 });
 
 test('new commands can be registered without changing the dispatcher', () => {
-  const editor = new Editor(new MemoryDocumentStore());
+  const editor = Fixtures.editor(new MemoryDocumentStore());
   const commands = new CommandFactory(editor).register('nudge', (args) => {
     args.count(1, Number.MAX_SAFE_INTEGER);
     return new MoveManyCommand(editor, args.all(), 1, 2);

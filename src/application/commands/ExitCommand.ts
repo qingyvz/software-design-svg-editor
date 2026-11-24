@@ -1,7 +1,7 @@
 import { Command } from '../Command.js';
-import type { Editor } from '../Editor.js';
-export class ExitCommand extends Command {
-  constructor(receiver: Editor) {
+import type { CommandReceiver } from '../CommandReceiver.js';
+export class ExitCommand extends Command<CommandReceiver> {
+  constructor(receiver: CommandReceiver) {
     super(receiver);
   }
   override execute(): readonly string[] {

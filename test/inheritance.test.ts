@@ -1,12 +1,11 @@
+import { Fixtures } from './Fixtures.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { Editor } from '../src/application/Editor.js';
 import { CommandDispatcher } from '../src/cli/CommandDispatcher.js';
-import { SvgCodec } from '../src/infrastructure/SvgCodec.js';
 import { MemoryDocumentStore } from './MemoryDocumentStore.js';
 
 test('ungroup resolves explicit inherit against the removed parent and supports undo', () => {
-  const editor = new Editor(new MemoryDocumentStore());
+  const editor = Fixtures.editor(new MemoryDocumentStore());
   const cli = new CommandDispatcher(editor);
   for (const command of [
     'init',
@@ -19,7 +18,7 @@ test('ungroup resolves explicit inherit against the removed parent and supports 
     'create rect r 0 0 10 10 in child',
   ])
     assert.ok(!cli.run(command)[0]!.startsWith('error:'), command);
-  const codec = new SvgCodec();
+  const codec = Fixtures.codec();
   const before = codec.encode(editor.inspect());
   cli.run('ungroup inner');
   assert.equal(editor.inspect().get('child').attributes.get('fill'), 'red');
@@ -30,7 +29,7 @@ test('ungroup resolves explicit inherit against the removed parent and supports 
 });
 
 test('ungroup materializes inherited paint and font properties without replacing explicit values', () => {
-  const codec = new SvgCodec();
+  const codec = Fixtures.codec();
   const document = codec.decode(
     '<svg><g id="outer" fill="blue"><g id="inner" fill="red" stroke="green" font-size="24" font-family="serif"><text id="t" x="10" y="20" fill=" inherit " stroke="black" font-size="inherit" font-family="inherit">Text</text></g></g></svg>',
   ).document;
@@ -47,7 +46,7 @@ test('ungroup materializes inherited paint and font properties without replacing
 });
 
 test('inherit still follows the remaining ancestor when the removed parent also inherits', () => {
-  const document = new SvgCodec().decode(
+  const document = Fixtures.codec().decode(
     '<svg><g id="outer" fill="blue"><g id="inner" fill="inherit"><g id="child" fill="inherit"><rect id="r" width="10" height="10"/></g></g></g></svg>',
   ).document;
   document.ungroup('inner');

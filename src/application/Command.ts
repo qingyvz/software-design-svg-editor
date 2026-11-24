@@ -1,5 +1,4 @@
-import type { Editor } from './Editor.js';
-export abstract class Command {
-  protected constructor(protected readonly receiver: Editor) {}
+export abstract class Command<Receiver = unknown> {
+  protected constructor(protected readonly receiver: Receiver) {}
   abstract execute(): readonly string[];
 }

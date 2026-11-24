@@ -20,7 +20,7 @@ export class Editor {
   private scope: EditScope = new CanvasScope();
   constructor(
     private readonly documents: DocumentPort,
-    private readonly shapes = new ShapeFactory(),
+    private readonly shapes: ShapeFactory,
     readonly attributes = new AttributeHandlers(),
     readonly decorators = new TreeDecorators(),
   ) {}

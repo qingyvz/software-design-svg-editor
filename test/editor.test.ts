@@ -1,11 +1,11 @@
+import { Fixtures } from './Fixtures.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { Editor } from '../src/application/Editor.js';
 import { CommandDispatcher } from '../src/cli/CommandDispatcher.js';
 import { MemoryDocumentStore } from './MemoryDocumentStore.js';
 
 test('history treats a multi-shape edit as one unit and supports branching', () => {
-  const editor = new Editor(new MemoryDocumentStore()),
+  const editor = Fixtures.editor(new MemoryDocumentStore()),
     cli = new CommandDispatcher(editor);
   cli.run('init');
   cli.run('create rect a 0 0 10 20');
@@ -26,7 +26,7 @@ test('history treats a multi-shape edit as one unit and supports branching', () 
 });
 
 test('failed edits preserve geometry and the redo branch', () => {
-  const editor = new Editor(new MemoryDocumentStore()),
+  const editor = Fixtures.editor(new MemoryDocumentStore()),
     cli = new CommandDispatcher(editor);
   cli.run('init');
   cli.run('create rect a 0 0 10 20');
@@ -43,7 +43,7 @@ test('failed edits preserve geometry and the redo branch', () => {
 
 test('successful IO creates a barrier; display commands and failed IO do not', () => {
   const store = new MemoryDocumentStore(),
-    editor = new Editor(store),
+    editor = Fixtures.editor(store),
     cli = new CommandDispatcher(editor);
   assert.deepEqual(cli.run('tree'), ["error: no document. use 'init' or 'read' first"]);
   cli.run('init');
@@ -71,7 +71,7 @@ test('successful IO creates a barrier; display commands and failed IO do not', (
 });
 
 test('all editing commands round-trip using undo/redo', () => {
-  const editor = new Editor(new MemoryDocumentStore()),
+  const editor = Fixtures.editor(new MemoryDocumentStore()),
     cli = new CommandDispatcher(editor);
   for (const line of [
     'init',
@@ -105,7 +105,7 @@ test('all editing commands round-trip using undo/redo', () => {
 });
 
 test('parser preserves quoted text, hex colors and Windows paths', () => {
-  const editor = new Editor(new MemoryDocumentStore()),
+  const editor = Fixtures.editor(new MemoryDocumentStore()),
     cli = new CommandDispatcher(editor);
   assert.deepEqual(cli.run(' # comment'), []);
   cli.run('init');
@@ -122,7 +122,7 @@ test('parser preserves quoted text, hex colors and Windows paths', () => {
 });
 
 test('overflow midway through a composite operation rolls back every child', () => {
-  const editor = new Editor(new MemoryDocumentStore()),
+  const editor = Fixtures.editor(new MemoryDocumentStore()),
     cli = new CommandDispatcher(editor);
   for (const line of [
     'init',

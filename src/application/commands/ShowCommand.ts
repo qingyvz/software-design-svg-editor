@@ -1,9 +1,9 @@
 import { Command } from '../Command.js';
-import type { Editor } from '../Editor.js';
+import type { CommandReceiver } from '../CommandReceiver.js';
 import { TreeFormatter } from '../TreeFormatter.js';
-export class ShowCommand extends Command {
+export class ShowCommand extends Command<CommandReceiver> {
   constructor(
-    receiver: Editor,
+    receiver: CommandReceiver,
     private readonly id: string,
   ) {
     super(receiver);

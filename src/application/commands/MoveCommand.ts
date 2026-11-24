@@ -1,9 +1,9 @@
 import { EditingCommand } from '../EditingCommand.js';
-import type { Editor } from '../Editor.js';
+import type { CommandReceiver } from '../CommandReceiver.js';
 import type { EditContext } from '../EditContext.js';
 export class MoveCommand extends EditingCommand {
   constructor(
-    receiver: Editor,
+    receiver: CommandReceiver,
     private readonly id: string,
     private readonly dx: number,
     private readonly dy: number,

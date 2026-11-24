@@ -1,19 +1,16 @@
+import { Fixtures } from './Fixtures.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync, symlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { Editor } from '../src/application/Editor.js';
 import { AttributeHandlers } from '../src/application/AttributeHandlers.js';
 import { CommandRegistry } from '../src/application/CommandRegistry.js';
 import { TreeDecorators } from '../src/application/TreeDecorators.js';
 import { CommandFactory } from '../src/cli/CommandFactory.js';
 import { CommandDispatcher } from '../src/cli/CommandDispatcher.js';
 import { PluginInstaller } from '../src/cli/PluginInstaller.js';
-import { ShapeFactory } from '../src/domain/ShapeFactory.js';
-import { SvgCodec } from '../src/infrastructure/SvgCodec.js';
-import { NodeDocumentStore } from '../src/infrastructure/NodeDocumentStore.js';
 import { Box } from '../src/plugins/Box.js';
 import { BoxPlugin } from '../src/plugins/BoxPlugin.js';
 import { DirPlugin } from '../src/plugins/DirPlugin.js';
@@ -24,12 +21,12 @@ import { StatsPlugin } from '../src/plugins/StatsPlugin.js';
 import { MemoryDocumentStore } from './MemoryDocumentStore.js';
 
 function setup(...plugins: ('stats' | 'dir' | 'box' | 'star')[]) {
-  const shapes = new ShapeFactory();
+  const shapes = Fixtures.shapes();
   const attributes = new AttributeHandlers();
   const decorators = new TreeDecorators();
   const commands = new CommandRegistry();
   const store = new MemoryDocumentStore();
-  const editor = new Editor(store, shapes, attributes, decorators);
+  const editor = Fixtures.editor(store, shapes, attributes, decorators);
   const factory = new CommandFactory(editor, commands);
   const cli = new CommandDispatcher(editor, factory);
   const installer = new PluginInstaller(shapes, commands, decorators, attributes, (name) => factory.has(name));
@@ -84,10 +81,10 @@ test('dir plugin adapter sorts directories/files/other, hides dot entries only, 
   listing = [];
   assert.deepEqual(h.cli.run('dir'), ['(empty directory)']);
   ok(h.cli, 'init', 'create rect a 0 0 1 1', 'move a 1 0', 'undo');
-  const before = new SvgCodec().encode(h.editor.inspect());
+  const before = Fixtures.codec().encode(h.editor.inspect());
   fail = true;
   assert.deepEqual(h.cli.run('dir'), ['error: cannot read directory: /fixed']);
-  assert.equal(new SvgCodec().encode(h.editor.inspect()), before);
+  assert.equal(Fixtures.codec().encode(h.editor.inspect()), before);
   fail = false;
   assert.deepEqual(h.cli.run('dir'), ['(empty directory)']);
   ok(h.cli, 'redo');
@@ -117,15 +114,15 @@ test('real Node directory adapter combines with command; optional symlink is rep
 test('box child ids are atomic; ordinary detaching commands fail while box remains valid', () => {
   const h = setup('box');
   ok(h.cli, 'init', 'create rect b-label 0 0 1 1');
-  const before = new SvgCodec(h.shapes).encode(h.editor.inspect());
+  const before = Fixtures.codec(h.shapes).encode(h.editor.inspect());
   assert.deepEqual(h.cli.run('create box b 0 0 10 10 "x"'), ['error: id already exists: b-label']);
-  assert.equal(new SvgCodec(h.shapes).encode(h.editor.inspect()), before);
+  assert.equal(Fixtures.codec(h.shapes).encode(h.editor.inspect()), before);
   ok(h.cli, 'create box other 0 0 10 10 "title"');
-  const intact = new SvgCodec(h.shapes).encode(h.editor.inspect());
+  const intact = Fixtures.codec(h.shapes).encode(h.editor.inspect());
   for (const command of ['delete other-label', 'delete other-rect', 'addto other other-label',
     'group g other-rect', 'ungroup other']) {
     assert.match(h.cli.run(command)[0]!, /^error:/, command);
-    assert.equal(new SvgCodec(h.shapes).encode(h.editor.inspect()), intact, command);
+    assert.equal(Fixtures.codec(h.shapes).encode(h.editor.inspect()), intact, command);
   }
   ok(h.cli, 'move other 2 3', 'undo', 'redo');
   assert.ok(h.editor.inspect().get('other') instanceof Box);
@@ -134,7 +131,7 @@ test('box child ids are atomic; ordinary detaching commands fail while box remai
 test('box import refuses missing/wrong children and duplicate ids, preserving document and redo history', () => {
   const h = setup('box');
   ok(h.cli, 'init', 'create rect safe 0 0 1 1', 'move safe 1 0', 'undo');
-  const before = new SvgCodec(h.shapes).encode(h.editor.inspect());
+  const before = Fixtures.codec(h.shapes).encode(h.editor.inspect());
   for (const invalid of [
     '<g id="b" data-kind="box"><rect id="b-rect" x="0" y="0" width="1" height="1"/></g>',
     '<g id="b" data-kind="box"><circle id="b-rect" cx="0" cy="0" r="1"/><text id="b-label" x="0" y="0">t</text></g>',
@@ -143,24 +140,24 @@ test('box import refuses missing/wrong children and duplicate ids, preserving do
     const path = 'bad.svg';
     const source = `<svg width="100" height="100">${invalid}</svg>`;
     // In-memory store takes validated documents only; direct decoder checks atomic import.
-    assert.throws(() => new SvgCodec(h.shapes).decode(source), /invalid box structure|id already exists/);
-    assert.equal(new SvgCodec(h.shapes).encode(h.editor.inspect()), before, path);
+    assert.throws(() => Fixtures.codec(h.shapes).decode(source), /invalid box structure|id already exists/);
+    assert.equal(Fixtures.codec(h.shapes).encode(h.editor.inspect()), before, path);
   }
   ok(h.cli, 'redo');
   assert.equal(h.editor.inspect().get('safe').attributes.get('x'), '1');
-  const box = new SvgCodec(h.shapes).decode('<svg width="100" height="100"><g id="b" data-kind="box"><rect id="b-rect" x="0" y="0" width="1" height="1"/><text id="b-label" x="0" y="0">t</text></g></svg>').document;
+  const box = Fixtures.codec(h.shapes).decode('<svg width="100" height="100"><g id="b" data-kind="box"><rect id="b-rect" x="0" y="0" width="1" height="1"/><text id="b-label" x="0" y="0">t</text></g></svg>').document;
   assert.ok(box.get('b') instanceof Box);
-  assert.equal(new SvgCodec().decode(new SvgCodec(h.shapes).encode(box)).document.get('b') instanceof Box, false);
+  assert.equal(Fixtures.codec().decode(Fixtures.codec(h.shapes).encode(box)).document.get('b') instanceof Box, false);
 });
 
 test('failed read of malformed box keeps current document, dirty label and redo branch', () => {
   const path = mkdtempSync(join(tmpdir(), 'svg-box-read-'));
   try {
-    const shapes = new ShapeFactory();
+    const shapes = Fixtures.shapes();
     const attributes = new AttributeHandlers();
     const decorators = new TreeDecorators();
     const registry = new CommandRegistry();
-    const editor = new Editor(new NodeDocumentStore(new SvgCodec(shapes)), shapes, attributes, decorators);
+    const editor = Fixtures.editor(Fixtures.store(Fixtures.codec(shapes)), shapes, attributes, decorators);
     const factory = new CommandFactory(editor, registry);
     const cli = new CommandDispatcher(editor, factory);
     const installer = new PluginInstaller(shapes, registry, decorators, attributes, (name) => factory.has(name));
@@ -168,11 +165,11 @@ test('failed read of malformed box keeps current document, dirty label and redo 
     assert.equal(installer.install(new StarPlugin()), undefined);
     ok(cli, 'init', 'create box b 0 0 10 20 "saved"', `save "${join(path, 'ok.svg')}"`,
       'set b label "dirty"', 'undo');
-    const before = new SvgCodec(shapes).encode(editor.inspect());
+    const before = Fixtures.codec(shapes).encode(editor.inspect());
     const bad = join(path, 'bad.svg');
     writeFileSync(bad, '<svg width="100" height="100"><g id="b" data-kind="box"><rect id="b-rect" x="0" y="0" width="1" height="1"/></g></svg>');
     assert.match(cli.run(`read "${bad}"`)[0]!, /^error: invalid SVG: invalid box structure/);
-    assert.equal(new SvgCodec(shapes).encode(editor.inspect()), before);
+    assert.equal(Fixtures.codec(shapes).encode(editor.inspect()), before);
     assert.doesNotMatch(cli.run('tree').join('\n'), / \*/);
     ok(cli, 'redo');
     assert.equal(editor.inspect().get('b-label').text, 'dirty');
@@ -182,11 +179,11 @@ test('failed read of malformed box keeps current document, dirty label and redo 
 test('saved nested box round-trips through real files with plugin and degrades to a group without it', () => {
   const dir = mkdtempSync(join(tmpdir(), 'svg-box-roundtrip-'));
   try {
-    const shapes = new ShapeFactory();
+    const shapes = Fixtures.shapes();
     const attributes = new AttributeHandlers();
     const decorators = new TreeDecorators();
     const commands = new CommandRegistry();
-    const editor = new Editor(new NodeDocumentStore(new SvgCodec(shapes)), shapes, attributes, decorators);
+    const editor = Fixtures.editor(Fixtures.store(Fixtures.codec(shapes)), shapes, attributes, decorators);
     const factory = new CommandFactory(editor, commands);
     const cli = new CommandDispatcher(editor, factory);
     const installer = new PluginInstaller(shapes, commands, decorators, attributes, (name) => factory.has(name));
@@ -201,8 +198,8 @@ test('saved nested box round-trips through real files with plugin and degrades t
     const expectedStats = cli.run('stats');
     const expectedTree = cli.run('tree');
     assert.doesNotMatch(expectedTree.join('\n'), / \*$/m);
-    const withBox = new NodeDocumentStore(new SvgCodec(shapes));
-    assert.equal(new SvgCodec(shapes).encode(withBox.read(source).document), serialized);
+    const withBox = Fixtures.store(Fixtures.codec(shapes));
+    assert.equal(Fixtures.codec(shapes).encode(withBox.read(source).document), serialized);
     ok(cli, `read "${source}"`);
     assert.deepEqual(cli.run('stats'), expectedStats);
     assert.deepEqual(cli.run('tree'), expectedTree);
@@ -211,13 +208,13 @@ test('saved nested box round-trips through real files with plugin and degrades t
     assert.equal(editor.inspect().get('parent-rect').attributes.get('fill'), '#f5a623');
     assert.equal(editor.inspect().get('child-label').text, '新标题');
 
-    const fallback = new NodeDocumentStore(new SvgCodec()).read(source).document;
+    const fallback = Fixtures.store(Fixtures.codec()).read(source).document;
     assert.equal(fallback.get('parent') instanceof Box, false);
     assert.equal(fallback.get('child') instanceof Box, false);
     assert.equal(fallback.get('parent').tag, 'g');
     assert.equal(fallback.get('parent').attributes.get('data-kind'), 'box');
     assert.equal(fallback.get('child-label').text, '新标题');
-    assert.equal(new SvgCodec().encode(fallback), serialized);
+    assert.equal(Fixtures.codec().encode(fallback), serialized);
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
 
@@ -241,7 +238,7 @@ test('attribute handler handles box fill/label with one undo each and default wh
 test('ambiguous handlers and partially failing handlers roll back the draft without changing redo history', () => {
   const h = setup('box');
   ok(h.cli, 'init', 'create box b 0 0 10 20 "old"', 'set b label "new"', 'undo');
-  const codec = new SvgCodec(h.shapes);
+  const codec = Fixtures.codec(h.shapes);
   const before = codec.encode(h.editor.inspect());
   h.attributes.register({ name: 'ambiguous', handles: (shape, attr) => shape instanceof Box && attr === 'fill', apply() { throw new Error('must not run'); } });
   assert.deepEqual(h.cli.run('set b fill red'), ['error: ambiguous attribute handler: fill']);
